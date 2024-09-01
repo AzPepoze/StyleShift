@@ -275,7 +275,90 @@ var Un_Add_Setting_UI = {
 		return Button;
 	},
 
-	["Add_Setting_Button"]: function () {},
+	["Show_Dropdown"]: function (options, target) {
+		const dropdownContainer = Settings_UI["Setting_Frame"](false, true);
+		console.log(dropdownContainer);
+		dropdownContainer.className += " STYLESHIFT-DropDown-Container STYLESHIFT-Main";
+
+		// Populate dropdown with options
+
+		// Add elements to the DOM
+		document.body.appendChild(dropdownContainer);
+
+		// Set dropdown width to match the target
+		const targetRect = target.getBoundingClientRect();
+		dropdownContainer.style.width = `${targetRect.width}px`;
+
+		// Calculate space below and above the target
+		const spaceBelow = window.innerHeight - targetRect.bottom;
+		const spaceAbove = targetRect.top;
+
+		// Position dropdown below or above the target
+		if (spaceBelow >= dropdownContainer.offsetHeight) {
+			dropdownContainer.style.top = `${targetRect.bottom}px`;
+		} else if (spaceAbove >= dropdownContainer.offsetHeight) {
+			dropdownContainer.style.top = `${targetRect.top - dropdownContainer.offsetHeight}px`;
+		} else {
+			// Default to positioning below if neither space is sufficient
+			dropdownContainer.style.top = `${targetRect.bottom}px`;
+		}
+		dropdownContainer.style.left = `${targetRect.left}px`;
+
+		function Remove_DropDown() {
+			dropdownContainer.remove();
+			dropdownContainer.dispatchEvent(new Event("Remove_DropDown"));
+		}
+
+		// Auto remove when mouse moves far away
+		let timeout;
+
+		dropdownContainer.addEventListener("mouseenter", () => {
+			clearTimeout(timeout);
+		});
+		return {
+			Selection: new Promise((resolve) => {
+				dropdownContainer.addEventListener("mouseleave", () => {
+					timeout = setTimeout(() => {
+						Remove_DropDown();
+					}, 1000);
+				});
+
+				dropdownContainer.addEventListener("Remove_DropDown", function () {
+					resolve(null);
+				});
+
+				options.forEach((option) => {
+					const listItem = document.createElement("div");
+					listItem.className = "STYLESHIFT-DropDown-Items STYLESHIFT-Glow-Hover";
+					listItem.textContent = option;
+					listItem.addEventListener("click", () => {
+						resolve(option); // Return the selected option
+						dropdownContainer.remove();
+					});
+					dropdownContainer.appendChild(listItem);
+				});
+			}),
+			Cancel: Remove_DropDown,
+		};
+	},
+
+	["Add_Setting_Button"]: function () {
+		var Adding;
+
+		var Add_Button = Settings_UI["Button"]("+", "255,255,255", async function () {
+			if (Adding) {
+				Adding.Cancel();
+				return;
+			}
+			Adding = Settings_UI["Show_Dropdown"](Object.keys(Add_Setting_UI), Add_Button);
+			if (await Adding.Selection) {
+				console.log(Adding.Selection);
+			}
+			Adding = null;
+		});
+		Add_Button.style.justifyContent = "center";
+		return Add_Button;
+	},
 };
 
 var Settings_UI = {

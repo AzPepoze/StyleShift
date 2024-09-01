@@ -92,6 +92,10 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 		Scrollable.append(await Create_Setting_UI_Element(ThisSetting.type, ThisSetting));
 	}
 
+	if (await Load("Developer_Mode")) {
+		Scrollable.append(await Create_Setting_UI_Element("Add_Setting_Button"));
+	}
+
 	//When_Element_Remove();
 }
 

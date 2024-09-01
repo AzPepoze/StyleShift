@@ -133,3 +133,26 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	z-index: 10000;
 	background: #000000a1;
 }
+
+.STYLESHIFT-DropDown-Container {
+	position: fixed;
+	padding: 0px;
+	height: auto;
+	display: flex;
+	z-index: 10000;
+	gap: 5px;
+	padding-block: 5px !important;
+	margin-block: 5px;
+}
+
+.STYLESHIFT-DropDown-Items {
+	width: calc(100% - 10px);
+	height: 30px;
+	font-size: 13px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: radial-gradient(at center top, rgb(99, 99, 99), rgba(66, 66, 66, 0.5));
+	color: rgb(255, 255, 255);
+	border: #ffffff17 solid 1px;
+}
