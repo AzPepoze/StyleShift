@@ -53,6 +53,17 @@
 				"revealProblems": "onProblem",
 				"close": true
 			}
+		},
+		{
+			"label": "Auto Commit & Push",
+			"type": "shell",
+			"command": "git add . && git commit -m '-' && git push",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "This task commits and pushes changes."
 		}
 	]
 }
