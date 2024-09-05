@@ -55,7 +55,7 @@ async function Main_Run() {
 	await sleep(1000);
 	Create_StyleSheet_Holder();
 	await Set_Null_Save();
-	//await Save("Custom_Editable_Items", Test_Editable_Items);
+	await Save("Custom_Editable_Items", Test_Editable_Items);
 	await Update_Editable_Items();
 	await Get_Settings_List();
 	console.log(await Get_Settings_List());

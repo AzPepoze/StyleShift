@@ -12,14 +12,22 @@ async function Load_ThisWeb_Save() {
 	});
 
 	chrome.storage.local.get(Save_Name, function (Saved: Object) {
-		Saved_Data = Saved[Save_Name];
+		if (Saved[Save_Name]) {
+			Saved_Data = Saved[Save_Name];
+			console.log("Loaded", Saved_Data);
+		} else {
+			Saved_Data = {};
+		}
 		Loaded = true;
-		console.log("Loaded", Saved_Data);
 	});
 }
 Load_ThisWeb_Save();
 
 export async function Save(Name, Value) {
+	if (!Loaded) {
+		await sleep(100);
+		return Save(Name, Value);
+	}
 	Saved_Data[Name] = Value;
 	console.log("Save", Name, Value);
 	return await Save_All();
