@@ -200,7 +200,7 @@ var Un_Add_Setting_UI = {
 		//CSS
 
 		This_Frame.append(Settings_UI["Sub_Title"]("CSS"));
-		var CSS_Editor = Settings_UI["Text_Editor"](This_Setting, RunType + "_function");
+		var CSS_Editor = Settings_UI["Text_Editor"](This_Setting, RunType + "_css");
 		This_Frame.append(CSS_Editor.Text_Editor);
 
 		//
