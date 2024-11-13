@@ -1,33 +1,43 @@
-var Ver = chrome.runtime.getManifest().version
+import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
 
-var isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+let Ver = chrome.runtime.getManifest().version;
 
-var inIframe
+let isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+
+let inIframe;
 try {
-     inIframe = window.self !== window.top;
+	inIframe = window.self !== window.top;
 } catch (e) {
-     inIframe = true;
+	inIframe = true;
 }
 
-var DefaultYouTubeLogo = `https://www.youtube.com/s/desktop/6588612c/img/favicon.ico`
-var DefaultNewTubeLogo = `https://i.ibb.co/tD2VTyg/1705431438657.png`
+let DefaultYouTubeLogo = `https://www.youtube.com/s/desktop/6588612c/img/favicon.ico`;
+let DefaultNewTubeLogo = `https://i.ibb.co/tD2VTyg/1705431438657.png`;
 
-var Extension_Location = chrome.runtime.getURL('')
-var Extension_ID = Extension_Location.slice(19, -1)
+let Extension_Location = chrome.runtime.getURL("");
+let Extension_ID = Extension_Location.slice(19, -1);
 
-var in_Setting_Page
+let in_Setting_Page;
 
 if (window.location.href.includes("Newtube_setting")) {
-     document.title = "NewTube Setting";
-     in_Setting_Page = true
+	document.title = "NewTube Setting";
+	in_Setting_Page = true;
 } else {
-     in_Setting_Page = false
+	in_Setting_Page = false;
 }
 
 export function Get_Extension_ID() {
-     return Extension_ID
+	return Extension_ID;
 }
 
 export function Get_Extension_Location() {
-     return Extension_Location
+	return Extension_Location;
+}
+
+export function Enable_Extension() {
+	Show_StyleSheet();
+}
+
+export function Disable_Extension() {
+	Hide_StyleSheet();
 }

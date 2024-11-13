@@ -1,40 +1,38 @@
 import {
 	Create_UniqueID,
-	Get_Scroll_Parent,
-	sleep,
 	WaitDocumentLoaded,
-	When_Element_Remove,
+	When_Element_Remove
 } from "../Modules/NormalFunction";
-import { Show_Confirm } from "../Settings/Extension_Setting";
+import { Show_Confirm } from "../Settings/Extension_Setting_UI";
 import { Get_Editable_Items } from "./Editable_Items";
 import { Create_Editor_UI, Remove_Editor_UI } from "./Editor_UI";
 
-var Highlight_Elements = {};
+let Highlight_Elements = {};
 
 function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 	console.log(Highlight_Elements);
 
-	var Exist_UniqueID = targetElement.getAttribute("StyleShift-UniqueID");
+	let Exist_UniqueID = targetElement.getAttribute("StyleShift-UniqueID");
 	if (Exist_UniqueID) {
-		var OBJ = Highlight_Elements[Exist_UniqueID];
+		let OBJ = Highlight_Elements[Exist_UniqueID];
 		console.log(OBJ.targetElement, targetElement);
 		OBJ.Stop();
 	}
 
-	var UniqueID = Create_UniqueID(10);
+	let UniqueID = Create_UniqueID(10);
 
 	targetElement.setAttribute("StyleShift-UniqueID", UniqueID);
 
-	const Color = Selector_Value.Highlight_Color;
+	const Color = `rgba(${Selector_Value.Highlight_Color}`;
 
-	var highlighter = document.createElement("div");
+	let highlighter = document.createElement("div");
 	highlighter.className = "STYLESHIFT-Highlight";
 	highlighter.setAttribute("Selector", Selector_Value.Selector);
 
 	highlighter.style.background = `${Color},0.3)`;
 	highlighter.style.borderColor = `${Color},0.8)`;
 
-	var ComputedStyle = window.getComputedStyle(targetElement, null);
+	let ComputedStyle = window.getComputedStyle(targetElement, null);
 
 	highlighter.style.width = `calc(100% - 
 	${ComputedStyle.getPropertyValue("padding-left")} - 
@@ -64,7 +62,13 @@ function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 		Stop_Highlighter();
 	};
 
+	let old_style = targetElement.style.position;
+	targetElement.style.position = "relative";
+
 	function Stop() {
+		if (targetElement) {
+			targetElement.style.position = old_style;
+		}
 		highlighter.remove();
 		//Running_Attach.Stop()
 		targetElement.removeAttribute("StyleShift-UniqueID");
@@ -76,7 +80,7 @@ function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 		Stop();
 	});
 
-	var return_OBJ = {
+	let return_OBJ = {
 		highlighter: highlighter,
 		targetElement: targetElement,
 		Stop: Stop,
@@ -88,7 +92,7 @@ function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 }
 
 // function Hover_Highlight(e) {
-//      var Hover_Element
+//      let Hover_Element
 
 //      for (const OBJ of Object.values(Highlight_Elements)) {
 //           const highlighter = OBJ.highlighter
@@ -121,7 +125,7 @@ function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 //      document.removeEventListener('mousemove', Hover_Highlight)
 // }
 
-var Watch_Body: MutationObserver;
+let Watch_Body: MutationObserver;
 
 export async function Start_Highlighter() {
 	await WaitDocumentLoaded();
@@ -130,7 +134,7 @@ export async function Start_Highlighter() {
 
 	console.log("Editable_Items", Editable_Items);
 
-	var Exept_Items = [];
+	let Exept_Items = [];
 
 	Watch_Body = new MutationObserver(async (mutationsList, observer) => {
 		for (const mutation of mutationsList) {
@@ -164,7 +168,7 @@ export async function Start_Highlighter() {
 
 	// Initialize highlights for existing editable elements
 	for (const Selector_Value of [...Editable_Items.Default, ...Editable_Items.Custom]) {
-		var Selector_Found = document.querySelectorAll(Selector_Value.Selector);
+		let Selector_Found = document.querySelectorAll(Selector_Value.Selector);
 		console.log(Selector_Found.length);
 
 		if (
@@ -184,10 +188,10 @@ export async function Start_Highlighter() {
 
 	//Start_Hover_Highlight()
 	// document.addEventListener('click', function (e) {
-	//      var Current_Hover = Hover_Highlight(e)
+	//      let Current_Hover = Hover_Highlight(e)
 	//      if (Current_Hover) {
 	//           console.log(Current_Hover)
-	//           var selector = Current_Hover.getAttribute("selector")
+	//           let selector = Current_Hover.getAttribute("selector")
 	//           console.log(selector)
 	//           console.log(Editable_Items[selector])
 	//      }
@@ -208,7 +212,7 @@ function Stop_Highlighter() {
 	Highlight_Elements = [];
 }
 
-var Running_Cusomize = false;
+let Running_Cusomize = false;
 
 export async function Start_Customize() {
 	if (Running_Cusomize) {

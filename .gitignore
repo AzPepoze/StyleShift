@@ -1,3 +1,5 @@
 .vscode
 dist/StyleShift.js
+dist/Style.css
 node_modules
+temp

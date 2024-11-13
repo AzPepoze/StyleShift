@@ -47,7 +47,7 @@ export function stringToNumber(str: string): number {
 export function Random(Minimum: number, Maximum: number, Seed: string | number): number {
 	const numericalSeed = typeof Seed === "string" ? stringToNumber(Seed) : Seed;
 
-	const a = 9301;
+	const a = 931;
 	const c = 49297;
 	const m = 233280;
 
@@ -62,7 +62,7 @@ export function Random(Minimum: number, Maximum: number, Seed: string | number):
 }
 
 export async function GetDocumentBody() {
-	var DocumentBody = document.body;
+	let DocumentBody = document.body;
 
 	if (DocumentBody) {
 		return DocumentBody;
@@ -73,7 +73,7 @@ export async function GetDocumentBody() {
 }
 
 export async function GetDocumentHead() {
-	var DocumentHead = document.head;
+	let DocumentHead = document.head;
 
 	if (DocumentHead) {
 		return DocumentHead;
@@ -84,7 +84,7 @@ export async function GetDocumentHead() {
 }
 
 export function When_Element_Remove(targetElement: HTMLElement, callback: Function) {
-	var observer = new MutationObserver((mutationsList, observer) => {
+	let observer = new MutationObserver((mutationsList, observer) => {
 		for (const mutation of mutationsList) {
 			if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
 				for (const removedNode of mutation.removedNodes) {
@@ -116,7 +116,7 @@ export function getElementCenterPosition(element: HTMLElement): { x: number; y: 
 
 export async function WaitDocumentLoaded() {
 	return new Promise(async (resolve) => {
-		var Loop = setInterval(function () {
+		let Loop = setInterval(function () {
 			if (document.readyState === "complete") {
 				clearInterval(Loop);
 				resolve(0);
@@ -143,7 +143,7 @@ export function Create_UniqueID(length: number): string {
 }
 
 export function RGBtoHSV(rgb) {
-	var r = rgb.r,
+	let r = rgb.r,
 		g = rgb.g,
 		b = rgb.b;
 	r /= 255;
@@ -160,7 +160,7 @@ export function RGBtoHSV(rgb) {
 }
 
 export function HSVtoRGB(hsv) {
-	var h = hsv.h,
+	let h = hsv.h,
 		s = hsv.s,
 		v = hsv.v;
 	s /= 100;
@@ -257,7 +257,7 @@ export function Click_To_Scroll(Button, Target) {
 	});
 }
 
-export function Apply_Drag(Drag_Object, Target) {
+export function Apply_Drag(Drag_Object, Target: HTMLElement) {
 	let isDragging = false;
 	let startX = 0;
 	let startY = 0;
@@ -288,9 +288,15 @@ export function Apply_Drag(Drag_Object, Target) {
 		const deltaY = event.clientY - startY;
 
 		// Apply the new position to the target, considering the original distance
-		Target.style.transform = `translate(${initialTargetX + deltaX}px, ${
-			initialTargetY + deltaY
-		}px)`;
+		// Target.style.transform = `translate(${initialTargetX + deltaX}px, ${
+		// 	initialTargetY + deltaY
+		// 	}px)`;
+		Target.style.left = `${initialTargetX + deltaX}px`;
+		Target.style.top = `${initialTargetY + deltaY}px`;
+
+		const Parent = Target.parentElement;
+		Parent.style.justifyContent = "start";
+		Parent.style.alignItems = "start";
 	});
 
 	// Mouse up event to stop dragging
@@ -298,4 +304,8 @@ export function Apply_Drag(Drag_Object, Target) {
 		if (!isDragging) return;
 		isDragging = false;
 	});
+}
+
+export function ReArrange_Selector(value) {
+	return value.replace(/\s+/g, " ").replace(/\n/g, "").replace(/, /g, ",").replace(/,/g, ",\n");
 }

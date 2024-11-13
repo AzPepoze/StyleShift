@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "StyleShift",
 	"author": "AzPepoze",
-	"version": "0.1.0",
+	"version": "0.8.0",
 	"description": "Customize your YouTube website with a lot customizable.",
 	"homepage_url": "https://github.com/AzPepoze/Newtube",
 	"default_locale": "en",
@@ -24,7 +24,7 @@
 			"all_frames": true,
 			"matches": ["<all_urls>"],
 			"js": ["StyleShift.js"],
-			"css": ["CSS/Editor.css", "CSS/Setting.css"],
+			"css": ["Style.css"],
 			"run_at": "document_start"
 		}
 	],

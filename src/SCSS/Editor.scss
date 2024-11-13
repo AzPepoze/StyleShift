@@ -1,17 +1,6 @@
-.STYLESHIFT-Main {
-	--Border-Radius: 10px;
-	--Font-Color: white;
-	--Drag-Top-BG: #80808082;
-	--Category-Title-BG: radial-gradient(
-		at center top,
-		rgb(255, 255, 255),
-		rgba(255, 255, 255, 0.62)
-	);
-	--Category-Title-Text-Color: black;
-	--Text-Editor-BG: rgb(30, 30, 30);
-	--Setting-Frame-BG: rgba(255, 255, 255, 0.1);
-	--Checkbox-BG: #979797;
+@use "Variables";
 
+.STYLESHIFT-Main {
 	height: -webkit-fill-available;
 	position: fixed;
 	border: 1px #ffffff87 solid;
@@ -80,6 +69,11 @@
 	flex-direction: column;
 	gap: 10px;
 
+	&[Left] {
+		resize: horizontal;
+		background: var(--Category-Left-BG);
+	}
+
 	::-webkit-scrollbar {
 		width: 10px;
 	}
@@ -107,6 +101,8 @@
 	border: 1px solid rgb(255, 255, 255);
 	position: absolute;
 	z-index: 1000;
+	left: 0;
+	top: 0;
 
 	&:hover {
 		background: #7cff7c4b !important;
@@ -156,3 +152,4 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	color: rgb(255, 255, 255);
 	border: #ffffff17 solid 1px;
 }
+

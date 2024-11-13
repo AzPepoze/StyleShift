@@ -4,23 +4,31 @@ import { Load } from "../Modules/Save";
 import { Create_Setting_UI_Element } from "../Settings/Settings_UI";
 import { Start_Highlighter } from "./Editor";
 
-var Edtior_Width = 400;
+let Edtior_Width = 400;
 
-var Editor: HTMLElement;
-var Current_Edit_OBJ = {};
-var Editor_Updater_ID;
+let Setting_BG: HTMLElement;
+let Editor: HTMLElement;
+
+let Current_Edit_OBJ = {};
+let Editor_Updater_ID;
 
 export async function Create_Editor_UI(targetElement, Selector_Value) {
+	Setting_BG = await Create_Setting_UI_Element("Fill_Screen", false);
+
+	(await GetDocumentBody()).appendChild(Setting_BG);
+
 	Current_Edit_OBJ[0] = targetElement;
 	Current_Edit_OBJ[1] = Selector_Value;
 
 	console.log(Selector_Value);
 
-	var targetElement_Center_Position, Cal_Position;
+	let targetElement_Center_Position, Cal_Position;
 
 	Editor = document.createElement("div");
 	Editor.className = "STYLESHIFT-Main STYLESHIFT-Editor";
+
 	Editor.style.width = `${Edtior_Width}px`;
+	Editor.style.pointerEvents = "all";
 
 	function Update_Position() {
 		targetElement_Center_Position = getElementCenterPosition(targetElement);
@@ -33,28 +41,33 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 			Cal_Position = targetElement.getBoundingClientRect().left - Edtior_Width - 20 - 10;
 		}
 
-		Editor.style.transform = `translate(${Cal_Position}px,0px)`;
+		if (Cal_Position + Edtior_Width > window.innerWidth) {
+			Cal_Position = window.innerWidth - Edtior_Width - 20 - 20;
+		}
+
+		// Editor.style.transform = `translate(${Cal_Position}px,0px)`;
+		Editor.style.left = `${Cal_Position}px`;
 	}
 	Update_Position();
 
 	Editor_Updater_ID = setInterval(Update_Position, 10);
 
-	(await GetDocumentBody()).append(Editor);
+	Setting_BG.appendChild(Editor);
 
 	// Object in Editor
 
-	var TopBar = document.createElement("div");
+	let TopBar = document.createElement("div");
 	TopBar.className = "STYLESHIFT-TopBar";
 	Editor.append(TopBar);
 
-	var Drag_Top = await Create_Setting_UI_Element("Drag", Editor);
+	let Drag_Top = await Create_Setting_UI_Element("Drag", Editor);
 	Drag_Top.style.width = "calc(100% - 5px - 27px)";
 	Drag_Top.addEventListener("mousedown", function () {
 		clearInterval(Editor_Updater_ID);
 	});
 	TopBar.append(Drag_Top);
 
-	var Close = await Create_Setting_UI_Element("Close");
+	let Close = await Create_Setting_UI_Element("Close");
 	Close.addEventListener(
 		"click",
 		function () {
@@ -66,24 +79,16 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 
 	Editor.append(await Create_Setting_UI_Element("Title", Selector_Value.Category));
 
-	var Scrollable = document.createElement("div");
+	let Scrollable = document.createElement("div");
 	Scrollable.className = "STYLESHIFT-Scrollable";
 	Editor.append(Scrollable);
 
 	if (await Load("Developer_Mode")) {
-		var Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+		let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
 
 		Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
 
-		console.log(Selector_Value.Selector);
-
-		var Selector_Text_Editor = await Create_Setting_UI_Element(
-			"Text_Editor",
-			Selector_Value,
-			"Selector"
-		);
-		Selector_Text_Editor.Text_Editor.className += " STYLESHIFT-Selector-Text-Editor";
-		Selector_Frame.append(Selector_Text_Editor.Text_Editor);
+		await Create_Setting_UI_Element("Selector_Text_Editor", Selector_Frame, Selector_Value);
 
 		Scrollable.append(Selector_Frame);
 	}
@@ -93,7 +98,7 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 	}
 
 	if (await Load("Developer_Mode")) {
-		Scrollable.append(await Create_Setting_UI_Element("Add_Setting_Button"));
+		Scrollable.append((await Create_Setting_UI_Element("Add_Setting_Button")).Frame);
 	}
 
 	//When_Element_Remove();
@@ -110,7 +115,8 @@ export function Close_Editor() {
 export function Remove_Editor_UI() {
 	if (Editor) {
 		clearInterval(Editor_Updater_ID);
-		Editor.remove();
+		Setting_BG.remove();
+		Setting_BG = null;
 		Editor = null;
 	}
 }

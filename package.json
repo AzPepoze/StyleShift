@@ -1,14 +1,16 @@
 {
 	"name": "StyleShift",
-	"version": "1.0.0",
+	"version": "0.8.0",
 	"scripts": {
-		"build": "node build.js"
+		"dev": "node build.js",
+		"compile_css": "sass --watch src/SCSS/Setting.scss dist/Style.css --style=compressed --no-source-map"
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.268",
+		"chokidar": "^4.0.1",
 		"esbuild": "^0.24.0",
-		"sass": "^1.80.4",
-		"terser-webpack-plugin": "^5.3.10",
+		"sass": "^1.80.7",
+		"terser": "^5.36.0",
 		"ts-loader": "^9.5.1",
 		"typescript": "^5.6.3"
 	}

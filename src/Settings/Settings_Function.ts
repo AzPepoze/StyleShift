@@ -1,31 +1,27 @@
 import { Get_Settings_List } from "../Items_Editor/Editable_Items";
-import { Load } from "../Modules/Save";
+import { Load_Any, Save_External } from "../Modules/Save";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
 
-var Settings_Current_State = {};
-var Settings_Update_Function = {};
+let Settings_Current_State = {};
+let Settings_Update_Function = {};
+var Global_Variables = {};
 
-var Settings_Funcion = {
+let Settings_Funcion = {
 	["Checkbox"]: async function (id, args) {
-		console.log(args);
-
-		// Require StyleSheet
-		var StyleSheet: HTMLElement;
-		if (args.enable_css || args.disable_css) {
+		let StyleSheet: HTMLElement;
+		if (args.setup_css || args.enable_css || args.disable_css) {
 			StyleSheet = Create_StyleSheet(id);
 			console.log(StyleSheet);
 		}
 
 		if (args.setup_function) {
-			console.log("RUN SETUP FUNCTION");
-			console.log(args.setup_function);
-			try {
-				setTimeout(args.setup_function, 1);
-			} catch (error) {}
+			setTimeout(args.setup_function, 1);
 		}
 
 		async function Update_Function() {
-			var value = await Load(id);
+			let value = await Load_Any(id);
+			Set_Variable(id, value);
+
 			console.log(id, value);
 			if (Settings_Current_State[id] == value) {
 				return;
@@ -33,28 +29,64 @@ var Settings_Funcion = {
 
 			Settings_Current_State[id] = value;
 
+			if (StyleSheet) {
+				StyleSheet.textContent = args.setup_css;
+			}
+
 			if (value) {
 				if (StyleSheet) {
-					StyleSheet.textContent = args.enable_css || ``;
+					StyleSheet.textContent += args.enable_css || ``;
 				}
 				if (args.enable_function) {
 					setTimeout(args.enable_function, 1);
-					// chrome.runtime.sendMessage({
-					// 	Command: "RunScript",
-					// 	Script: args.enable_function,
-					// });
 				}
 			} else {
 				if (StyleSheet) {
-					StyleSheet.textContent = args.disable_css || ``;
+					StyleSheet.textContent += args.disable_css || ``;
 				}
 				if (args.disable_function) {
 					setTimeout(args.disable_function, 1);
-					// chrome.runtime.sendMessage({
-					// 	Command: "RunScript",
-					// 	Script: args.disable_function,
-					// });
 				}
+			}
+		}
+
+		Update_Function();
+
+		return Update_Function;
+	},
+	["Number_Slide"]: async function (id, args) {
+		let StyleSheet: HTMLElement;
+		if (args.setup_css || args.var_css) {
+			StyleSheet = Create_StyleSheet(id);
+			console.log(StyleSheet);
+		}
+
+		if (args.setup_function) {
+			try {
+				setTimeout(args.setup_function, 1);
+			} catch (error) {}
+		}
+
+		async function Update_Function() {
+			let value = await Load_Any(id);
+			Set_Variable(id, value);
+
+			console.log(id, value);
+			if (Settings_Current_State[id] == value) {
+				return;
+			}
+
+			Settings_Current_State[id] = value;
+
+			if (StyleSheet) {
+				StyleSheet.textContent = `
+				:root{${args.var_css}: ${value}px}
+
+				${args.setup_css}`;
+			}
+
+			if (args.update_function) {
+				setTimeout(args.update_function, 1);
 			}
 		}
 
@@ -64,12 +96,25 @@ var Settings_Funcion = {
 	},
 };
 
+export function Set_Variable(id, value) {
+	if (Save_External.includes(id)) return;
+
+	console.log("SET", id, value);
+	setTimeout(`${id} = ${value};`, 0);
+}
+
 export async function SetUp_Setting_Function(id) {
 	console.log("SetUp", id);
-	var This_Setting = (await Get_Settings_List())[id];
+	let This_Setting = (await Get_Settings_List())[id];
 	console.log(await Get_Settings_List());
 	console.log(This_Setting);
-	var Update_Function = await Settings_Funcion[This_Setting.type](id, This_Setting);
+
+	if (!Save_External.includes(id)) {
+		setTimeout(`var ${id};`, 0);
+	}
+
+	let Update_Function = await Settings_Funcion[This_Setting.type](id, This_Setting);
+
 	Settings_Update_Function[id] = Update_Function;
 	console.log(Settings_Update_Function);
 	return Update_Function;
