@@ -1,13 +1,14 @@
-import { GetDocumentBody, getElementCenterPosition } from "../Modules/NormalFunction";
-import { Load } from "../Modules/Save";
-
-import { Create_Setting_UI_Element } from "../Settings/Settings_UI";
-import { Start_Highlighter } from "./Editor";
+import { GetDocumentBody, getElementCenterPosition } from '../Modules/NormalFunction';
+import { Load } from '../Modules/Save';
+import { Create_Setting_UI_Element, Dynamic_Append } from '../Settings/Settings_UI';
+import { Start_Highlighter } from './Editor';
 
 let Edtior_Width = 400;
 
-let Setting_BG: HTMLElement;
-let Editor: HTMLElement;
+let Setting_BG: HTMLDivElement;
+let Editor: HTMLDivElement;
+
+let Scrollable: HTMLDivElement;
 
 let Current_Edit_OBJ = {};
 let Editor_Updater_ID;
@@ -77,9 +78,11 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 	);
 	TopBar.append(Close);
 
-	Editor.append(await Create_Setting_UI_Element("Title", Selector_Value.Category));
+	Editor.append(
+		await Create_Setting_UI_Element("Title", Selector_Value.Category, Selector_Value.Rainbow)
+	);
 
-	let Scrollable = document.createElement("div");
+	Scrollable = document.createElement("div");
 	Scrollable.className = "STYLESHIFT-Scrollable";
 	Editor.append(Scrollable);
 
@@ -94,18 +97,24 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 	}
 
 	for (const ThisSetting of Selector_Value.Settings) {
-		Scrollable.append(await Create_Setting_UI_Element(ThisSetting.type, ThisSetting));
+		Dynamic_Append(
+			Scrollable,
+			await Create_Setting_UI_Element(ThisSetting.type, ThisSetting)
+		);
 	}
 
 	if (await Load("Developer_Mode")) {
-		Scrollable.append((await Create_Setting_UI_Element("Add_Setting_Button")).Frame);
+		Dynamic_Append(
+			Scrollable,
+			await Create_Setting_UI_Element("Add_Setting_Button", Selector_Value.Settings)
+		);
 	}
 
 	//When_Element_Remove();
 }
 
 export function Close_Editor() {
-	if (Editor) {
+	if (Setting_BG) {
 		Remove_Editor_UI();
 		Current_Edit_OBJ = {};
 		Start_Highlighter();
@@ -113,17 +122,22 @@ export function Close_Editor() {
 }
 
 export function Remove_Editor_UI() {
-	if (Editor) {
+	if (Setting_BG) {
 		clearInterval(Editor_Updater_ID);
 		Setting_BG.remove();
 		Setting_BG = null;
 		Editor = null;
+		Scrollable = null;
 	}
 }
 
-export function Recreate_Editor_UI() {
-	if (Editor) {
+export async function Recreate_Editor_UI() {
+	if (Setting_BG) {
+		let Scroll = Scrollable.scrollTop;
+		let Last_Style = Editor.style.cssText;
 		Remove_Editor_UI();
-		Create_Editor_UI(Current_Edit_OBJ[0], Current_Edit_OBJ[1]);
+		await Create_Editor_UI(Current_Edit_OBJ[0], Current_Edit_OBJ[1]);
+		Editor.style.cssText = Last_Style;
+		Scrollable.scrollTo(0, Scroll);
 	}
 }

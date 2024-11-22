@@ -1,10 +1,15 @@
-import { Get_ALL_Editable_Items, Get_Editable_Items } from "../Items_Editor/Editable_Items";
-import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
-import { Load } from "../Modules/Save";
-import { Create_Setting_UI_Element } from "./Settings_UI";
+import { Get_ALL_StyleShift_Items } from '../Items_Editor/StyleShift_Items';
+import { Click_To_Scroll, GetDocumentBody, sleep } from '../Modules/NormalFunction';
+import { Load } from '../Modules/Save';
+import { Create_Setting_UI_Element, Dynamic_Append } from './Settings_UI';
 
 let Setting_Frame: HTMLElement;
 let Setting_BG: HTMLElement;
+
+let Scroll_Left: HTMLDivElement;
+let Scroll_Right: HTMLDivElement;
+
+let Skip_Animation = false;
 
 let Update_Setting_Interval;
 
@@ -17,7 +22,7 @@ export async function Create_Extension_Setting() {
 	Setting_BG.append(Setting_Frame);
 	Setting_Frame.className = "STYLESHIFT-Main";
 
-	Setting_Frame.style.width = "60%";
+	Setting_Frame.style.width = "50%";
 	Setting_Frame.style.height = "80%";
 	Setting_Frame.style.minWidth = "600px";
 	Setting_Frame.style.minHeight = "250px";
@@ -52,17 +57,17 @@ export async function Create_Extension_Setting() {
 	let Main_Frame = await Create_Setting_UI_Element("Setting_Frame", false, false);
 	Setting_Frame.append(Main_Frame);
 
-	let Left_Category_Scrollable = document.createElement("div");
-	Left_Category_Scrollable.className = "STYLESHIFT-Scrollable";
-	Left_Category_Scrollable.setAttribute("Left", "true");
-	Main_Frame.append(Left_Category_Scrollable);
+	Scroll_Left = document.createElement("div");
+	Scroll_Left.className = "STYLESHIFT-Scrollable";
+	Scroll_Left.setAttribute("Left", "true");
+	Main_Frame.append(Scroll_Left);
 
-	Left_Category_Scrollable.style.minWidth = "220px";
-	Left_Category_Scrollable.style.width = "220px";
+	Scroll_Left.style.minWidth = "220px";
+	Scroll_Left.style.width = "220px";
 
-	let Category_Scrollable = document.createElement("div");
-	Category_Scrollable.className = "STYLESHIFT-Scrollable";
-	Main_Frame.append(Category_Scrollable);
+	Scroll_Right = document.createElement("div");
+	Scroll_Right.className = "STYLESHIFT-Scrollable";
+	Main_Frame.append(Scroll_Right);
 
 	Main_Frame.style.width = "calc(100% - 5px)";
 	Main_Frame.style.height = "-webkit-fill-available";
@@ -75,20 +80,25 @@ export async function Create_Extension_Setting() {
 	let Left_UI = [];
 	let Right_UI = [];
 
-	for (const Selector_Value of await Get_ALL_Editable_Items()) {
-		let Category_Title = await Create_Setting_UI_Element("Title", Selector_Value.Category);
-		Category_Scrollable.append(Category_Title);
+	for (const Selector_Value of await Get_ALL_StyleShift_Items()) {
+		let Category_Title = await Create_Setting_UI_Element(
+			"Title",
+			Selector_Value.Category,
+			Selector_Value.Rainbow
+		);
+		Scroll_Right.append(Category_Title);
 
 		let Left_Category_Title = await Create_Setting_UI_Element(
 			"Left-Title",
-			Selector_Value.Category
+			Selector_Value.Category,
+			Skip_Animation
 		);
 		Click_To_Scroll(Left_Category_Title, Category_Title);
 
 		Left_UI.push(Left_Category_Title);
 		Right_UI.push(Category_Title);
 
-		Left_Category_Scrollable.append(Left_Category_Title);
+		Scroll_Left.append(Left_Category_Title);
 
 		if (await Load("Developer_Mode")) {
 			let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
@@ -101,47 +111,65 @@ export async function Create_Extension_Setting() {
 				Selector_Value
 			);
 
-			Category_Scrollable.append(Selector_Frame);
+			Scroll_Right.append(Selector_Frame);
 		}
 
 		for (const ThisSetting of Selector_Value.Settings) {
-			Category_Scrollable.append(
-				await Create_Setting_UI_Element(ThisSetting.type, ThisSetting)
+			Dynamic_Append(
+				Scroll_Right,
+				await Create_Setting_UI_Element(ThisSetting.type, ThisSetting as any)
 			);
 		}
 
 		if (await Load("Developer_Mode")) {
-			Category_Scrollable.append(
-				(await Create_Setting_UI_Element("Add_Setting_Button")).Frame
+			Dynamic_Append(
+				Scroll_Right,
+				await Create_Setting_UI_Element("Add_Setting_Button", Selector_Value.Settings)
 			);
 		}
+
+		await Create_Setting_UI_Element("Space", Scroll_Right);
+
+		//------------------------------------------------------
+	}
+
+	if (!Skip_Animation) {
+		requestAnimationFrame(function () {
+			for (let Left_Order = 0; Left_Order < Left_UI.length; Left_Order++) {
+				const Left_Category_Title = Left_UI[Left_Order];
+				setTimeout(() => {
+					Left_Category_Title.style.transform = "";
+					Left_Category_Title.style.opacity = "1";
+				}, 50 * Left_Order);
+			}
+		});
 	}
 
 	let Current_Selected: HTMLElement;
 
-	Update_Setting_Interval = setInterval(async () => {
+	Update_Setting_Interval = setInterval(async function () {
 		const Last_Index = Right_UI.length - 1;
+
 		for (let index = 0; index <= Last_Index; index++) {
-			await sleep(50);
-			const Category_Scrollable_Box = Category_Scrollable.getBoundingClientRect();
+			const Scroll_Right_Box = Scroll_Right.getBoundingClientRect();
 			if (
 				index == Last_Index ||
-				(Right_UI[index].getBoundingClientRect().top <= Category_Scrollable_Box.top &&
-					Right_UI[index + 1].getBoundingClientRect().top >=
-						Category_Scrollable_Box.top)
+				(Right_UI[index].getBoundingClientRect().top - 10 <= Scroll_Right_Box.top &&
+					Right_UI[index + 1].getBoundingClientRect().top - 10 >=
+						Scroll_Right_Box.top)
 			) {
 				if (Current_Selected == Left_UI[index]) {
-					return;
+					break;
 				}
 				if (Current_Selected) {
 					Current_Selected.removeAttribute("Selected");
 				}
 				Current_Selected = Left_UI[index];
 				Current_Selected.setAttribute("Selected", "");
-				return;
+				break;
 			}
 		}
-	}, 50 * Right_UI.length);
+	}, 100);
 }
 
 export function Remove_Extension_Setting() {
@@ -150,21 +178,31 @@ export function Remove_Extension_Setting() {
 		Setting_BG.remove();
 		Setting_BG = null;
 		Setting_Frame = null;
+		Scroll_Left = null;
+		Scroll_Right = null;
 	}
 }
 
 export async function Toggle_Extension_Setting() {
-	if (Setting_Frame) {
+	if (Setting_BG) {
 		Remove_Extension_Setting();
 	} else {
 		Create_Extension_Setting();
 	}
 }
 
-export function Recreate_Extension_Setting() {
-	if (Setting_Frame) {
+export async function Recreate_Extension_Setting() {
+	if (Setting_BG) {
+		let Last_Scroll = Scroll_Left.scrollTop;
+		let Right_Scroll = Scroll_Right.scrollTop;
+		let Last_Style = Setting_Frame.style.cssText;
 		Remove_Extension_Setting();
-		Create_Extension_Setting();
+		Skip_Animation = true;
+		await Create_Extension_Setting();
+		Skip_Animation = false;
+		Setting_Frame.style.cssText = Last_Style;
+		Scroll_Left.scrollTo(0, Last_Scroll);
+		Scroll_Right.scrollTo(0, Right_Scroll);
 	}
 }
 

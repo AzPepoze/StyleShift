@@ -1,51 +1,58 @@
-import { Get_Settings_List } from "../Items_Editor/Editable_Items";
-import { Load_Any, Save_External } from "../Modules/Save";
+import { Recreate_Editor_UI } from "../Items_Editor/Editor_UI";
+import { Setting, Update_StyleShift_Items } from "../Items_Editor/StyleShift_Items";
+import {
+	Color_OBJ_to_HEX,
+	Color_OBJ_to_Usable_OBJ,
+	Run_Text_Script,
+} from "../Modules/Extension_Main";
+import { Is_Same_OBJ } from "../Modules/NormalFunction";
+import { Load_Any } from "../Modules/Save";
+import { Recreate_Extension_Setting } from "./Extension_Setting_UI";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
 
-let Settings_Current_State = {};
-let Settings_Update_Function = {};
-var Global_Variables = {};
+export let Settings_Current_State = {};
+let Settings_Update_Function: { [key: string]: Function } = {};
 
 let Settings_Funcion = {
-	["Checkbox"]: async function (id, args) {
+	["Checkbox"]: async function (This_Setting) {
 		let StyleSheet: HTMLElement;
-		if (args.setup_css || args.enable_css || args.disable_css) {
-			StyleSheet = Create_StyleSheet(id);
+		if (This_Setting.setup_css || This_Setting.enable_css || This_Setting.disable_css) {
+			StyleSheet = Create_StyleSheet(This_Setting.id);
 			console.log(StyleSheet);
 		}
 
-		if (args.setup_function) {
-			setTimeout(args.setup_function, 1);
+		if (This_Setting.setup_function) {
+			Run_Text_Script(This_Setting.setup_function);
 		}
 
 		async function Update_Function() {
-			let value = await Load_Any(id);
-			Set_Variable(id, value);
+			let value = await Load_Any(This_Setting.id);
 
-			console.log(id, value);
-			if (Settings_Current_State[id] == value) {
-				return;
-			}
+			//----------------------
 
-			Settings_Current_State[id] = value;
+			if (Settings_Current_State[This_Setting.id] == value) return;
+			Set_Variable(This_Setting.id, value);
+			Settings_Current_State[This_Setting.id] = value;
+
+			//----------------------
 
 			if (StyleSheet) {
-				StyleSheet.textContent = args.setup_css;
+				StyleSheet.textContent = This_Setting.setup_css || ``;
 			}
 
 			if (value) {
 				if (StyleSheet) {
-					StyleSheet.textContent += args.enable_css || ``;
+					StyleSheet.textContent += This_Setting.enable_css || ``;
 				}
-				if (args.enable_function) {
-					setTimeout(args.enable_function, 1);
+				if (This_Setting.enable_function) {
+					Run_Text_Script(This_Setting.enable_function);
 				}
 			} else {
 				if (StyleSheet) {
-					StyleSheet.textContent += args.disable_css || ``;
+					StyleSheet.textContent += This_Setting.disable_css || ``;
 				}
-				if (args.disable_function) {
-					setTimeout(args.disable_function, 1);
+				if (This_Setting.disable_function) {
+					Run_Text_Script(This_Setting.disable_function);
 				}
 			}
 		}
@@ -54,39 +61,131 @@ let Settings_Funcion = {
 
 		return Update_Function;
 	},
-	["Number_Slide"]: async function (id, args) {
+	["Number_Slide"]: async function (This_Setting) {
 		let StyleSheet: HTMLElement;
-		if (args.setup_css || args.var_css) {
-			StyleSheet = Create_StyleSheet(id);
+		if (This_Setting.setup_css || This_Setting.var_css) {
+			StyleSheet = Create_StyleSheet(This_Setting.id);
 			console.log(StyleSheet);
 		}
 
-		if (args.setup_function) {
-			try {
-				setTimeout(args.setup_function, 1);
-			} catch (error) {}
+		if (This_Setting.setup_function) {
+			Run_Text_Script(This_Setting.setup_function);
 		}
 
 		async function Update_Function() {
-			let value = await Load_Any(id);
-			Set_Variable(id, value);
+			let value = await Load_Any(This_Setting.id);
 
-			console.log(id, value);
-			if (Settings_Current_State[id] == value) {
-				return;
-			}
+			//----------------------
 
-			Settings_Current_State[id] = value;
+			if (Settings_Current_State[This_Setting.id] == value) return;
+			Set_Variable(This_Setting.id, value);
+			Settings_Current_State[This_Setting.id] = value;
+
+			//----------------------
 
 			if (StyleSheet) {
-				StyleSheet.textContent = `
-				:root{${args.var_css}: ${value}px}
-
-				${args.setup_css}`;
+				StyleSheet.textContent = "";
+				if (This_Setting.var_css) {
+					StyleSheet.textContent += `:root{${This_Setting.var_css}: ${value}px}`;
+				}
+				if (This_Setting.setup_css) {
+					StyleSheet.textContent += This_Setting.setup_css;
+				}
 			}
 
-			if (args.update_function) {
-				setTimeout(args.update_function, 1);
+			if (This_Setting.update_function) {
+				Run_Text_Script(This_Setting.update_function);
+			}
+		}
+
+		Update_Function();
+
+		return Update_Function;
+	},
+	["Dropdown"]: async function (This_Setting: Partial<Extract<Setting, { type: "Dropdown" }>>) {
+		let StyleSheet: HTMLElement;
+		StyleSheet = Create_StyleSheet(This_Setting.id);
+
+		if (This_Setting.setup_function) {
+			Run_Text_Script(This_Setting.setup_function);
+		}
+
+		async function Update_Function() {
+			let value = await Load_Any(This_Setting.id);
+
+			if (Settings_Current_State[This_Setting.id] == value) return;
+			Set_Variable(This_Setting.id, value);
+
+			//----------------------
+
+			const Old_Dropdown = This_Setting.options[Settings_Current_State[This_Setting.id]];
+			Run_Text_Script(Old_Dropdown.disable_function);
+
+			//----------------------
+
+			Settings_Current_State[This_Setting.id] = value;
+			const Current_Dropdown = This_Setting.options[value];
+			Run_Text_Script(Current_Dropdown.enable_function);
+
+			//----------------------
+
+			StyleSheet.textContent = "";
+			if (This_Setting.setup_css) {
+				StyleSheet.textContent += This_Setting.setup_css;
+			}
+			if (Current_Dropdown.enable_css) {
+				StyleSheet.textContent += Current_Dropdown.enable_css;
+			}
+		}
+
+		Update_Function();
+
+		return Update_Function;
+	},
+	["Color"]: async function (This_Setting: Partial<Extract<Setting, { type: "Color" }>>) {
+		let StyleSheet: HTMLElement;
+
+		if (This_Setting.setup_css) {
+			StyleSheet = Create_StyleSheet(This_Setting.id);
+			console.log(StyleSheet);
+		}
+
+		if (This_Setting.setup_function) {
+			Run_Text_Script(This_Setting.setup_function);
+		}
+
+		async function Update_Function() {
+			console.log("UPDATE!!!!");
+			let value = await Load_Any(This_Setting.id);
+
+			console.log(value);
+
+			//----------------------
+
+			if (Settings_Current_State[This_Setting.id] != null) {
+				console.log(Is_Same_OBJ(Settings_Current_State[This_Setting.id], value));
+			}
+
+			Set_Variable(This_Setting.id, Color_OBJ_to_Usable_OBJ(value));
+			Settings_Current_State[This_Setting.id] = value;
+
+			//----------------------
+
+			console.log("Test", StyleSheet);
+
+			if (StyleSheet) {
+				StyleSheet.textContent = "";
+				StyleSheet.textContent += `:root{--${This_Setting.id}: ${Color_OBJ_to_HEX(
+					value
+				)}}`;
+				StyleSheet.textContent += This_Setting.setup_css || ``;
+				console.log(StyleSheet.textContent);
+			}
+
+			//----------------------
+
+			if (This_Setting.update_function) {
+				Run_Text_Script(This_Setting.update_function);
 			}
 		}
 
@@ -97,30 +196,32 @@ let Settings_Funcion = {
 };
 
 export function Set_Variable(id, value) {
-	if (Save_External.includes(id)) return;
-
 	console.log("SET", id, value);
-	setTimeout(`${id} = ${value};`, 0);
+	setTimeout(() => {
+		window[id] = value;
+	}, 0);
 }
 
-export async function SetUp_Setting_Function(id) {
-	console.log("SetUp", id);
-	let This_Setting = (await Get_Settings_List())[id];
-	console.log(await Get_Settings_List());
-	console.log(This_Setting);
+export async function SetUp_Setting_Function(This_Setting) {
+	if (This_Setting.id == null) return;
 
-	if (!Save_External.includes(id)) {
-		setTimeout(`var ${id};`, 0);
-	}
+	const Get_Update_Function = Settings_Funcion[This_Setting.type];
+	if (!Get_Update_Function) return;
 
-	let Update_Function = await Settings_Funcion[This_Setting.type](id, This_Setting);
+	let Update_Function = await Get_Update_Function(This_Setting);
+	Settings_Update_Function[This_Setting.id] = Update_Function;
 
-	Settings_Update_Function[id] = Update_Function;
-	console.log(Settings_Update_Function);
 	return Update_Function;
 }
 
 export async function Update_Setting_Function(id) {
 	console.log("Update", id, Settings_Update_Function[id]);
 	Settings_Update_Function[id]();
+	console.log(Settings_Update_Function[id].toString());
+}
+
+export function Update_All() {
+	Update_StyleShift_Items();
+	Recreate_Editor_UI();
+	Recreate_Extension_Setting();
 }

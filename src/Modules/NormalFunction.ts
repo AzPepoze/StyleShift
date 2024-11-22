@@ -2,6 +2,92 @@ export function sleep(delay: number) {
 	return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
+//---------------------------------------------
+
+export function HEX_to_RBGA(hex) {
+	hex = hex.replace(/^#/, "");
+
+	if (hex.length === 6) {
+		hex += "ff";
+	} else if (hex.length !== 8) {
+		throw new Error("Invalid hex color format");
+	}
+
+	let r = parseInt(hex.substring(0, 2), 16);
+	let g = parseInt(hex.substring(2, 4), 16);
+	let b = parseInt(hex.substring(4, 6), 16);
+	let a = parseInt(hex.substring(6, 8), 16) / 255;
+
+	return { r, g, b, a };
+}
+
+export function HEX_to_RBG(hex) {
+	hex = hex.replace(/^#/, "");
+
+	if (hex.length === 3) {
+		hex = hex
+			.split("")
+			.map(function (char) {
+				return char + char;
+			})
+			.join("");
+	}
+
+	const r = parseInt(hex.slice(0, 2), 16);
+	const g = parseInt(hex.slice(2, 4), 16);
+	const b = parseInt(hex.slice(4, 6), 16);
+
+	return { r, g, b };
+}
+
+export function RGBA_to_HEX(r, g, b, a = 1) {
+	r = Math.round(Math.min(255, Math.max(0, r)));
+	g = Math.round(Math.min(255, Math.max(0, g)));
+	b = Math.round(Math.min(255, Math.max(0, b)));
+	a = Math.min(1, Math.max(0, a));
+
+	let hex = `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b
+		.toString(16)
+		.padStart(2, "0")}`;
+	if (a < 1) {
+		hex += Math.round(a * 255)
+			.toString(16)
+			.padStart(2, "0");
+	}
+
+	return hex;
+}
+
+export function RGB_to_HSV(rgb) {
+	let r = rgb.r,
+		g = rgb.g,
+		b = rgb.b;
+	r /= 255;
+	g /= 255;
+	b /= 255;
+	let v = Math.max(r, g, b),
+		c = v - Math.min(r, g, b);
+	let h = c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
+	return {
+		h: Math.round(60 * (h < 0 ? h + 6 : h)),
+		s: v && Math.round((c / v) * 100),
+		v: Math.round(v * 100),
+	};
+}
+
+export function HSV_to_RGB(hsv) {
+	let h = hsv.h,
+		s = hsv.s,
+		v = hsv.v;
+	s /= 100;
+	v /= 100;
+	let f = (n) =>
+		(v - v * s * Math.max(Math.min((n + h / 60) % 6, 4 - ((n + h / 60) % 6), 1), 0)) * 255;
+	return { r: Math.round(f(5)), g: Math.round(f(3)), b: Math.round(f(1)) };
+}
+
+//---------------------------------------------
+
 export function is_Scrollable(element: HTMLElement) {
 	// Check if the element has a vertical scroll bar
 	const hasVerticalScrollbar = element.scrollHeight > element.clientHeight;
@@ -115,16 +201,11 @@ export function getElementCenterPosition(element: HTMLElement): { x: number; y: 
 }
 
 export async function WaitDocumentLoaded() {
-	return new Promise(async (resolve) => {
-		let Loop = setInterval(function () {
-			if (document.readyState === "complete") {
-				clearInterval(Loop);
-				resolve(0);
-			}
-		}, 100);
-	});
+	while (document.readyState !== "complete") {
+		await sleep(10);
+	}
+	return 0;
 }
-
 /**
  * Generates a unique ID with the specified length.
  * @param length - The desired length of the unique ID.
@@ -142,39 +223,11 @@ export function Create_UniqueID(length: number): string {
 	return uniqueID;
 }
 
-export function RGBtoHSV(rgb) {
-	let r = rgb.r,
-		g = rgb.g,
-		b = rgb.b;
-	r /= 255;
-	g /= 255;
-	b /= 255;
-	let v = Math.max(r, g, b),
-		c = v - Math.min(r, g, b);
-	let h = c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
-	return {
-		h: Math.round(60 * (h < 0 ? h + 6 : h)),
-		s: v && Math.round((c / v) * 100),
-		v: Math.round(v * 100),
-	};
-}
-
-export function HSVtoRGB(hsv) {
-	let h = hsv.h,
-		s = hsv.s,
-		v = hsv.v;
-	s /= 100;
-	v /= 100;
-	let f = (n) =>
-		(v - v * s * Math.max(Math.min((n + h / 60) % 6, 4 - ((n + h / 60) % 6), 1), 0)) * 255;
-	return { r: Math.round(f(5)), g: Math.round(f(3)), b: Math.round(f(1)) };
-}
-
 export function deepMerge(obj1, obj2) {
 	if (Array.isArray(obj1) && Array.isArray(obj2)) {
 		// Merge arrays, trying to merge objects within them if they have the same `id`
 		const mergedArray = [...obj1];
-		obj2.forEach((item2) => {
+		for (const item2 of obj2) {
 			const matchingIndex = mergedArray.findIndex(
 				(item1) => item1.id && item2.id && item1.id === item2.id
 			);
@@ -185,7 +238,7 @@ export function deepMerge(obj1, obj2) {
 				// Add new items that don't match
 				mergedArray.push(item2);
 			}
-		});
+		}
 		return mergedArray;
 	} else if (typeof obj1 === "object" && typeof obj2 === "object") {
 		// Merge objects deeply
@@ -211,7 +264,7 @@ export function deepMerge(obj1, obj2) {
 
 export function deepMergeInPlace(target, source) {
 	if (Array.isArray(target) && Array.isArray(source)) {
-		source.forEach((item, index) => {
+		for (const [index, item] of source.entries()) {
 			if (index < target.length) {
 				// Merge objects within arrays based on `id`
 				if (typeof target[index] === "object" && typeof item === "object") {
@@ -223,7 +276,7 @@ export function deepMergeInPlace(target, source) {
 			} else {
 				target.push(item);
 			}
-		});
+		}
 	} else if (typeof target === "object" && typeof source === "object") {
 		for (const key in source) {
 			if (source.hasOwnProperty(key)) {
@@ -308,4 +361,63 @@ export function Apply_Drag(Drag_Object, Target: HTMLElement) {
 
 export function ReArrange_Selector(value) {
 	return value.replace(/\s+/g, " ").replace(/\n/g, "").replace(/, /g, ",").replace(/,/g, ",\n");
+}
+
+export function isObjectArray(value) {
+	return (
+		Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null)
+	);
+}
+
+export function deepClone(data) {
+	return JSON.parse(JSON.stringify(data));
+}
+
+export function Is_Same_OBJ(obj1, obj2) {
+	if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
+	for (let key in obj1) {
+		if (obj1[key] !== obj2[key]) return false;
+	}
+	return true;
+}
+export async function WaitForElement(selector: string, timeout?: number): Promise<Element | null> {
+	const startTime = Date.now();
+	while (true) {
+		const element = document.querySelector(selector);
+		if (element) {
+			return element;
+		}
+		if (timeout && Date.now() - startTime >= timeout) {
+			console.warn(`Timeout: Element "${selector}" not found within ${timeout}ms`);
+			return null;
+		}
+		await sleep(100);
+	}
+}
+
+export function Download_File(data, filename) {
+	var file = new Blob([data]);
+	var a = document.createElement("a"),
+		url = URL.createObjectURL(file);
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	setTimeout(function () {
+		document.body.removeChild(a);
+		window.URL.revokeObjectURL(url);
+	}, 0);
+}
+
+export function Input_File(Element: HTMLInputElement) {
+	Element.addEventListener("change", async (event: Event) => {
+		const file = (event.target as HTMLInputElement).files[0];
+		if (!file) return;
+
+		try {
+			return file;
+		} catch (error) {
+			console.error("Error reading file:", error);
+		}
+	});
 }

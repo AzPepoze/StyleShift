@@ -1,11 +1,11 @@
 import {
 	Create_UniqueID,
 	WaitDocumentLoaded,
-	When_Element_Remove
+	When_Element_Remove,
 } from "../Modules/NormalFunction";
 import { Show_Confirm } from "../Settings/Extension_Setting_UI";
-import { Get_Editable_Items } from "./Editable_Items";
 import { Create_Editor_UI, Remove_Editor_UI } from "./Editor_UI";
+import { Get_StyleShift_Items } from "./StyleShift_Items";
 
 let Highlight_Elements = {};
 
@@ -130,7 +130,7 @@ let Watch_Body: MutationObserver;
 export async function Start_Highlighter() {
 	await WaitDocumentLoaded();
 
-	const Editable_Items = await Get_Editable_Items();
+	const Editable_Items = await Get_StyleShift_Items();
 
 	console.log("Editable_Items", Editable_Items);
 
@@ -182,6 +182,7 @@ export async function Start_Highlighter() {
 		}
 
 		for (const element of Selector_Found) {
+			//@ts-ignore
 			Add_Highlight(element, Selector_Value);
 		}
 	}
@@ -199,15 +200,13 @@ export async function Start_Highlighter() {
 }
 
 function Stop_Highlighter() {
-	// Stop_Hover_Highlight()
-
 	if (Watch_Body) {
 		Watch_Body.disconnect();
 	}
 
-	Object.values(Highlight_Elements).forEach((Highlight_Elements_OBJ: any) => {
+	for (const Highlight_Elements_OBJ of Object.values(Highlight_Elements) as any) {
 		Highlight_Elements_OBJ.Stop();
-	});
+	}
 
 	Highlight_Elements = [];
 }

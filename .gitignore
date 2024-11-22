@@ -1,5 +1,8 @@
 .vscode
+
 dist/StyleShift.js
 dist/Style.css
+dist/Global_Functions.js
+
 node_modules
-temp
+out

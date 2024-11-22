@@ -60,6 +60,7 @@
 }
 
 .STYLESHIFT-Scrollable {
+	position: relative;
 	overflow-y: auto;
 	width: 100%;
 	height: 100%;
@@ -130,6 +131,20 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	background: #000000a1;
 }
 
+.STYLESHIFT-Scrollable > .STYLESHIFT-Setting-Frame {
+	.STYLESHIFT-Config-Frame-Button {
+		width: 100%;
+		transition: all 0.2s;
+		opacity: 0;
+	}
+
+	&:hover {
+		.STYLESHIFT-Config-Frame-Button {
+			opacity: 1;
+		}
+	}
+}
+
 .STYLESHIFT-DropDown-Container {
 	position: fixed;
 	padding: 0px;
@@ -152,4 +167,3 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	color: rgb(255, 255, 255);
 	border: #ffffff17 solid 1px;
 }
-

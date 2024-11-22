@@ -1,8 +1,29 @@
-async function getNowtab() {
-	let queryOptions = { active: true };
-	let tabsArray = await chrome.tabs.query(queryOptions);
+function sleep(delay) {
+	return new Promise((resolve) => setTimeout(resolve, delay));
+}
 
-	return tabsArray[0];
+async function getNowTab() {
+	let queryOptions = { active: true, currentWindow: true };
+
+	try {
+		let tabsArray = await chrome.tabs.query(queryOptions);
+
+		if (tabsArray && tabsArray.length > 0) {
+			return tabsArray[0];
+		}
+
+		queryOptions = { active: true };
+		tabsArray = await chrome.tabs.query(queryOptions);
+
+		if (tabsArray && tabsArray.length > 0) {
+			return tabsArray[0];
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Failed to get the current active tab:", error);
+		return null;
+	}
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
@@ -13,18 +34,44 @@ chrome.commands.onCommand.addListener(async (command) => {
 	chrome.tabs.sendMessage(tab.id, command);
 });
 
-// chrome.runtime.onMessage.addListener(async (Message_OBJ) => {
-// 	console.log(Message_OBJ);
+let Global_Functions_Data;
 
-// 	if (Message_OBJ.Command == "RunScript") {
-// 		var NowTab = await getNowtab();
+fetch(chrome.runtime.getURL("Global_Functions.js"))
+	.then((response) => response.text())
+	.then((data) => {
+		Global_Functions_Data = data;
+	});
 
-// 		chrome.scripting.executeScript({
-// 			target: { tabId: NowTab.id },
-// 			func: function (Message_OBJ) {
-// 				setTimeout(Message_OBJ.Script, 0);
-// 			},
-// 		});
-// 		return;
-// 	}
-// });
+async function Excute_Function(Excute_Text) {
+	setTimeout(Excute_Text, 1);
+}
+
+chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
+	console.log(Recived_Message);
+
+	switch (Recived_Message.Command) {
+		case "RunScript":
+			while (!Global_Functions_Data) {
+				console.log(Global_Functions_Data);
+				await sleep(10);
+			}
+
+			const Excute_Data = `${Global_Functions_Data}(async () => {${Recived_Message.Script}})()`;
+
+			const Result = await chrome.scripting.executeScript({
+				target: { tabId: Sender.tab.id },
+				func: Excute_Function,
+				args: [Excute_Data],
+			});
+
+			console.log("Excuted Script");
+			console.log(Result);
+			console.log(Sender);
+			console.log(Excute_Data);
+			console.log(Recived_Message.Script);
+
+			break;
+	}
+
+	console.log("---------------------------------");
+});

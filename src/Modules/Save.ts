@@ -1,8 +1,8 @@
 import {
 	Get_Custom_Items,
 	Get_Settings_List,
-	Update_Editable_Items,
-} from "../Items_Editor/Editable_Items";
+	Update_StyleShift_Items,
+} from "../Items_Editor/StyleShift_Items";
 import { Get_Current_Domain, sleep } from "./NormalFunction";
 
 //Save
@@ -12,10 +12,10 @@ let Save_Name = Get_Current_Domain();
 
 export let Save_External = [
 	"Current_Settings",
-	"Custom_Editable_Items",
+	"Custom_StyleShift_Items",
 	"Themes",
 	"Enable_Extension",
-	"Realtime",
+	"Realtime_Extension",
 	"Developer_Mode",
 ];
 
@@ -73,7 +73,7 @@ export async function Save_All() {
 }
 
 // export async function Save_Custom_Items() {
-// 	return Save("Custom_Editable_Items", Get_Custom_Items());
+// 	return Save("Custom_StyleShift_Items", Get_Custom_Items());
 // }
 
 export async function Load(LoadName: string) {
@@ -227,7 +227,7 @@ export async function LoadNTubeCodeString(string) {
 }
 
 export async function GenNTubeCode() {
-	await Update_Editable_Items();
+	await Update_StyleShift_Items();
 	await Clear_Unnessary_Save();
 
 	return await Load("Current_Settings");

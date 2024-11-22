@@ -1,11 +1,13 @@
-import {
-	Get_ALL_Editable_Items,
-	Get_Settings_List,
-	Update_Editable_Items,
-} from "./Items_Editor/Editable_Items";
 import { Toggle_Customize } from "./Items_Editor/Editor";
 import { Recreate_Editor_UI } from "./Items_Editor/Editor_UI";
-import { Disable_Extension, Enable_Extension } from "./Modules/ExtensionVariable";
+import {
+	Category,
+	Get_ALL_StyleShift_Items,
+	Get_ALL_StyleShift_Settings,
+	Get_Settings_List,
+	Update_StyleShift_Items,
+} from "./Items_Editor/StyleShift_Items";
+import { Run_Text_Script } from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
 	Clear_Unnessary_Save,
@@ -13,91 +15,247 @@ import {
 	Load_ThisWeb_Save,
 	Save,
 	Save_All,
-	Set_Null_Save
+	Set_Null_Save,
 } from "./Modules/Save";
+import * as Global from "./Recived_Global_Functions";
 import {
 	Recreate_Extension_Setting,
 	Toggle_Extension_Setting,
 } from "./Settings/Extension_Setting_UI";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
-import {
-	Create_StyleSheet_Holder
-} from "./Settings/Settings_StyleSheet";
+import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 
-console.log("Test");
+console.log(Global);
 console.log(window.location.href);
 
-let temp = 0;
-if (1 == temp) {
-	Enable_Extension();
-	Disable_Extension();
-}
-
-let STORE_FUNCTION_PRESET = [
+let Test_Editable_Items: Category[] = [
 	{
-		type: "Button",
-		id: "TestButton",
-		name: "none",
-		description: "bruh man",
+		Category: "☕ Buy me a coffee!",
+		Rainbow: true,
+		Settings: [
+			{
+				type: "Button",
+				name: "Ko-fi",
+				icon: "https://cdn.prod.website-files.com/5c14e387dab576fe667689cf/670f5a01229bf8a18f97a3c1_favion-p-500.png",
+				color: {
+					RGB: {
+						r: 255,
+						g: 45,
+						b: 45,
+					},
+					Alpha: 1,
+				},
+				font_size: 15,
+				click_function:
+					"function helloWorld() {\n    console.log('Hello, world!');\n}\n\na\nwindowawd\nwa\nd\n\nawaitd\naw\ndiscorda\nwindowawd\n\n\n\na\nwindow\nawaitd\naw",
+				text_align: "left",
+			},
+		],
 	},
 	{
-		type: "Checkbox",
-		id: "TestCheckbox",
-		name: "none",
-		description: "bruh man",
-
-		value: false,
-
-		setup_css: ``,
-		enable_css: ``,
-		disable_css: ``,
-
-		setup_function: ``,
-		enable_function: ``,
-		disable_function: ``,
+		Category: "🎉 Join my Discord!",
+		Rainbow: true,
+		Settings: [
+			{
+				type: "Button",
+				name: "NEWTUBE",
+				icon: "https://brandlogos.net/wp-content/uploads/2021/11/discord-logo.png",
+				color: {
+					RGB: {
+						r: 25,
+						g: 50,
+						b: 255,
+					},
+					Alpha: 1,
+				},
+				font_size: 15,
+				click_function: 'window.open("https://discord.gg/BgxvVqap4G");\n',
+				text_align: "left",
+			},
+		],
 	},
-	{
-		type: "Number_Slide",
-		id: "PlayerEdge",
-		name: "Round edges amount",
-		description: "bruh man",
-
-		min: 0,
-		max: 100,
-		step: 1,
-		value: 20,
-
-		var_css: "--player-edge",
-		setup_css: ``,
-
-		setup_function: ``,
-		update_function: ``,
-	},
-];
-
-let Test_Editable_Items = [
 	{
 		Category: "⚙️ Extention's settings",
-
 		Settings: [
 			{
 				type: "Checkbox",
 				id: "Enable_Extension",
 				name: "Enable",
 				value: true,
-				enable_function: `
-				Enable_Extension()
-				`,
-				disable_function: `
-				Disable_Extension()
-				`,
+				enable_function: "Enable_Extension_Function()",
+				disable_function: "Disable_Extension_Function()",
+				enable_css: "wad",
+				setup_css: "",
+			},
+			{
+				type: "Checkbox",
+				id: "Realtime_Extension",
+				name: "Realtime Changing",
+				value: false,
+			},
+			{
+				type: "Checkbox",
+				id: "Setting_BG_Transparent",
+				name: "Setting Background transparent",
+				value: false,
+			},
+			{
+				type: "Button",
+				id: "Test_Button",
+				name: "Github",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 52,
+						g: 36,
+						b: 255,
+					},
+					Alpha: 1,
+				},
+				click_function: 'window.open("https://github.com/AzPepoze/Newtube");',
+				text_align: "left",
+				icon: "https://pbs.twimg.com/profile_images/1372304699601285121/5yBS6_3F_400x400.jpg",
+				font_size: 15,
+			},
+			{
+				type: "Button",
+				id: "Test_Button",
+				name: "❗Report bugs / Issues❗\n",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 255,
+						g: 45,
+						b: 45,
+					},
+					Alpha: 1,
+				},
+				click_function: 'window.open("https://discord.gg/BgxvVqap4G");',
+				font_size: 15,
+				text_align: "center",
+			},
+		],
+	},
+	{
+		Category: "🛍️ Themes 🛍️",
+		Settings: [
+			{
+				type: "Button",
+				id: "Test_Button",
+				name: "✨ Select Theme ✨",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 230,
+						g: 170,
+						b: 0,
+					},
+					Alpha: 1,
+				},
+				click_function: "",
+				text_align: "center",
+				icon: "",
+				font_size: 15,
+			},
+			{
+				type: "Button",
+				id: "Test_Button_1",
+				name: "🛍️ Themes store 🛍️",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 0,
+						g: 80,
+						b: 200,
+					},
+					Alpha: 1,
+				},
+				click_function: "",
+				text_align: "center",
+				font_size: 15,
+			},
+			{
+				type: "Button",
+				id: "Test_Button_2",
+				name: "🛍️ Themes store 🛍️\n(Floating window)",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 0,
+						g: 80,
+						b: 200,
+					},
+					Alpha: 1,
+				},
+				click_function: "",
+				text_align: "center",
+				font_size: 15,
+			},
+			{
+				type: "Button",
+				id: "Test_Button_3",
+				name: "✳️ Share your themes ✳️",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 50,
+						g: 180,
+						b: 50,
+					},
+					Alpha: 1,
+				},
+				click_function: "",
+				text_align: "center",
+				font_size: 15,
+			},
+		],
+	},
+	{
+		Category: "📜 Import / Export Style",
+		Settings: [
+			{
+				type: "Button",
+				name: 'Export "Custom Items" (Clipboard)',
+				icon: "",
+				color: {
+					RGB: {
+						r: 25,
+						g: 50,
+						b: 255,
+					},
+					Alpha: 1,
+				},
+				font_size: 15,
+				click_function:
+					'await StyleShift("Copy_to_clipboard",await StyleShift("Export_Custom_Items_Text"));',
+				text_align: "center",
+				description: "",
+				id: "",
+			},
+			{
+				type: "Button",
+				id: "Test_Button",
+				name: "Export File",
+				description: "Description of this Button",
+				color: {
+					RGB: {
+						r: 0,
+						g: 255,
+						b: 220,
+					},
+					Alpha: 1,
+				},
+				font_size: 15,
+				click_function:
+					'Export_JSON_To_ZIP(JSON.parse(await Export_Custom_Items_Text()),"Test.zip")',
+				text_align: "center",
+				icon: "",
 			},
 		],
 	},
 	{
 		Category: "📺 Video",
 		Selector: ".html5-video-player",
-
 		Settings: [
 			{
 				type: "Number_Slide",
@@ -105,64 +263,129 @@ let Test_Editable_Items = [
 				name: "Round edges amount",
 				value: 20,
 				var_css: "--player-edge",
-				setup_css: `video{
-					border-radius: var(--player-edge) !important;
-				}`,
+				setup_css: "video{\tborder-radius: var(--player-edge) !important;}",
 			},
 			{
 				type: "Checkbox",
-				id: "TestCheckbox",
-				name: "none",
+				id: "VdoAnim",
+				name: "Enable Chaning Video transition",
 				description: "bruh man",
 				value: false,
-				enable_css: `video{
-					display: none !important;
-				}`,
+				enable_css:
+					"div.html5-video-player:not(.ytp-fullscreen):not(.ytp-embed) .html5-video-container{\n               transition: all 1s ,background 0.1s;\n               top: 0px !important\n          }\n         \n          div.ended-mode .html5-video-container,\n          div.unstarted-mode:not(.ytp-small-mode) .html5-video-container{\n               transform:scale(0.5);\n               opacity:0 !important;\n          }",
+			},
+			{
+				type: "Color",
+				id: "Time-LineBG",
+				name: "Just Color Selector",
+				description: "Description of this Dropdown",
+				show_alpha_slider: true,
+				value: {
+					RGB: {
+						r: 36,
+						g: 219,
+						b: 40,
+					},
+					Alpha: 100,
+				},
+			},
+			{
+				type: "Color",
+				id: "TimeLoaded",
+				name: "Just Color Selector_1",
+				description: "Description of this Dropdown",
+				show_alpha_slider: true,
+				value: {
+					RGB: {
+						r: 36,
+						g: 219,
+						b: 40,
+					},
+					Alpha: 100,
+				},
+			},
+			{
+				type: "Color",
+				id: "EndBG",
+				name: "Just Color Selector_2",
+				description: "Description of this Dropdown",
+				show_alpha_slider: true,
+				value: {
+					RGB: {
+						r: 36,
+						g: 219,
+						b: 40,
+					},
+					Alpha: 100,
+				},
+			},
+			{
+				type: "Color",
+				id: "Time-Play",
+				name: "Progress line",
+				description: "Description of this Dropdown",
+				show_alpha_slider: true,
+				value: {
+					RGB: {
+						r: 36,
+						g: 219,
+						b: 40,
+					},
+					Alpha: 100,
+				},
+				setup_css:
+					".ytp-play-progress{\n     background: var(--Time-Play) !important;\n}",
+				setup_function: "",
+			},
+			{
+				type: "Checkbox",
+				id: "CenterUDF",
+				name: "(Fullscreen) Move tittle to the center",
+				description: "Description of this Checkbox",
+				value: false,
+				enable_css: ".ytp-big-mode .ytp-title-text {\n     text-align: center;\n}",
+				enable_function: "",
+			},
+			{
+				type: "Checkbox",
+				id: "AutoTheater",
+				name: "Auto Enter Theater Mode",
+				description: "Description of this Checkbox",
+				value: false,
+				enable_function:
+					"let GetTheaterButton = await WaitForElement(`.ytp-size-button`)\n          if (GetTheaterButton) {\n               let IsPlayerInNormalMode = await WaitForElement(`#player .html5-video-player`)\n               console.log(IsPlayerInNormalMode)\n               if (IsPlayerInNormalMode) {\n                    console.log(GetTheaterButton)\n                    GetTheaterButton.click()\n                    await sleep(1000)\n                    IsPlayerInNormalMode = await WaitForElement(`#player .html5-video-player`)\n                    if (IsPlayerInNormalMode) {\n                         AutoTheaterMode()\n                    }\n               }\n}",
+				enable_css: "",
 			},
 		],
 	},
 	{
 		Category: "📰 Thumbnail",
 		Selector:
-			"ytd-watch-next-secondary-results-renderer #contents > .ytd-item-section-renderer:not(ytd-reel-shelf-renderer), ytd-rich-grid-renderer #contents > .ytd-rich-grid-renderer:(ytd-rich-item-renderer)",
-
-		Settings: [
-			{
-				type: "Checkbox",
-				id: "test",
-				name: "Test",
-				value: true,
-				setup_function: `
-				let JustGetMeBro = "Hey yo you got me XD"
-				`,
-				enable_function: `
-				alert(JustGetMeBro)
-				`,
-			},
-		],
+			"ytd-watch-next-secondary-results-renderer #contents > .ytd-item-section-renderer:not(ytd-reel-shelf-renderer),\nytd-rich-grid-renderer #contents > .ytd-rich-grid-renderer:(ytd-rich-item-renderer)",
+		Settings: [],
 	},
 ];
 
 async function Main_Run() {
 	// await ClearSave();
 	await Load_ThisWeb_Save();
-	await Save("Custom_Editable_Items", Test_Editable_Items);
+	await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
-	await Update_Editable_Items();
+	await Update_StyleShift_Items();
 	await Set_Null_Save();
 	console.log("Settings_List", await Get_Settings_List());
 
 	//------------------------------------------
 
-	for (const [id, value] of Object.entries(await Get_Settings_List())) {
-		if (id == "Themes") {
+	for (const This_Setting of await Get_ALL_StyleShift_Settings()) {
+		if (This_Setting.id == "Themes") {
 			continue;
 		}
-		SetUp_Setting_Function(id);
+		SetUp_Setting_Function(This_Setting);
 	}
 
 	await Clear_Unnessary_Save();
-	for (const This_Category of Get_ALL_Editable_Items()) {
+	for (const This_Category of Get_ALL_StyleShift_Items()) {
 		if (This_Category.Selector == null) continue;
 		This_Category.Selector = ReArrange_Selector(This_Category.Selector);
 		console.log("ReArranged", This_Category.Selector);
@@ -174,6 +397,7 @@ async function Main_Run() {
 	setTimeout(() => {
 		console.log("Window Variable", window);
 	}, 1);
+	Run_Text_Script(`console.log("Window Variable 2", window);`);
 }
 
 Main_Run();

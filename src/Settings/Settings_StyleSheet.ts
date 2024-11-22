@@ -1,5 +1,5 @@
-import { GetDocumentHead, sleep } from "../Modules/NormalFunction";
-import { Load } from "../Modules/Save";
+import { GetDocumentHead, sleep } from '../Modules/NormalFunction';
+import { Load } from '../Modules/Save';
 
 let StyleSheet_Holder: HTMLElement;
 
@@ -7,7 +7,7 @@ export async function Create_StyleSheet_Holder() {
 	StyleSheet_Holder = document.createElement("fieldset");
 	StyleSheet_Holder.id = "STYLESHIFT_StyleSheet_Holder";
 
-	if ((await Load("Enable_Extension")) == true) {
+	if ((await Load("Enable_Extension_Function")) == true) {
 		Show_StyleSheet();
 	} else {
 		Hide_StyleSheet();
@@ -30,5 +30,6 @@ export async function Hide_StyleSheet() {
 		StyleSheet_Holder.remove();
 	} else {
 		await sleep(10);
+		await Hide_StyleSheet();
 	}
 }
