@@ -12,10 +12,10 @@
 	"author": "AzPepoze",
 	"license": "MIT",
 	"scripts": {
-		"dev": "npm-run-all -p build_css build",
-		"build": "node utils/build.js",
-		"build_css": "sass --watch src/Extension/SCSS/Setting.scss dist/Style.css --style=compressed --no-source-map",
-		"build_setting": "node utils/build_setting.js",
+		"dev": "npm-run-all -p dev_css dev_js",
+		"dev_js": "node utils/build.js",
+		"dev_css": "sass --watch src/Extension/SCSS/Setting.scss dist/Style.css --style=compressed --no-source-map",
+		"build": "sass src/Extension/SCSS/Setting.scss dist/Style.css --style=compressed --no-source-map && node utils/build_setting.js && node utils/build.js --production --once",
 		"build_release": "node utils/build_release.js"
 	},
 	"devDependencies": {

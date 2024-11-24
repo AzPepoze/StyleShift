@@ -48,7 +48,6 @@ const workerEntryPoints = [
 			}
 		});
 
-		console.log(Object.keys(themes)); // Array of theme objects
 		return themes;
 	}
 

@@ -3,6 +3,10 @@ const chokidar = require("chokidar");
 const fs = require("fs-extra");
 const path = require("path");
 
+const args = process.argv.slice(2);
+const isProduction = args.includes("--production");
+const isOnce = args.includes("--once");
+
 async function Replace_for_Firefox_Text(data) {
 	data = data.replace(/webkit-fill/g, "moz");
 	data = data.replace(/-webkit-mask-box/g, "mask");
@@ -11,7 +15,6 @@ async function Replace_for_Firefox_Text(data) {
 	data = data.replace(/webkit-slider-thumb/g, "moz-range-thumb");
 
 	data = data.replace(/webkit/g, "moz");
-
 	data = data.replace(/nowrap/g, "pre");
 
 	return data;
@@ -19,19 +22,16 @@ async function Replace_for_Firefox_Text(data) {
 
 async function Replace_for_Firefox(filePath) {
 	try {
-		// Read the file
 		let data = await fs.readFile(filePath, "utf8");
 
 		let modifiedContent;
-		// Modify content based on file extension
 		if (filePath.endsWith(".css") || filePath.endsWith(".js")) {
 			modifiedContent = await Replace_for_Firefox_Text(data);
 		} else {
 			console.log(`Skipping file '${filePath}'`);
-			return; // Skip processing non-CSS and non-JS files
+			return;
 		}
 
-		// Write the modified content back to the file
 		await fs.writeFile(filePath, modifiedContent, "utf8");
 		console.log(`File '${filePath}' updated successfully!`);
 	} catch (err) {
@@ -54,14 +54,14 @@ async function build() {
 			bundle: true,
 			outfile: path.join(__dirname, "../dist/StyleShift.js"),
 			platform: "browser",
-			// minify: true,
+			minify: isProduction, // Enable minification for production builds
 		});
 
 		await esbuild.build({
 			entryPoints: [path.join(__dirname, "../src/Extension/Modules/NormalFunction.ts")],
 			outfile: path.join(__dirname, "../temp/NormalFunction.js"),
 			platform: "browser",
-			minify: true,
+			minify: isProduction,
 			keepNames: true,
 		});
 
@@ -118,16 +118,18 @@ async function build() {
 		console.log("Built!");
 		console.log("--------------------------------");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	}
 
 	Running = false;
 	fs.removeSync(path.join(__dirname, "../temp"));
 }
 
-chokidar.watch(path.join(__dirname, "../src/Extension")).on("all", async (event, path) => {
-	console.log(event, path);
-	await build();
-	// await build("production");
-	// await build("dev");
-});
+if (isOnce) {
+	build();
+} else {
+	chokidar.watch(path.join(__dirname, "../src/Extension")).on("all", async (event, path) => {
+		console.log(event, path);
+		await build();
+	});
+}
