@@ -1,7 +1,9 @@
-import { Get_ALL_StyleShift_Items } from '../Items_Editor/StyleShift_Items';
-import { Click_To_Scroll, GetDocumentBody, sleep } from '../Modules/NormalFunction';
-import { Load } from '../Modules/Save';
-import { Create_Setting_UI_Element, Dynamic_Append } from './Settings_UI';
+import { Get_ALL_StyleShift_Items } from "../Items_Editor/StyleShift_Items";
+import { In_Setting_Page } from "../Modules/Extension_Main";
+import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
+import { Load } from "../Modules/Save";
+import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
+import { Create_Setting_UI_Element, Dynamic_Append } from "./Settings_UI";
 
 let Setting_Frame: HTMLElement;
 let Setting_BG: HTMLElement;
@@ -29,6 +31,12 @@ export async function Create_Extension_Setting() {
 	Setting_Frame.style.resize = "both";
 	Setting_Frame.style.overflow = "auto";
 	Setting_Frame.style.pointerEvents = "all";
+
+	if (In_Setting_Page) {
+		Setting_Frame.style.width = "100%";
+		Setting_Frame.style.height = "100%";
+		Setting_Frame.style.resize = "none";
+	}
 
 	//-----------------------------------------------
 
@@ -120,6 +128,28 @@ export async function Create_Extension_Setting() {
 				await Create_Setting_UI_Element(ThisSetting.type, ThisSetting as any)
 			);
 		}
+
+		//------------------------------
+
+		if (In_Setting_Page) {
+			const Get_Setting_Page_Only = Get_Setting_Page_Only_Items().filter(
+				(x) => x.Category === Selector_Value.Category
+			)[0];
+
+			if (Get_Setting_Page_Only) {
+				for (const This_Setting_Only of Get_Setting_Page_Only.Settings) {
+					Dynamic_Append(
+						Scroll_Right,
+						await Create_Setting_UI_Element(
+							This_Setting_Only.type,
+							This_Setting_Only as any
+						)
+					);
+				}
+			}
+		}
+
+		//------------------------------
 
 		if (await Load("Developer_Mode")) {
 			Dynamic_Append(

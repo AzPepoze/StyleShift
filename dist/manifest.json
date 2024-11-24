@@ -4,13 +4,17 @@
 	"author": "AzPepoze",
 	"version": "0.8.0",
 	"description": "Customize your YouTube website with a lot customizable.",
-	"homepage_url": "https://github.com/AzPepoze/Newtube",
+	"homepage_url": "https://github.com/AzPepoze/StyleShift",
 	"minimum_chrome_version": "88",
 	"icons": {
 		"128": "icon/128.png",
 		"64": "icon/64.png",
 		"32": "icon/32.png",
 		"16": "icon/16.png"
+	},
+	"options_page": "Setting_Page/index.html",
+	"sandbox": {
+		"pages": ["sandbox.html"]
 	},
 	"web_accessible_resources": [
 		{
@@ -20,13 +24,14 @@
 	],
 	"content_scripts": [
 		{
-			"all_frames": true,
 			"matches": ["<all_urls>"],
+			"all_frames": true,
 			"js": ["StyleShift.js"],
 			"css": ["Style.css"],
 			"run_at": "document_start"
 		}
 	],
+
 	"background": {
 		"service_worker": "Background.js",
 		"scripts": ["Background.js"]

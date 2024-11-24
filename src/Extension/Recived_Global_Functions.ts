@@ -12,11 +12,6 @@ import { Hide_StyleSheet, Show_StyleSheet } from "./Settings/Settings_StyleSheet
 
 let JSzip: typeof import("jszip");
 
-if (process.env.mode === "dev") {
-	//@ts-ignore
-	JSzip = import("jszip");
-}
-
 export let StyleShift_Functions = {
 	Enable_Extension_Function: function () {
 		Show_StyleSheet();
@@ -57,6 +52,8 @@ export let StyleShift_Functions = {
 	},
 
 	Export_JSON_To_ZIP: async (jsonData, zipFileName) => {
+		JSzip = window["JSzip"].default;
+
 		console.log("Data", jsonData);
 
 		try {
@@ -122,6 +119,8 @@ export let StyleShift_Functions = {
 	},
 
 	Import_ZIP_TO_JSON: async (zipData) => {
+		JSzip = window["JSzip"].default;
+
 		const JSON_Data = {};
 
 		try {

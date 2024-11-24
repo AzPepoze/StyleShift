@@ -18,14 +18,15 @@ let DefaultNewTubeLogo = `https://i.ibb.co/tD2VTyg/1705431438657.png`;
 let Extension_Location = chrome.runtime.getURL("");
 let Extension_ID = Extension_Location.slice(19, -1);
 
-let in_Setting_Page;
+export let In_Setting_Page;
 
-if (window.location.href.includes("Newtube_setting")) {
-	document.title = "NewTube Setting";
-	in_Setting_Page = true;
+if (window.location.origin == Get_Extension_Location().slice(0, -1)) {
+	In_Setting_Page = true;
 } else {
-	in_Setting_Page = false;
+	In_Setting_Page = false;
 }
+
+console.log(In_Setting_Page);
 
 export function Get_Extension_ID() {
 	return Extension_ID;
@@ -40,10 +41,12 @@ export async function Run_Text_Script(Text) {
 	console.log(Text);
 
 	if (Text != null && Text != "") {
-		chrome.runtime.sendMessage({
-			Command: "RunScript",
-			Script: Text,
-		});
+		if (!In_Setting_Page) {
+			chrome.runtime.sendMessage({
+				Command: "RunScript",
+				Script: Text,
+			});
+		}
 	}
 }
 

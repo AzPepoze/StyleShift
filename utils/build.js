@@ -40,7 +40,7 @@ async function Replace_for_Firefox(filePath) {
 }
 
 let Running = false;
-async function build(Mode) {
+async function build() {
 	if (Running) {
 		return;
 	}
@@ -50,41 +50,30 @@ async function build(Mode) {
 		console.log("Building");
 
 		await esbuild.build({
-			entryPoints: ["./src/Run.ts"],
+			entryPoints: [path.join(__dirname, "../src/Extension/Run.ts")],
 			bundle: true,
-			outfile: "./dist/StyleShift.js",
+			outfile: path.join(__dirname, "../dist/StyleShift.js"),
 			platform: "browser",
-			// target: ["es2020"],
 			// minify: true,
-			// format: "esm",
-			define: {
-				"process.env.mode": `"${Mode}"`,
-			},
 		});
 
 		await esbuild.build({
-			entryPoints: ["./src/Modules/NormalFunction.ts"],
-			outfile: "./temp/NormalFunction.js",
+			entryPoints: [path.join(__dirname, "../src/Extension/Modules/NormalFunction.ts")],
+			outfile: path.join(__dirname, "../temp/NormalFunction.js"),
 			platform: "browser",
 			minify: true,
 			keepNames: true,
-			define: {
-				"process.env.mode": `"${Mode}"`,
-			},
 		});
 
 		await esbuild.build({
-			entryPoints: ["./src/Sent_Global_Functions.ts"],
-			outfile: "./dist/Global_Functions.js",
+			entryPoints: [path.join(__dirname, "../src/Extension/Sent_Global_Functions.ts")],
+			outfile: path.join(__dirname, "../dist/Global_Functions.js"),
 			platform: "browser",
-			define: {
-				"process.env.mode": `"${Mode}"`,
-			},
 		});
 
 		let Functions_List_Data = "";
 		const Functions_List_Content = fs.readFileSync(
-			"./src/Recived_Global_Functions.ts",
+			path.join(__dirname, "../src/Extension/Recived_Global_Functions.ts"),
 			"utf-8"
 		);
 		const Functions_List = [...Functions_List_Content.matchAll(/(\w+)\s*:/g)].map(
@@ -96,25 +85,22 @@ async function build(Mode) {
 		}
 
 		let Global_Functions_Data =
-			(await fs.readFile("./temp/NormalFunction.js", "utf8")).replace(/export /g, "") +
-			(await fs.readFile("./dist/Global_Functions.js", "utf8")).replace(/\n/g, "") +
+			(
+				await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")
+			).replace(/export /g, "") +
+			(
+				await fs.readFile(path.join(__dirname, "../dist/Global_Functions.js"), "utf8")
+			).replace(/\n/g, "") +
 			Functions_List_Data;
 
-		await fs.writeFile("./dist/Global_Functions.js", Global_Functions_Data, "utf8");
+		await fs.writeFile(
+			path.join(__dirname, "../dist/Global_Functions.js"),
+			Global_Functions_Data,
+			"utf8"
+		);
 
-		let Chromium;
-		let Firefox;
-
-		switch (Mode) {
-			case "production":
-				Chromium = "./out/build/Chromium";
-				Firefox = "./out/build/Firefox";
-				break;
-			case "dev":
-				Chromium = "./out/build/Chromium (Developer)";
-				Firefox = "./out/build/Firefox (Developer)";
-				break;
-		}
+		let Chromium = path.join(__dirname, "../out/build/Chromium");
+		let Firefox = path.join(__dirname, "../out/build/Firefox");
 
 		if (fs.existsSync(Chromium)) {
 			fs.rmSync(Chromium, { recursive: true, force: true });
@@ -123,8 +109,8 @@ async function build(Mode) {
 			fs.rmSync(Firefox, { recursive: true, force: true });
 		}
 
-		fs.copySync("./dist", Chromium);
-		fs.copySync("./dist", Firefox);
+		fs.copySync(path.join(__dirname, "../dist"), Chromium);
+		fs.copySync(path.join(__dirname, "../dist"), Firefox);
 
 		await Replace_for_Firefox(path.join(Firefox, "Style.css"));
 		await Replace_for_Firefox(path.join(Firefox, "StyleShift.js"));
@@ -136,11 +122,12 @@ async function build(Mode) {
 	}
 
 	Running = false;
-	fs.removeSync("./temp");
+	fs.removeSync(path.join(__dirname, "../temp"));
 }
 
-chokidar.watch("./src").on("all", async (event, path) => {
+chokidar.watch(path.join(__dirname, "../src/Extension")).on("all", async (event, path) => {
 	console.log(event, path);
-	await build("production");
-	await build("dev");
+	await build();
+	// await build("production");
+	// await build("dev");
 });

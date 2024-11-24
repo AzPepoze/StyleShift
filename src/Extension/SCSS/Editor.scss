@@ -14,9 +14,20 @@
 	align-items: center;
 	gap: 10px;
 
-	* {
+	*:not(.monaco-editor *) {
 		border-radius: var(--Border-Radius);
 		color: var(--Font-Color);
+	}
+
+	.monaco-editor .overflow-guard {
+		border-radius: 10px;
+	}
+
+	.STYLESHIFT-Code-Editor {
+		resize: vertical;
+		overflow: hidden;
+		padding: 5px;
+		background: #ffffff52;
 	}
 }
 

@@ -7,7 +7,7 @@ import {
 	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Items_Editor/StyleShift_Items";
-import { Run_Text_Script } from "./Modules/Extension_Main";
+import { Get_Extension_Location, In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
 	Clear_Unnessary_Save,
@@ -19,6 +19,7 @@ import {
 } from "./Modules/Save";
 import * as Global from "./Recived_Global_Functions";
 import {
+	Create_Extension_Setting,
 	Recreate_Extension_Setting,
 	Toggle_Extension_Setting,
 } from "./Settings/Extension_Setting_UI";
@@ -27,6 +28,8 @@ import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 
 console.log(Global);
 console.log(window.location.href);
+
+console.log(chrome);
 
 let Test_Editable_Items: Category[] = [
 	{
@@ -46,8 +49,7 @@ let Test_Editable_Items: Category[] = [
 					Alpha: 1,
 				},
 				font_size: 15,
-				click_function:
-					"function helloWorld() {\n    console.log('Hello, world!');\n}\n\na\nwindowawd\nwa\nd\n\nawaitd\naw\ndiscorda\nwindowawd\n\n\n\na\nwindow\nawaitd\naw",
+				click_function: 'window.open("https://ko-fi.com/azpepoze");',
 				text_align: "left",
 			},
 		],
@@ -69,7 +71,7 @@ let Test_Editable_Items: Category[] = [
 					Alpha: 1,
 				},
 				font_size: 15,
-				click_function: 'window.open("https://discord.gg/BgxvVqap4G");\n',
+				click_function: 'window.open("https://discord.gg/BgxvVqap4G");',
 				text_align: "left",
 			},
 		],
@@ -231,25 +233,6 @@ let Test_Editable_Items: Category[] = [
 				text_align: "center",
 				description: "",
 				id: "",
-			},
-			{
-				type: "Button",
-				id: "Test_Button",
-				name: "Export File",
-				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 0,
-						g: 255,
-						b: 220,
-					},
-					Alpha: 1,
-				},
-				font_size: 15,
-				click_function:
-					'Export_JSON_To_ZIP(JSON.parse(await Export_Custom_Items_Text()),"Test.zip")',
-				text_align: "center",
-				icon: "",
 			},
 		],
 	},
@@ -418,3 +401,7 @@ chrome.runtime.onMessage.addListener(async function (message) {
 		Toggle_Extension_Setting();
 	}
 });
+
+if (In_Setting_Page) {
+	Create_Extension_Setting();
+}

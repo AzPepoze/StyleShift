@@ -297,7 +297,7 @@ export function deepMergeInPlace(target, source) {
 }
 
 export function Get_Current_Domain() {
-	const hostname = window.location.hostname;
+	const hostname = window.location.origin;
 	const domainParts = hostname.split(".");
 	const domain = domainParts.slice(-2).join(".");
 

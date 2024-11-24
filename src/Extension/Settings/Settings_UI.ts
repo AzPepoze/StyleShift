@@ -1,6 +1,7 @@
 import { Add_Setting, color_obj, Remove_Setting, Setting } from "../Items_Editor/StyleShift_Items";
 import {
 	Color_OBJ_to_Usable_OBJ,
+	In_Setting_Page,
 	RGB_to_Color_OBJ,
 	Run_Text_Script,
 } from "../Modules/Extension_Main";
@@ -12,10 +13,27 @@ import {
 	HSV_to_RGB,
 	ReArrange_Selector,
 	RGB_to_HSV,
+	sleep,
 } from "../Modules/NormalFunction";
 import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
 import { Update_Setting_Function } from "./Settings_Function";
-// import * as Monaco from "monaco-editor";
+
+let Monaco: typeof import("monaco-editor");
+let Monaco_Themes;
+
+// import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
+
+// (async () => {
+// 	if (process.env.mode === "dev") {
+// 		Monaco = await import("monaco-editor");
+
+// 		import("monaco-editor/esm/vs/basic-languages/javascript/javascript.js");
+// 		import("monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js");
+
+// 		import("monaco-editor/esm/vs/basic-languages/css/css.js");
+// 		import("monaco-editor/esm/vs/basic-languages/css/css.contribution.js");
+// 	}
+// })();
 
 async function Set_And_Save(This_Setting, value) {
 	// This_Setting.value = value;
@@ -817,67 +835,91 @@ const Advance_Setting_UI = {
 		};
 	},
 
-	// ["Code_Editor"]: async function (OBJ, key, language) {
-	// 	const Frame = document.createElement("div");
-	// 	Frame.style.width = "100%";
-	// 	Frame.style.height = "200px";
-	// 	Frame.style.position = "relative";
-	// 	Frame.style.background = "black";
+	["Code_Editor"]: async function (OBJ, key, language) {
+		if (Monaco == null) {
+			if (window["Monaco"] == null) {
+				await sleep(10);
+				return await Settings_UI["Code_Editor"](OBJ, key, language);
+			} else {
+				Monaco = window["Monaco"];
+				Monaco_Themes = window["Monaco_Themes"];
 
-	// 	// await new Promise((resolve, reject) => {
-	// 	// 	requestAnimationFrame(function () {
-	// 	// 		resolve(true);
-	// 	// 	});
-	// 	// });
+				for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [
+					string,
+					any
+				][]) {
+					if (Theme_Name == "themelist") continue;
+					console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
+					Monaco.editor.defineTheme(
+						Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""),
+						Theme_Content
+					);
+				}
+				Monaco.editor.setTheme("Dracula");
+			}
+		}
 
-	// 	let Code_Editor = Monaco.editor.create(Frame, {
-	// 		value: OBJ[key] || "",
-	// 		language: language || "javascript",
-	// 		theme: "vs-dark",
-	// 		automaticLayout: true,
-	// 	});
+		const Frame = document.createElement("div");
+		Frame.style.width = "-webkit-fill-available";
+		Frame.style.height = "400px";
+		Frame.style.position = "relative";
+		Frame.className += " STYLESHIFT-Code-Editor";
 
-	// 	let Additinal_OnChange: Function = null;
-	// 	let ReArrange_Value: Function = null;
+		// await new Promise((resolve, reject) => {
+		// 	requestAnimationFrame(function () {
+		// 		resolve(true);
+		// 	});
+		// });
 
-	// 	let OnChange = async function (Value) {
-	// 		OBJ[key] = Value;
-	// 		Save_All();
-	// 		if (Additinal_OnChange) {
-	// 			console.log(Additinal_OnChange);
-	// 			Additinal_OnChange(Value);
-	// 		}
-	// 	};
+		console.log("HEY!!!", Monaco.languages.getLanguages());
 
-	// 	Code_Editor.onKeyDown(async function () {
-	// 		OnChange(Code_Editor.getValue());
-	// 	});
+		let Code_Editor = Monaco.editor.create(Frame, {
+			value: OBJ[key] || "",
+			automaticLayout: true,
+			language: language || "plaintext",
+		});
 
-	// 	Code_Editor.onDidBlurEditorWidget(async function () {
-	// 		let Value = Code_Editor.getValue();
-	// 		if (ReArrange_Value) {
-	// 			console.log("Before", Value);
-	// 			Value = await ReArrange_Value(Value);
-	// 			console.log("After", Value);
-	// 			Code_Editor.setValue(Value);
-	// 		}
-	// 		OnChange(Value);
-	// 	});
+		let Additinal_OnChange: Function = null;
+		let ReArrange_Value: Function = null;
 
-	// 	return {
-	// 		Code_Editor: Code_Editor,
-	// 		OnChange: function (callback) {
-	// 			OnChange = callback;
-	// 		},
-	// 		Additinal_OnChange: function (callback) {
-	// 			Additinal_OnChange = callback;
-	// 		},
-	// 		ReArrange_Value: function (callback) {
-	// 			ReArrange_Value = callback;
-	// 		},
-	// 		Frame,
-	// 	};
-	// },
+		let OnChange = async function (Value) {
+			OBJ[key] = Value;
+			Save_All();
+			if (Additinal_OnChange) {
+				console.log(Additinal_OnChange);
+				Additinal_OnChange(Value);
+			}
+		};
+
+		Code_Editor.onKeyDown(async function () {
+			OnChange(Code_Editor.getValue());
+		});
+
+		Code_Editor.onDidBlurEditorWidget(async function () {
+			let Value = Code_Editor.getValue();
+			if (ReArrange_Value) {
+				console.log("Before", Value);
+				Value = await ReArrange_Value(Value);
+				console.log("After", Value);
+				Code_Editor.setValue(Value);
+			}
+			OnChange(Value);
+		});
+
+		return {
+			Code_Editor: Code_Editor,
+			OnChange: function (callback) {
+				OnChange = callback;
+			},
+			Additinal_OnChange: function (callback) {
+				Additinal_OnChange = callback;
+			},
+			ReArrange_Value: function (callback) {
+				ReArrange_Value = callback;
+			},
+			Frame,
+		};
+	},
 
 	["Setting_Name"]: function (text, position: "left" | "center" | "right" = "left") {
 		let Name = document.createElement("div");
@@ -1256,25 +1298,25 @@ let Developer_Setting_UI = {
 
 			This_Frame.append(Settings_UI["Sub_Title"](This_Type_Name));
 
-			// if (This_Type_Name == "JS" || This_Type_Name == "CSS") {
-			// 	if (This_Type_Name == "JS") {
-			// 		This_Type_Name = "javascript";
-			// 	}
+			if (In_Setting_Page && (This_Type_Name == "JS" || This_Type_Name == "CSS")) {
+				if (This_Type_Name == "JS") {
+					This_Type_Name = "javascript";
+				}
 
-			// 	if (This_Type_Name == "CSS") {
-			// 		This_Type_Name = "css";
-			// 	}
+				if (This_Type_Name == "CSS") {
+					This_Type_Name = "css";
+				}
 
-			// 	let Editor = await Settings_UI["Code_Editor"](
-			// 		This_Setting,
-			// 		RunType + "_" + ext,
-			// 		This_Type_Name
-			// 	);
+				let Editor = await Settings_UI["Code_Editor"](
+					This_Setting,
+					RunType + "_" + ext,
+					This_Type_Name
+				);
 
-			// 	(await GetDocumentBody()).append(Editor.Frame);
+				This_Frame.append(Editor.Frame);
 
-			// 	continue;
-			// }
+				continue;
+			}
 
 			let Editor = Settings_UI["Text_Editor"](This_Setting, RunType + "_" + ext);
 			This_Frame.append(Editor.Text_Editor);
