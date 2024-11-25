@@ -118,11 +118,21 @@ async function build() {
 		console.log("Built!");
 		console.log("--------------------------------");
 	} catch (error) {
-		console.error(error);
+		console.log("Error!, Trying again!");
+		setTimeout(() => {
+			build();
+		}, 500);
 	}
 
 	Running = false;
-	fs.removeSync(path.join(__dirname, "../temp"));
+	try {
+		fs.removeSync(path.join(__dirname, "../temp"));
+	} catch (error) {
+		console.log("Error!, Trying again!");
+		setTimeout(() => {
+			build();
+		}, 500);
+	}
 }
 
 if (isOnce) {

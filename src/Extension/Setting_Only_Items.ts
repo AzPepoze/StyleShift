@@ -10,14 +10,7 @@ let Setting_Page_Items: Category[] = [
 				id: "Export_ZIP_File",
 				name: "Export File",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 0,
-						g: 255,
-						b: 220,
-					},
-					Alpha: 1,
-				},
+				color: "#e6aa00ff",
 				font_size: 15,
 				click_function: async function () {
 					StyleShift_Functions["Export_JSON_To_ZIP"](

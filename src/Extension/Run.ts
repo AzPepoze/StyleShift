@@ -7,7 +7,7 @@ import {
 	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Items_Editor/StyleShift_Items";
-import { Get_Extension_Location, In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
+import { In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
 	Clear_Unnessary_Save,
@@ -40,14 +40,7 @@ let Test_Editable_Items: Category[] = [
 				type: "Button",
 				name: "Ko-fi",
 				icon: "https://cdn.prod.website-files.com/5c14e387dab576fe667689cf/670f5a01229bf8a18f97a3c1_favion-p-500.png",
-				color: {
-					RGB: {
-						r: 255,
-						g: 45,
-						b: 45,
-					},
-					Alpha: 1,
-				},
+				color: "#e60017ff",
 				font_size: 15,
 				click_function: 'window.open("https://ko-fi.com/azpepoze");',
 				text_align: "left",
@@ -62,14 +55,7 @@ let Test_Editable_Items: Category[] = [
 				type: "Button",
 				name: "NEWTUBE",
 				icon: "https://brandlogos.net/wp-content/uploads/2021/11/discord-logo.png",
-				color: {
-					RGB: {
-						r: 25,
-						g: 50,
-						b: 255,
-					},
-					Alpha: 1,
-				},
+				color: "#1932ffff",
 				font_size: 15,
 				click_function: 'window.open("https://discord.gg/BgxvVqap4G");',
 				text_align: "left",
@@ -106,14 +92,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button",
 				name: "Github",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 52,
-						g: 36,
-						b: 255,
-					},
-					Alpha: 1,
-				},
+				color: "#2e16feff",
 				click_function: 'window.open("https://github.com/AzPepoze/Newtube");',
 				text_align: "left",
 				icon: "https://pbs.twimg.com/profile_images/1372304699601285121/5yBS6_3F_400x400.jpg",
@@ -124,14 +103,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button",
 				name: "❗Report bugs / Issues❗\n",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 255,
-						g: 45,
-						b: 45,
-					},
-					Alpha: 1,
-				},
+				color: "#e60005ff",
 				click_function: 'window.open("https://discord.gg/BgxvVqap4G");',
 				font_size: 15,
 				text_align: "center",
@@ -146,14 +118,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button",
 				name: "✨ Select Theme ✨",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 230,
-						g: 170,
-						b: 0,
-					},
-					Alpha: 1,
-				},
+				color: "#e6aa00ff",
 				click_function: "",
 				text_align: "center",
 				icon: "",
@@ -164,14 +129,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button_1",
 				name: "🛍️ Themes store 🛍️",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 0,
-						g: 80,
-						b: 200,
-					},
-					Alpha: 1,
-				},
+				color: "#0050c8ff",
 				click_function: "",
 				text_align: "center",
 				font_size: 15,
@@ -181,14 +139,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button_2",
 				name: "🛍️ Themes store 🛍️\n(Floating window)",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 0,
-						g: 80,
-						b: 200,
-					},
-					Alpha: 1,
-				},
+				color: "#0050c8ff",
 				click_function: "",
 				text_align: "center",
 				font_size: 15,
@@ -198,14 +149,7 @@ let Test_Editable_Items: Category[] = [
 				id: "Test_Button_3",
 				name: "✳️ Share your themes ✳️",
 				description: "Description of this Button",
-				color: {
-					RGB: {
-						r: 50,
-						g: 180,
-						b: 50,
-					},
-					Alpha: 1,
-				},
+				color: "#32b432ff",
 				click_function: "",
 				text_align: "center",
 				font_size: 15,
@@ -219,14 +163,7 @@ let Test_Editable_Items: Category[] = [
 				type: "Button",
 				name: 'Export "Custom Items" (Clipboard)',
 				icon: "",
-				color: {
-					RGB: {
-						r: 25,
-						g: 50,
-						b: 255,
-					},
-					Alpha: 1,
-				},
+				color: "#1932ffff",
 				font_size: 15,
 				click_function:
 					'await StyleShift("Copy_to_clipboard",await StyleShift("Export_Custom_Items_Text"));',
@@ -263,14 +200,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Just Color Selector",
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
-				value: {
-					RGB: {
-						r: 36,
-						g: 219,
-						b: 40,
-					},
-					Alpha: 100,
-				},
+				value: "#24db28ff",
 			},
 			{
 				type: "Color",
@@ -278,14 +208,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Just Color Selector_1",
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
-				value: {
-					RGB: {
-						r: 36,
-						g: 219,
-						b: 40,
-					},
-					Alpha: 100,
-				},
+				value: "#24db28ff",
 			},
 			{
 				type: "Color",
@@ -293,14 +216,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Just Color Selector_2",
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
-				value: {
-					RGB: {
-						r: 36,
-						g: 219,
-						b: 40,
-					},
-					Alpha: 100,
-				},
+				value: "#24db28ff",
 			},
 			{
 				type: "Color",
@@ -308,14 +224,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Progress line",
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
-				value: {
-					RGB: {
-						r: 36,
-						g: 219,
-						b: 40,
-					},
-					Alpha: 100,
-				},
+				value: "#24db28ff",
 				setup_css:
 					".ytp-play-progress{\n     background: var(--Time-Play) !important;\n}",
 				setup_function: "",
@@ -352,11 +261,13 @@ let Test_Editable_Items: Category[] = [
 async function Main_Run() {
 	// await ClearSave();
 	await Load_ThisWeb_Save();
-	await Save("Custom_StyleShift_Items", Test_Editable_Items);
+	// await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
 	await Set_Null_Save();
 	console.log("Settings_List", await Get_Settings_List());
+
+	//------------------------------------------
 
 	//------------------------------------------
 

@@ -1,9 +1,8 @@
 import {
-	Get_Custom_Items,
-	Get_Settings_List,
-	Update_StyleShift_Items,
-} from "../Items_Editor/StyleShift_Items";
-import { Get_Current_Domain, sleep } from "./NormalFunction";
+    Get_Custom_Items, Get_Settings_List, Update_StyleShift_Items
+} from '../Items_Editor/StyleShift_Items';
+import { Color_OBJ_to_HEX } from './Extension_Main';
+import { Get_Current_Domain, sleep } from './NormalFunction';
 
 //Save
 let Saved_Data = {};
@@ -38,30 +37,34 @@ export async function Load_ThisWeb_Save() {
 	});
 }
 
-export async function Save(Name, Value) {
+export async function Save(Name, Value, Pre_Save = false) {
 	if (!Loaded) {
 		await sleep(100);
 		return Save(Name, Value);
 	}
 	Saved_Data[Name] = Value;
 	console.log("Save", Name, Value);
-	return await Save_All();
+	if (!Pre_Save) {
+		return await Save_All();
+	}
 }
 
-export async function Save_Setting(Name, Value) {
+export async function Save_Setting(Name, Value, Pre_Save = false) {
 	if (Saved_Data["Current_Settings"] == null) {
 		Saved_Data["Current_Settings"] = {};
 	}
 	Saved_Data["Current_Settings"][Name] = Value;
 	console.log("Save_Setting", Name, Value);
-	return await Save_All();
+	if (!Pre_Save) {
+		return await Save_All();
+	}
 }
 
-export async function Save_Any(Name, Value) {
+export async function Save_Any(Name, Value, Pre_Save = false) {
 	if (Save_External.includes(Name)) {
-		return await Save(Name, Value);
+		return await Save(Name, Value, Pre_Save);
 	} else {
-		return await Save_Setting(Name, Value);
+		return await Save_Setting(Name, Value, Pre_Save);
 	}
 }
 
@@ -284,7 +287,9 @@ export async function Set_Null_Save() {
 		console.log("Check", id, Current_Settings[id]);
 		if (Current_Settings[id] == null) {
 			console.log("Added New", id, args.value);
-			await Save_Any(id, args.value);
+			await Save_Any(id, args.value, true);
 		}
 	}
+
+	await Save_All();
 }

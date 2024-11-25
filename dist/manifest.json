@@ -12,10 +12,7 @@
 		"32": "icon/32.png",
 		"16": "icon/16.png"
 	},
-	"options_page": "Setting_Page/index.html",
-	"sandbox": {
-		"pages": ["sandbox.html"]
-	},
+	"options_page": "Setting_Page/StyleShift.html",
 	"web_accessible_resources": [
 		{
 			"resources": ["*"],

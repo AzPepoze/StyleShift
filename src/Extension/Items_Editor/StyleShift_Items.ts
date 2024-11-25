@@ -28,7 +28,7 @@ export type option = {
 };
 
 export type color_obj = {
-	RGB: { r: number; g: number; b: number };
+	HEX: string;
 	Alpha: number;
 };
 
@@ -53,7 +53,7 @@ export type Setting =
 
 			icon?: string;
 			text_align?: "left" | "center" | "right";
-			color?: color_obj;
+			color?: string;
 			font_size?: number;
 
 			click_function?: string | Function;
@@ -121,7 +121,7 @@ export type Setting =
 			description?: string;
 			show_alpha_slider?: boolean;
 
-			value: color_obj;
+			value: string;
 
 			var_css?: string;
 
@@ -203,7 +203,7 @@ export async function Update_StyleShift_Items() {
 
 let Settings_List = {};
 
-export async function Get_Settings_List(Force = false) {
+export async function Get_Settings_List(Force = false): Promise<Setting[] | {}> {
 	if (!Force && Object.keys(Settings_List).length) {
 		return Settings_List;
 	}
@@ -213,6 +213,9 @@ export async function Get_Settings_List(Force = false) {
 	for (const Category_OBJ of Get_ALL_StyleShift_Items()) {
 		try {
 			for (const Setting of Category_OBJ.Settings) {
+				if (Setting.id == "") {
+					continue;
+				}
 				Settings_List[Setting.id] = Setting;
 			}
 		} catch (error) {}

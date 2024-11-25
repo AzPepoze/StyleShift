@@ -1,9 +1,9 @@
-import { Get_ALL_StyleShift_Items } from "../Items_Editor/StyleShift_Items";
-import { In_Setting_Page } from "../Modules/Extension_Main";
-import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
-import { Load } from "../Modules/Save";
-import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
-import { Create_Setting_UI_Element, Dynamic_Append } from "./Settings_UI";
+import { Get_ALL_StyleShift_Items } from '../Items_Editor/StyleShift_Items';
+import { In_Setting_Page } from '../Modules/Extension_Main';
+import { Click_To_Scroll, GetDocumentBody, sleep } from '../Modules/NormalFunction';
+import { Load } from '../Modules/Save';
+import { Get_Setting_Page_Only_Items } from '../Setting_Only_Items';
+import { Create_Setting_UI_Element, Dynamic_Append } from './Settings_UI';
 
 let Setting_Frame: HTMLElement;
 let Setting_BG: HTMLElement;

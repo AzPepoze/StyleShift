@@ -1,22 +1,13 @@
-import { Add_Setting, color_obj, Remove_Setting, Setting } from "../Items_Editor/StyleShift_Items";
+import { Add_Setting, color_obj, Remove_Setting, Setting } from '../Items_Editor/StyleShift_Items';
 import {
-	Color_OBJ_to_Usable_OBJ,
-	In_Setting_Page,
-	RGB_to_Color_OBJ,
-	Run_Text_Script,
-} from "../Modules/Extension_Main";
+    Color_OBJ_to_HEX, HEX_to_Color_OBJ, In_Setting_Page, Run_Text_Script
+} from '../Modules/Extension_Main';
 import {
-	Apply_Drag,
-	deepClone,
-	GetDocumentBody,
-	HEX_to_RBG,
-	HSV_to_RGB,
-	ReArrange_Selector,
-	RGB_to_HSV,
-	sleep,
-} from "../Modules/NormalFunction";
-import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
-import { Update_Setting_Function } from "./Settings_Function";
+    Apply_Drag, deepClone, GetDocumentBody, HEX_to_RBG, HEX_to_RBGA, HSV_to_RGB, ReArrange_Selector,
+    RGB_to_HSV, sleep
+} from '../Modules/NormalFunction';
+import { Load, Load_Any, Save_All, Save_Any } from '../Modules/Save';
+import { Update_Setting_Function } from './Settings_Function';
 
 let Monaco: typeof import("monaco-editor");
 let Monaco_Themes;
@@ -142,7 +133,7 @@ let Main_Setting_UI = {
 			Frame.id = This_Setting.id || "";
 
 			//-----------------------------------
-			let { r, g, b } = This_Setting.color.RGB;
+			let { r, g, b } = HEX_to_RBG(This_Setting.color);
 
 			let BG_HSV = RGB_to_HSV({ r, g, b });
 			BG_HSV.s /= 2;
@@ -451,7 +442,7 @@ let Main_Setting_UI = {
 
 		let Dropdown = await Settings_UI["Button"]({
 			name: "",
-			color: RGB_to_Color_OBJ(255, 255, 255),
+			color: "#FFFFFF",
 			text_align: "center",
 		});
 		Dropdown.Button.className += " STYLESHIFT-Dropdown";
@@ -586,7 +577,7 @@ let Main_Setting_UI = {
 				min: 0,
 				max: 100,
 				step: 1,
-				value: This_Setting.value.Alpha,
+				value: HEX_to_Color_OBJ(This_Setting.value).Alpha,
 				update_function: function (value) {
 					Update_Value("Alpha", value / 100);
 				},
@@ -601,7 +592,8 @@ let Main_Setting_UI = {
 			Frame.id = This_Setting.id || "";
 
 			let value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
-			let Color_Usable_OBJ = Color_OBJ_to_Usable_OBJ(value);
+			console.log("Value", value, await Load_Any(This_Setting.id));
+			let Color_Usable_OBJ = HEX_to_Color_OBJ(value);
 
 			Color.value = String(Color_Usable_OBJ.HEX);
 		}
@@ -609,15 +601,20 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		async function Update_Value(type: "RGB" | "Alpha", value) {
+		async function Update_Value(type: "HEX" | "Alpha", value: any) {
 			console.log(value);
 			if (This_Setting.id) {
-				let Color_OBJ = deepClone(await Load_Any(This_Setting.id));
+				let Color_OBJ: any = HEX_to_Color_OBJ(await Load_Any(This_Setting.id));
 				Color_OBJ[type] = value;
-				await Set_And_Save(This_Setting, Color_OBJ);
+
+				await Set_And_Save(This_Setting, Color_OBJ_to_HEX(Color_OBJ));
 				Update_Setting_Function(This_Setting.id);
 			} else {
-				This_Setting.value[type] = value;
+				let Color_OBJ: any = HEX_to_Color_OBJ(This_Setting.value);
+				Color_OBJ[type] = value;
+
+				This_Setting.value = Color_OBJ_to_HEX(Color_OBJ);
+
 				if (typeof This_Setting.update_function === "function") {
 					This_Setting.update_function(This_Setting.value);
 				}
@@ -627,13 +624,13 @@ let Main_Setting_UI = {
 		//-------------------------------------
 
 		Color.addEventListener("change", async function () {
-			Update_Value("RGB", HEX_to_RBG(Color.value));
+			Update_Value("HEX", Color.value);
 		});
 
 		Color.addEventListener("input", async function () {
 			if (!(await Load_Any("Realtime_Extension"))) return;
 
-			Update_Value("RGB", HEX_to_RBG(Color.value));
+			Update_Value("HEX", Color.value);
 		});
 
 		//-------------------------------------
@@ -999,7 +996,7 @@ const Advance_Setting_UI = {
 		return Title;
 	},
 
-	["Collapsed_Button"]: async function (ButtonName, RBG: color_obj, TargetElement: HTMLElement) {
+	["Collapsed_Button"]: async function (ButtonName, color: string, TargetElement: HTMLElement) {
 		TargetElement.setAttribute("STYLESHIFT-All-Transition", "");
 		TargetElement.className += " STYLESHIFT-Collapse";
 
@@ -1021,7 +1018,7 @@ const Advance_Setting_UI = {
 
 		let Button = await Settings_UI["Button"]({
 			name: ButtonName,
-			color: RBG,
+			color: color,
 			click_function: function () {
 				if (Collapsed) {
 					Show_Function();
@@ -1140,7 +1137,7 @@ const Advance_Setting_UI = {
 
 		let Add_Button = await Settings_UI["Button"]({
 			name: "+",
-			color: RGB_to_Color_OBJ(255, 255, 255),
+			color: "#FFFFFF",
 			text_align: "center",
 			click_function: async function () {
 				if (Current_Dropdown) {
@@ -1215,44 +1212,44 @@ let Developer_Setting_UI = {
 		ext_array = ["function", "css"]
 	) {
 		let This_RunType_Name = RunType;
-		let Color = RGB_to_Color_OBJ(200, 200, 200);
+		let Color = "#999999";
 
 		switch (RunType) {
 			case "var":
 				This_RunType_Name = "Variable";
-				Color = RGB_to_Color_OBJ(255, 167, 0);
+				Color = "#FFA500";
 				break;
 
 			case "click":
 				This_RunType_Name = "On Click";
-				Color = RGB_to_Color_OBJ(0, 220, 255);
+				Color = "#00DFFF";
 				break;
 
 			case "setup":
 				This_RunType_Name = "Setup / Auto run";
-				Color = RGB_to_Color_OBJ(50, 50, 255);
+				Color = "#3232FF";
 				break;
 
 			case "enable":
 				This_RunType_Name = "Enable";
-				Color = RGB_to_Color_OBJ(50, 255, 50);
+				Color = "#32CD32";
 				break;
 
 			case "disable":
 				This_RunType_Name = "Disable";
-				Color = RGB_to_Color_OBJ(255, 50, 50);
+				Color = "#FF3232";
 				break;
 
 			case "update":
 				This_RunType_Name = "On Change";
-				Color = RGB_to_Color_OBJ(255, 0, 245);
+				Color = "#FF00F5";
 				break;
 
 			default:
 				break;
 		}
 
-		let { r, g, b } = Color.RGB;
+		let { r, g, b } = HEX_to_RBG(Color);
 
 		let BG_HSV = RGB_to_HSV({ r, g, b });
 		BG_HSV.s /= 2;
@@ -1495,7 +1492,7 @@ let Developer_Setting_UI = {
 	["Config_Button"]: async function (Config_Frame) {
 		const Config_Button = await Settings_UI["Collapsed_Button"](
 			"Edit config",
-			RGB_to_Color_OBJ(200, 200, 200),
+			"#999999",
 			Config_Frame
 		);
 		Config_Button.Frame.style.marginTop = "10px";
@@ -1505,7 +1502,7 @@ let Developer_Setting_UI = {
 	["Setting_Delete_Button"]: async function (Parent, WhenClick, type: "full" | "mini" = "full") {
 		const Setting_Delete_Button = await Settings_UI["Button"]({
 			name: "🗑️",
-			color: RGB_to_Color_OBJ(255, 0, 0),
+			color: "#FF0000",
 			text_align: "center",
 		});
 		Setting_Delete_Button.Button.addEventListener("click", WhenClick);
@@ -1531,7 +1528,7 @@ const UI_Preset: Setting[] = [
 		name: "Button",
 		description: "Description of this Button",
 
-		color: RGB_to_Color_OBJ(0, 255, 220),
+		color: "#00FF99",
 		font_size: 15,
 
 		click_function: "",
@@ -1572,7 +1569,7 @@ const UI_Preset: Setting[] = [
 		description: "Description of this Dropdown",
 		show_alpha_slider: true,
 
-		value: { RGB: { r: 255, g: 0, b: 0 }, Alpha: 100 },
+		value: "#FF0000FF",
 	},
 ];
 
