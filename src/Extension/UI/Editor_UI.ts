@@ -1,7 +1,7 @@
-import { GetDocumentBody, getElementCenterPosition } from '../Modules/NormalFunction';
-import { Load } from '../Modules/Save';
-import { Create_Setting_UI_Element, Dynamic_Append } from '../Settings/Settings_UI';
-import { Start_Highlighter } from './Editor';
+import { GetDocumentBody, getElementCenterPosition } from "../Modules/NormalFunction";
+import { Load } from "../Modules/Save";
+import { Create_Inner_UI, Create_Setting_UI_Element, Dynamic_Append } from "../Settings/Settings_UI";
+import { Start_Highlighter } from "./Highlight_UI";
 
 let Edtior_Width = 400;
 
@@ -86,22 +86,11 @@ export async function Create_Editor_UI(targetElement, Selector_Value) {
 	Scrollable.className = "STYLESHIFT-Scrollable";
 	Editor.append(Scrollable);
 
-	if (await Load("Developer_Mode")) {
-		let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+	//------------------------------
 
-		Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
+	Create_Inner_UI(Scrollable, Selector_Value);
 
-		await Create_Setting_UI_Element("Selector_Text_Editor", Selector_Frame, Selector_Value);
-
-		Scrollable.append(Selector_Frame);
-	}
-
-	for (const ThisSetting of Selector_Value.Settings) {
-		Dynamic_Append(
-			Scrollable,
-			await Create_Setting_UI_Element(ThisSetting.type, ThisSetting)
-		);
-	}
+	//------------------------------
 
 	if (await Load("Developer_Mode")) {
 		Dynamic_Append(

@@ -1,9 +1,14 @@
-import { Category, Get_Custom_Items } from './Items_Editor/StyleShift_Items';
+import { Category, Get_Custom_Items } from "./Settings/StyleShift_Items";
 import {
-    deepClone, Download_File, HEX_to_RBGA, HSV_to_RGB, RGB_to_HSV, RGBA_to_HEX
-} from './Modules/NormalFunction';
-import { Settings_Current_State } from './Settings/Settings_Function';
-import { Hide_StyleSheet, Show_StyleSheet } from './Settings/Settings_StyleSheet';
+	deepClone,
+	Download_File,
+	HEX_to_RBGA,
+	HSV_to_RGB,
+	RGB_to_HSV,
+	RGBA_to_HEX,
+} from "./Modules/NormalFunction";
+import { Settings_Current_State } from "./Settings/Settings_Function";
+import { Hide_StyleSheet, Show_StyleSheet } from "./Settings/Settings_StyleSheet";
 
 let JSzip: typeof import("jszip");
 

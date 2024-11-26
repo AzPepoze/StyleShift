@@ -29,6 +29,20 @@
 		padding: 5px;
 		background: #ffffff52;
 	}
+
+	.STYLESHIFT-Close {
+		width: 27px;
+		height: 27px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--Drag-Top-BG);
+		border-radius: 1000px;
+		margin-left: 5px;
+		font-size: 12px;
+		font-weight: 500;
+		user-select: none;
+	}
 }
 
 .STYLESHIFT-Glow-Hover:hover {
@@ -54,20 +68,6 @@
 	align-items: center;
 	font-size: 20px;
 	border-radius: 100px;
-}
-
-.STYLESHIFT-Close {
-	width: 27px;
-	height: 27px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: var(--Drag-Top-BG);
-	border-radius: 1000px;
-	margin-left: 5px;
-	font-size: 12px;
-	font-weight: 500;
-	user-select: none;
 }
 
 .STYLESHIFT-Scrollable {
@@ -101,7 +101,8 @@
 	scrollbar-color: #888 transparent;
 	scrollbar-width: thin;
 
-	> .STYLESHIFT-Setting-Frame {
+	> .STYLESHIFT-Setting-Frame,
+	.STYLESHIFT-Main-Setting-Frame {
 		background: var(--Setting-Frame-BG);
 	}
 }
@@ -142,16 +143,28 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	background: #000000a1;
 }
 
-.STYLESHIFT-Scrollable > .STYLESHIFT-Setting-Frame {
-	.STYLESHIFT-Config-Frame-Button {
-		width: 100%;
+.STYLESHIFT-Main .STYLESHIFT-Scrollable > .STYLESHIFT-Config-Frame {
+	gap: 0px;
+
+	.STYLESHIFT-Config-Button {
 		transition: all 0.2s;
 		opacity: 0;
+		min-width: 0px;
+		min-height: 0px;
+		max-width: 0px;
+		max-height: 0px;
+		padding: 0px;
 	}
 
 	&:hover {
-		.STYLESHIFT-Config-Frame-Button {
+		gap: 10px;
+
+		.STYLESHIFT-Config-Button {
 			opacity: 1;
+			min-width: 40px;
+			min-height: 40px;
+			max-width: 40px;
+			max-height: 40px;
 		}
 	}
 }

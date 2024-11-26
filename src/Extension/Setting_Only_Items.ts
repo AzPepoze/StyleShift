@@ -1,4 +1,4 @@
-import { Category } from "./Items_Editor/StyleShift_Items";
+import { Category } from "./Settings/StyleShift_Items";
 import { StyleShift_Functions } from "./Recived_Global_Functions";
 
 let Setting_Page_Items: Category[] = [
@@ -10,7 +10,7 @@ let Setting_Page_Items: Category[] = [
 				id: "Export_ZIP_File",
 				name: "Export File",
 				description: "Description of this Button",
-				color: "#e6aa00ff",
+				color: "#ffe21aff",
 				font_size: 15,
 				click_function: async function () {
 					StyleShift_Functions["Export_JSON_To_ZIP"](

@@ -1,10 +1,10 @@
-import { Recreate_Editor_UI } from '../Items_Editor/Editor_UI';
-import { Setting, Update_StyleShift_Items } from '../Items_Editor/StyleShift_Items';
-import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from '../Modules/Extension_Main';
-import { Is_Same_OBJ } from '../Modules/NormalFunction';
-import { Load_Any } from '../Modules/Save';
-import { Recreate_Extension_Setting } from './Extension_Setting_UI';
-import { Create_StyleSheet } from './Settings_StyleSheet';
+import { Recreate_Editor_UI } from "../Items_Editor/Editor_UI";
+import { Setting, Update_StyleShift_Items } from "./StyleShift_Items";
+import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Extension_Main";
+import { Is_Same_OBJ } from "../Modules/NormalFunction";
+import { Load_Any } from "../Modules/Save";
+import { Recreate_Extension_Setting } from "./Extension_Setting_UI";
+import { Create_StyleSheet } from "./Settings_StyleSheet";
 
 export let Settings_Current_State = {};
 let Settings_Update_Function: { [key: string]: Function } = {};

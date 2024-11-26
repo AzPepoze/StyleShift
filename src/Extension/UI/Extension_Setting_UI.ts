@@ -1,9 +1,14 @@
-import { Get_ALL_StyleShift_Items } from '../Items_Editor/StyleShift_Items';
-import { In_Setting_Page } from '../Modules/Extension_Main';
-import { Click_To_Scroll, GetDocumentBody, sleep } from '../Modules/NormalFunction';
-import { Load } from '../Modules/Save';
-import { Get_Setting_Page_Only_Items } from '../Setting_Only_Items';
-import { Create_Setting_UI_Element, Dynamic_Append } from './Settings_UI';
+import { Get_ALL_StyleShift_Items } from "../Settings/StyleShift_Items";
+import { In_Setting_Page } from "../Modules/Extension_Main";
+import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
+import { Load } from "../Modules/Save";
+import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
+import {
+	Create_Inner_UI,
+	Create_Setting_UI_Element,
+	Create_Setting_UI_Element_With_Able_Developer_Mode,
+	Dynamic_Append,
+} from "./Settings_UI";
 
 let Setting_Frame: HTMLElement;
 let Setting_BG: HTMLElement;
@@ -70,8 +75,8 @@ export async function Create_Extension_Setting() {
 	Scroll_Left.setAttribute("Left", "true");
 	Main_Frame.append(Scroll_Left);
 
-	Scroll_Left.style.minWidth = "220px";
-	Scroll_Left.style.width = "220px";
+	Scroll_Left.style.minWidth = "100px";
+	Scroll_Left.style.width = "250px";
 
 	Scroll_Right = document.createElement("div");
 	Scroll_Right.className = "STYLESHIFT-Scrollable";
@@ -89,18 +94,19 @@ export async function Create_Extension_Setting() {
 	let Right_UI = [];
 
 	for (const Selector_Value of await Get_ALL_StyleShift_Items()) {
-		let Category_Title = await Create_Setting_UI_Element(
-			"Title",
-			Selector_Value.Category,
-			Selector_Value.Rainbow
-		);
-		Scroll_Right.append(Category_Title);
+		let Category_Title = (
+			await Create_Setting_UI_Element_With_Able_Developer_Mode(
+				Scroll_Right,
+				Selector_Value
+			)
+		).Frame;
 
 		let Left_Category_Title = await Create_Setting_UI_Element(
 			"Left-Title",
 			Selector_Value.Category,
 			Skip_Animation
 		);
+
 		Click_To_Scroll(Left_Category_Title, Category_Title);
 
 		Left_UI.push(Left_Category_Title);
@@ -108,26 +114,9 @@ export async function Create_Extension_Setting() {
 
 		Scroll_Left.append(Left_Category_Title);
 
-		if (await Load("Developer_Mode")) {
-			let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+		//------------------------------
 
-			Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
-
-			await Create_Setting_UI_Element(
-				"Selector_Text_Editor",
-				Selector_Frame,
-				Selector_Value
-			);
-
-			Scroll_Right.append(Selector_Frame);
-		}
-
-		for (const ThisSetting of Selector_Value.Settings) {
-			Dynamic_Append(
-				Scroll_Right,
-				await Create_Setting_UI_Element(ThisSetting.type, ThisSetting as any)
-			);
-		}
+		await Create_Inner_UI(Scroll_Right, Selector_Value);
 
 		//------------------------------
 
@@ -138,12 +127,9 @@ export async function Create_Extension_Setting() {
 
 			if (Get_Setting_Page_Only) {
 				for (const This_Setting_Only of Get_Setting_Page_Only.Settings) {
-					Dynamic_Append(
+					await Create_Setting_UI_Element_With_Able_Developer_Mode(
 						Scroll_Right,
-						await Create_Setting_UI_Element(
-							This_Setting_Only.type,
-							This_Setting_Only as any
-						)
+						This_Setting_Only
 					);
 				}
 			}

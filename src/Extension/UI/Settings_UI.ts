@@ -1,13 +1,29 @@
-import { Add_Setting, color_obj, Remove_Setting, Setting } from '../Items_Editor/StyleShift_Items';
 import {
-    Color_OBJ_to_HEX, HEX_to_Color_OBJ, In_Setting_Page, Run_Text_Script
-} from '../Modules/Extension_Main';
+	Add_Setting,
+	Category,
+	color_obj,
+	Remove_Setting,
+	Setting,
+} from "../Settings/StyleShift_Items";
 import {
-    Apply_Drag, deepClone, GetDocumentBody, HEX_to_RBG, HEX_to_RBGA, HSV_to_RGB, ReArrange_Selector,
-    RGB_to_HSV, sleep
-} from '../Modules/NormalFunction';
-import { Load, Load_Any, Save_All, Save_Any } from '../Modules/Save';
-import { Update_Setting_Function } from './Settings_Function';
+	Color_OBJ_to_HEX,
+	HEX_to_Color_OBJ,
+	In_Setting_Page,
+	Run_Text_Script,
+} from "../Modules/Extension_Main";
+import {
+	Apply_Drag,
+	deepClone,
+	GetDocumentBody,
+	HEX_to_RBG,
+	HEX_to_RBGA,
+	HSV_to_RGB,
+	ReArrange_Selector,
+	RGB_to_HSV,
+	sleep,
+} from "../Modules/NormalFunction";
+import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
+import { Update_Setting_Function } from "../Settings/Settings_Function";
 
 let Monaco: typeof import("monaco-editor");
 let Monaco_Themes;
@@ -68,29 +84,31 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		if (This_Setting.Editable && (await Load("Developer_Mode"))) {
-			const Config_Frame = (await Settings_UI["Config_UI"](Frame, This_Setting))
-				.Config_Frame;
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Setting.Editable,
+			async function (Parent) {
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Setting,
+					{
+						Text: "text",
+					},
+					Update_UI
+				);
+			}
+		);
 
-			//-----------------------------------------------
-
-			await Settings_UI["Config_Section_1"](
-				Config_Frame,
-				This_Setting,
-				{
-					Text: "text",
-				},
-				Update_UI
-			);
-		}
-
-		return Frame;
+		return { Frame, Config_UI_Function };
 	},
 
 	["Button"]: async function (This_Setting: Partial<Extract<Setting, { type: "Button" }>>) {
 		This_Setting.font_size = Number(This_Setting.font_size);
 
-		let Frame = Settings_UI["Setting_Frame"](false, true);
+		if (This_Setting.color == null) {
+			This_Setting.color = "#ffffff";
+		}
+
+		// let Frame = Settings_UI["Setting_Frame"](false, true);
 
 		//-------------------------------------
 
@@ -98,7 +116,7 @@ let Main_Setting_UI = {
 		Button.className = "STYLESHIFT-Button";
 		Button.style.borderRadius = "20px";
 
-		Frame.appendChild(Button);
+		// Frame.appendChild(Button);
 
 		//---------------------------------------
 
@@ -130,7 +148,8 @@ let Main_Setting_UI = {
 		//---------------------------------------
 
 		function Update_UI() {
-			Frame.id = This_Setting.id || "";
+			// Frame.id = This_Setting.id || "";
+			Button.id = This_Setting.id || "";
 
 			//-----------------------------------
 			let { r, g, b } = HEX_to_RBG(This_Setting.color);
@@ -191,40 +210,34 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		if (This_Setting.Editable && (await Load("Developer_Mode"))) {
-			Frame.style.padding = "10px";
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Setting.Editable,
+			async function (Parent) {
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Setting,
+					{
+						Id: "id",
+						Name: ["name", Button_Text],
+						Description: "description",
 
-			const Config_Frame = (await Settings_UI["Config_UI"](Frame, This_Setting))
-				.Config_Frame;
+						Icon: "icon",
+						["Text align"]: ["text_align", ["left", "center", "right"]],
+						Color: "color",
+						["Font size"]: "font_size",
+					},
+					Update_UI
+				);
 
-			//-----------------------------------------------
+				//-----------------------------------------------
 
-			await Settings_UI["Config_Section_1"](
-				Config_Frame,
-				This_Setting,
-				{
-					Id: "id",
-					Name: ["name", Button_Text],
-					Description: "description",
+				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+					click: 3,
+				});
+			}
+		);
 
-					Icon: "icon",
-					["Text align"]: ["text_align", ["left", "center", "right"]],
-					Color: "color",
-					["Font size"]: "font_size",
-				},
-				Update_UI
-			);
-
-			//-----------------------------------------------
-
-			await Settings_UI["Config_Section_2"](Config_Frame, This_Setting, {
-				click: 3,
-			});
-		} else {
-			Frame.style.background = "transparent";
-		}
-
-		return { Frame, Button };
+		return { Button, Config_UI_Function };
 	},
 
 	["Checkbox"]: async function (This_Setting: Partial<Extract<Setting, { type: "Checkbox" }>>) {
@@ -277,33 +290,31 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		if (This_Setting.Editable && (await Load("Developer_Mode"))) {
-			const Config_Frame = (await Settings_UI["Config_UI"](Frame, This_Setting))
-				.Config_Frame;
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Setting.Editable,
+			async function (Parent) {
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Setting,
+					{
+						Id: "id",
+						Name: ["name", Setting_Name],
+						Description: "description",
+					},
+					Update_UI
+				);
 
-			//-----------------------------------------------
+				//-----------------------------------------------
 
-			await Settings_UI["Config_Section_1"](
-				Config_Frame,
-				This_Setting,
-				{
-					Id: "id",
-					Name: ["name", Setting_Name],
-					Description: "description",
-				},
-				Update_UI
-			);
+				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+					setup: 0,
+					enable: 0,
+					disable: 0,
+				});
+			}
+		);
 
-			//-----------------------------------------------
-
-			await Settings_UI["Config_Section_2"](Config_Frame, This_Setting, {
-				setup: 0,
-				enable: 0,
-				disable: 0,
-			});
-		}
-
-		return Frame;
+		return { Frame, Config_UI_Function };
 	},
 
 	["Number_Slide"]: async function (
@@ -396,37 +407,35 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		if (This_Setting.Editable && (await Load("Developer_Mode"))) {
-			const Config_Frame = (await Settings_UI["Config_UI"](Frame, This_Setting))
-				.Config_Frame;
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Setting.Editable,
+			async function (Parent) {
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Setting,
+					{
+						Id: "id",
+						Name: ["name", Setting_Name],
+						Description: "description",
 
-			//-----------------------------------------------
+						Min: "min",
+						Max: "max",
+						Step: "step",
+					},
+					Update_UI
+				);
 
-			await Settings_UI["Config_Section_1"](
-				Config_Frame,
-				This_Setting,
-				{
-					Id: "id",
-					Name: ["name", Setting_Name],
-					Description: "description",
+				//-----------------------------------------------
 
-					Min: "min",
-					Max: "max",
-					Step: "step",
-				},
-				Update_UI
-			);
+				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+					var: 2,
+					setup: 0,
+					update: 3,
+				});
+			}
+		);
 
-			//-----------------------------------------------
-
-			await Settings_UI["Config_Section_2"](Config_Frame, This_Setting, {
-				var: 2,
-				setup: 0,
-				update: 3,
-			});
-		}
-
-		return Frame;
+		return { Frame, Config_UI_Function };
 	},
 
 	["Dropdown"]: async function (This_Setting: Partial<Extract<Setting, { type: "Dropdown" }>>) {
@@ -446,7 +455,7 @@ let Main_Setting_UI = {
 			text_align: "center",
 		});
 		Dropdown.Button.className += " STYLESHIFT-Dropdown";
-		SubFrame.appendChild(Dropdown.Frame);
+		SubFrame.appendChild(Dropdown.Button);
 
 		let Setting_Name = Settings_UI["Setting_Name"](This_Setting.name);
 		SubFrame.appendChild(Setting_Name);
@@ -558,7 +567,7 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Sub_Frame = Settings_UI["Setting_Frame"](false, false);
+		let Sub_Frame = Settings_UI["Setting_Frame"](false, false, { x: false, y: true });
 		Sub_Frame.setAttribute("settingtype", This_Setting.type);
 		Frame.append(Sub_Frame);
 
@@ -573,15 +582,17 @@ let Main_Setting_UI = {
 
 		let Opacity: HTMLDivElement;
 		if (This_Setting.show_alpha_slider != false) {
-			Opacity = await Settings_UI["Number_Slide"]({
-				min: 0,
-				max: 100,
-				step: 1,
-				value: HEX_to_Color_OBJ(This_Setting.value).Alpha,
-				update_function: function (value) {
-					Update_Value("Alpha", value / 100);
-				},
-			});
+			Opacity = (
+				await Settings_UI["Number_Slide"]({
+					min: 0,
+					max: 100,
+					step: 1,
+					value: HEX_to_Color_OBJ(This_Setting.value).Alpha,
+					update_function: function (value) {
+						Update_Value("Alpha", value / 100);
+					},
+				})
+			).Frame;
 			Opacity.style.width = "-webkit-fill-available";
 			Sub_Frame.appendChild(Opacity);
 		}
@@ -635,33 +646,31 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		if (This_Setting.Editable && (await Load("Developer_Mode"))) {
-			const Config_Frame = (await Settings_UI["Config_UI"](Frame, This_Setting))
-				.Config_Frame;
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Setting.Editable,
+			async function (Parent) {
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Setting,
+					{
+						Id: "id",
+						Name: ["name", Setting_Name],
+						Description: "description",
+					},
+					Update_UI
+				);
 
-			//-----------------------------------------------
+				//-----------------------------------------------
 
-			await Settings_UI["Config_Section_1"](
-				Config_Frame,
-				This_Setting,
-				{
-					Id: "id",
-					Name: ["name", Setting_Name],
-					Description: "description",
-				},
-				Update_UI
-			);
+				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+					setup: 0,
+					enable: 0,
+					disable: 0,
+				});
+			}
+		);
 
-			//-----------------------------------------------
-
-			await Settings_UI["Config_Section_2"](Config_Frame, This_Setting, {
-				setup: 0,
-				enable: 0,
-				disable: 0,
-			});
-		}
-
-		return Frame;
+		return { Frame, Config_UI_Function };
 	},
 
 	// ["File"]: async function (This_Setting: Partial<Extract<Setting, { type: "File" }>>) {
@@ -760,7 +769,8 @@ const Advance_Setting_UI = {
 	["Setting_Frame"]: function (
 		padding: boolean = true,
 		vertical: boolean = true,
-		center: { x: boolean; y: boolean } = { x: false, y: false }
+		center: { x: boolean; y: boolean } = { x: false, y: false },
+		transparent = false
 	) {
 		const Frame = document.createElement("div");
 		Frame.className = "STYLESHIFT-Setting-Frame";
@@ -783,6 +793,9 @@ const Advance_Setting_UI = {
 			Frame.style.alignItems = "center";
 		}
 
+		if (transparent) {
+			Frame.style.background = "transparent";
+		}
 		return Frame;
 	},
 
@@ -952,6 +965,7 @@ const Advance_Setting_UI = {
 
 		return Drag;
 	},
+
 	["Close"]: function () {
 		let Close = document.createElement("div");
 		Close.className = "STYLESHIFT-Close STYLESHIFT-Glow-Hover";
@@ -960,16 +974,33 @@ const Advance_Setting_UI = {
 		return Close;
 	},
 
-	["Title"]: function (Category, Rainbow = false) {
-		let Title = document.createElement("div");
-		Title.className = "STYLESHIFT-Category-Title";
-		if (Rainbow) {
-			Title.className += " STYLESHIFT-Category-Title-Rainbow";
-		}
-		Title.innerHTML = Category;
+	["Title"]: async function (This_Category: Category) {
+		let Frame = document.createElement("div");
+		Frame.className = "STYLESHIFT-Category-Title";
 
-		return Title;
+		if (This_Category.Rainbow) {
+			Frame.className += " STYLESHIFT-Category-Title-Rainbow";
+		}
+
+		Frame.innerHTML = This_Category.Category;
+
+		let Config_UI_Function = await Create_Config_UI_Function(false, async function (Parent) {
+			let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+
+			Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
+
+			await Create_Setting_UI_Element(
+				"Selector_Text_Editor",
+				Selector_Frame,
+				This_Category
+			);
+
+			Parent.append(Selector_Frame);
+		});
+
+		return { Frame, Config_UI_Function };
 	},
+
 	["Left-Title"]: function (Category, Skip_Animation) {
 		let Title = document.createElement("div");
 		Title.className = "STYLESHIFT-Left-Category-Title";
@@ -1320,7 +1351,7 @@ let Developer_Setting_UI = {
 			Editor.Text_Editor.style.height = "100px";
 		}
 
-		Parent.append(Collapsed_Button.Frame);
+		Parent.append(Collapsed_Button.Button);
 		Parent.append(This_Frame);
 
 		return This_Frame;
@@ -1370,15 +1401,17 @@ let Developer_Setting_UI = {
 			//-----------------------------------
 
 			if (Property == "color") {
-				let Color_UI = await Settings_UI["Color"]({
-					name: Title,
-					value: This_Setting.color,
-					show_alpha_slider: false,
-					update_function: function (value) {
-						This_Setting.color = value;
-						Update_UI();
-					},
-				});
+				let Color_UI = (
+					await Settings_UI["Color"]({
+						name: Title,
+						value: This_Setting.color,
+						show_alpha_slider: false,
+						update_function: function (value) {
+							This_Setting.color = value;
+							Update_UI();
+						},
+					})
+				).Frame;
 
 				Color_UI.className += " STYLESHIFT-Config-Sub-Frame";
 
@@ -1389,16 +1422,19 @@ let Developer_Setting_UI = {
 			//-----------------------------------
 
 			if (Property == "font_size") {
-				let Number_Slide_UI = await Settings_UI["Number_Slide"]({
-					name: Title,
-					value: This_Setting.font_size,
-					update_function: function (value) {
-						This_Setting.font_size = value;
-						Update_UI();
-					},
-				});
+				let Number_Slide_UI = (
+					await Settings_UI["Number_Slide"]({
+						name: Title,
+						value: This_Setting.font_size,
+						update_function: function (value) {
+							This_Setting.font_size = value;
+							Update_UI();
+						},
+					})
+				).Frame;
 
 				Number_Slide_UI.className += " STYLESHIFT-Config-Sub-Frame";
+				Number_Slide_UI.style.width = "-webkit-fill-available";
 
 				Parent.append(Number_Slide_UI);
 				continue;
@@ -1462,43 +1498,6 @@ let Developer_Setting_UI = {
 		return Selector_Text_Editor;
 	},
 
-	["Config_UI"]: async function (Parent, This_Setting) {
-		const Config_Frame = Settings_UI["Setting_Frame"](false, true);
-		Config_Frame.style.paddingTop = "10px";
-		Config_Frame.style.gap = "10px";
-
-		const Config_Button = await Settings_UI["Config_Button"](Config_Frame);
-		Config_Button.Frame.style.flexDirection = "row";
-		Config_Button.Frame.style.gap = "10px";
-		Config_Button.Frame.className += " STYLESHIFT-Config-Frame-Button";
-
-		Parent.append(Config_Button.Frame);
-		Parent.append(Config_Frame);
-
-		if (This_Setting) {
-			const Delete_Button = await Settings_UI["Setting_Delete_Button"](
-				Config_Frame,
-				function () {
-					Remove_Setting(This_Setting);
-				},
-				"mini"
-			);
-			Config_Button.Frame.append(Delete_Button.Frame);
-		}
-
-		return { Config_Frame, Config_Button };
-	},
-
-	["Config_Button"]: async function (Config_Frame) {
-		const Config_Button = await Settings_UI["Collapsed_Button"](
-			"Edit config",
-			"#999999",
-			Config_Frame
-		);
-		Config_Button.Frame.style.marginTop = "10px";
-		return Config_Button;
-	},
-
 	["Setting_Delete_Button"]: async function (Parent, WhenClick, type: "full" | "mini" = "full") {
 		const Setting_Delete_Button = await Settings_UI["Button"]({
 			name: "🗑️",
@@ -1506,7 +1505,7 @@ let Developer_Setting_UI = {
 			text_align: "center",
 		});
 		Setting_Delete_Button.Button.addEventListener("click", WhenClick);
-		Parent.append(Setting_Delete_Button.Frame);
+		Parent.append(Setting_Delete_Button.Button);
 
 		switch (type) {
 			case "full":
@@ -1595,9 +1594,104 @@ export async function Create_Setting_UI_Element<T extends UI_Type>(
 
 export function Dynamic_Append(Parent: HTMLDivElement, Child) {
 	console.log("Try Apeend", Child);
+
 	if (Child.Frame) {
 		Parent.appendChild(Child.Frame);
+		return;
+	}
+
+	if (Child.Button) {
+		Parent.appendChild(Child.Button);
+		return;
+	}
+
+	Parent.appendChild(Child);
+}
+
+//------------------------------
+
+export async function Create_Config_UI_Function(
+	Editable = false,
+	Config_Function: Function
+): Promise<Function> {
+	if (Editable && (await Load("Developer_Mode"))) {
+		return Config_Function;
+	}
+}
+
+export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
+	Parent: HTMLDivElement,
+	ThisSetting
+) {
+	const Main_Element = await Create_Setting_UI_Element(
+		ThisSetting.Category != null ? "Title" : ThisSetting.type,
+		ThisSetting as any
+	);
+
+	if (await Load("Developer_Mode")) {
+		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
+		Frame.className += " STYLESHIFT-Config-Frame";
+		Parent.append(Frame);
+
+		//---------------------------
+
+		const Move_Button = (
+			await Settings_UI["Button"]({
+				name: "☰",
+				text_align: "center",
+			})
+		).Button;
+		Move_Button.className += " STYLESHIFT-Config-Button";
+
+		Frame.append(Move_Button);
+
+		//---------------------------
+
+		const Main_Frame = Settings_UI["Setting_Frame"](
+			false,
+			false,
+			{ x: true, y: true },
+			ThisSetting.type == "Button" || ThisSetting.Category != null
+		);
+		Main_Frame.className += " STYLESHIFT-Main-Setting-Frame";
+		Frame.append(Main_Frame);
+
+		Dynamic_Append(Main_Frame, Main_Element);
+
+		//---------------------------
+
+		const Edit_Button = (
+			await Settings_UI["Button"]({
+				name: "✏️",
+				text_align: "center",
+				color: "#3399ff",
+			})
+		).Button;
+		Edit_Button.className += " STYLESHIFT-Config-Button";
+
+		Frame.append(Edit_Button);
+
+		const Delete_Button = (
+			await Settings_UI["Button"]({
+				name: "🗑️",
+				text_align: "center",
+				color: "#FF0000",
+			})
+		).Button;
+		Delete_Button.className += " STYLESHIFT-Config-Button";
+
+		Frame.append(Delete_Button);
+
+		//---------------------------
 	} else {
-		Parent.appendChild(Child);
+		Dynamic_Append(Parent, Main_Element);
+	}
+
+	return Main_Element;
+}
+
+export async function Create_Inner_UI(Parent, Selector_Value) {
+	for (const ThisSetting of Selector_Value.Settings) {
+		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, ThisSetting);
 	}
 }

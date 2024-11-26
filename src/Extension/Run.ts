@@ -6,7 +6,7 @@ import {
 	Get_ALL_StyleShift_Settings,
 	Get_Settings_List,
 	Update_StyleShift_Items,
-} from "./Items_Editor/StyleShift_Items";
+} from "./Settings/StyleShift_Items";
 import { In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
@@ -40,7 +40,7 @@ let Test_Editable_Items: Category[] = [
 				type: "Button",
 				name: "Ko-fi",
 				icon: "https://cdn.prod.website-files.com/5c14e387dab576fe667689cf/670f5a01229bf8a18f97a3c1_favion-p-500.png",
-				color: "#e60017ff",
+				color: "#ff040bff",
 				font_size: 15,
 				click_function: 'window.open("https://ko-fi.com/azpepoze");',
 				text_align: "left",
@@ -261,7 +261,7 @@ let Test_Editable_Items: Category[] = [
 async function Main_Run() {
 	// await ClearSave();
 	await Load_ThisWeb_Save();
-	// await Save("Custom_StyleShift_Items", Test_Editable_Items);
+	await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
 	await Set_Null_Save();
@@ -298,6 +298,10 @@ Main_Run();
 
 chrome.runtime.onMessage.addListener(async function (message) {
 	console.log(message);
+	if (In_Setting_Page) {
+		return;
+	}
+
 	if (message == "Customize") {
 		Toggle_Customize();
 	}

@@ -1,5 +1,5 @@
-import { color_obj } from '../Items_Editor/StyleShift_Items';
-import { HEX_to_RBGA, sleep } from './NormalFunction';
+import { color_obj } from "../Settings/StyleShift_Items";
+import { HEX_to_RBGA, sleep } from "./NormalFunction";
 
 export let Ver = chrome.runtime.getManifest().version;
 

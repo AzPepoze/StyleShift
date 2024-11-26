@@ -421,3 +421,12 @@ export function Input_File(Element: HTMLInputElement) {
 		}
 	});
 }
+
+export function Get_Current_URL_Parameters() {
+	const searchParams = new URL(window.location.href).searchParams;
+	const result: { [key: string]: string } = {};
+	searchParams.forEach((value, key) => {
+		result[key] = value;
+	});
+	return result;
+}

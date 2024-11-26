@@ -182,8 +182,9 @@
 	}
 
 	.STYLESHIFT-Setting-Frame {
-		width: auto;
-		padding: 10px;
+		width: -webkit-fill-available;
+		padding-inline: 10px;
+		padding-block: 20px;
 		display: flex;
 		gap: 3px;
 	}
@@ -214,6 +215,7 @@
 		user-select: none;
 		width: -webkit-fill-available;
 		flex-direction: row;
+		padding-block: 13px;
 	}
 
 	.STYLESHIFT-Button:hover {

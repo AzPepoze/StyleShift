@@ -1,9 +1,11 @@
 import {
-    Create_UniqueID, WaitDocumentLoaded, When_Element_Remove
-} from '../Modules/NormalFunction';
-import { Show_Confirm } from '../Settings/Extension_Setting_UI';
-import { Create_Editor_UI, Remove_Editor_UI } from './Editor_UI';
-import { Get_StyleShift_Items } from './StyleShift_Items';
+	Create_UniqueID,
+	WaitDocumentLoaded,
+	When_Element_Remove,
+} from "../Modules/NormalFunction";
+import { Show_Confirm } from "./Extension_Setting_UI";
+import { Create_Editor_UI, Remove_Editor_UI } from "./Editor_UI";
+import { Get_StyleShift_Items } from "../Settings/StyleShift_Items";
 
 let Highlight_Elements = {};
 

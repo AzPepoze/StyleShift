@@ -1,7 +1,7 @@
-import { Get_Default_Items } from '../Default_Items';
-import { Random } from '../Modules/NormalFunction';
-import { Load, Save_Any } from '../Modules/Save';
-import { SetUp_Setting_Function, Update_All } from '../Settings/Settings_Function';
+import { Get_Default_Items } from "../Default_Items";
+import { Random } from "../Modules/NormalFunction";
+import { Load, Save_Any } from "../Modules/Save";
+import { SetUp_Setting_Function, Update_All } from "./Settings_Function";
 
 let Highlight_Colors = [
 	`255, 109, 109`,

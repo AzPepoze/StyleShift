@@ -1,13 +1,25 @@
 import {
-    Get_Custom_Items, Get_Settings_List, Update_StyleShift_Items
-} from '../Items_Editor/StyleShift_Items';
-import { Color_OBJ_to_HEX } from './Extension_Main';
-import { Get_Current_Domain, sleep } from './NormalFunction';
+	Get_Custom_Items,
+	Get_Settings_List,
+	Update_StyleShift_Items,
+} from "../Settings/StyleShift_Items";
+import { Color_OBJ_to_HEX, In_Setting_Page } from "./Extension_Main";
+import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "./NormalFunction";
 
 //Save
 let Saved_Data = {};
 let Loaded = false;
-let Save_Name = Get_Current_Domain();
+let Save_Name;
+
+if (In_Setting_Page) {
+	let URL_Parameters = Get_Current_URL_Parameters();
+	if (URL_Parameters.Save_Domain) {
+		Save_Name = URL_Parameters.Save_Domain;
+	} else {
+	}
+} else {
+	Save_Name = Get_Current_Domain();
+}
 
 export let Save_External = [
 	"Current_Settings",
@@ -273,14 +285,15 @@ export async function ConvertToNewSave(Save) {
 }
 
 export async function Set_Null_Save() {
-	console.log("Test2", await Load("Current_Settings"));
 	if ((await Load("Current_Settings")) == null) {
 		await Save("Current_Settings", {});
 	}
 
-	console.log("Current All Settings", await Get_Settings_List());
+	if ((await Load("Themes")) == null) {
+		await Save("Themes", {});
+	}
+
 	let Current_Settings = await Load("Current_Settings");
-	console.log("Current_Settings", Current_Settings);
 
 	for (const [id, args] of Object.entries(await Get_Settings_List()) as [string, any]) {
 		if (Save_External.includes(id)) continue;
