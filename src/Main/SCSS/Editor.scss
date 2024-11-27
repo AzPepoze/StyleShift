@@ -1,4 +1,5 @@
 @use "Variables";
+@use "Animation";
 
 .STYLESHIFT-Main {
 	height: -webkit-fill-available;
@@ -42,6 +43,36 @@
 		font-size: 12px;
 		font-weight: 500;
 		user-select: none;
+	}
+
+	.STYLESHIFT-Search {
+		background: #ffffff38;
+		border-radius: 20px;
+		border: transparent;
+		padding: 10px;
+		font-size: 17px;
+		margin-top: 3px;
+
+		::placeholder {
+			color: #ff8888;
+		}
+	}
+
+	.STYLESHIFT-Category-Frame {
+		gap: 10px;
+
+		.STYLESHIFT-Add-Setting-Button {
+			margin-top: -56px;
+			transform: scaleY(0);
+			opacity: 0;
+		}
+
+		&:hover .STYLESHIFT-Add-Setting-Button,
+		.STYLESHIFT-Add-Setting-Button[selecting] {
+			margin-top: 0px;
+			transform: scaleY(1);
+			opacity: 1;
+		}
 	}
 }
 
@@ -101,9 +132,17 @@
 	scrollbar-color: #888 transparent;
 	scrollbar-width: thin;
 
-	> .STYLESHIFT-Setting-Frame,
-	.STYLESHIFT-Main-Setting-Frame {
+	.STYLESHIFT-Category-Frame {
 		background: var(--Setting-Frame-BG);
+	}
+
+	.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
+	.STYLESHIFT-Main-Setting-Frame {
+		background: radial-gradient(
+			at center top,
+			rgba(255, 255, 255, 0.23),
+			rgba(255, 255, 255, 0.1)
+		);
 	}
 }
 
@@ -124,8 +163,10 @@
 }
 
 .STYLESHIFT-Editor {
-	max-height: 80%;
 	resize: both;
+	overflow: auto;
+	height: 80%;
+	width: 30%;
 }
 
 textarea.STYLESHIFT-Selector-Text-Editor {
@@ -143,10 +184,12 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	background: #000000a1;
 }
 
-.STYLESHIFT-Main .STYLESHIFT-Scrollable > .STYLESHIFT-Config-Frame {
+.STYLESHIFT-Main .STYLESHIFT-Scrollable .STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame {
 	gap: 0px;
 
 	.STYLESHIFT-Config-Button {
+		--Config-Button-Size: 40px;
+
 		transition: all 0.2s;
 		opacity: 0;
 		min-width: 0px;
@@ -161,10 +204,10 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 
 		.STYLESHIFT-Config-Button {
 			opacity: 1;
-			min-width: 40px;
-			min-height: 40px;
-			max-width: 40px;
-			max-height: 40px;
+			min-width: var(--Config-Button-Size);
+			min-height: var(--Config-Button-Size);
+			max-width: var(--Config-Button-Size);
+			max-height: var(--Config-Button-Size);
 		}
 	}
 }
@@ -177,7 +220,6 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	z-index: 10000;
 	gap: 5px;
 	padding-block: 5px !important;
-	margin-block: 5px;
 }
 
 .STYLESHIFT-DropDown-Items {
@@ -190,4 +232,5 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	background: radial-gradient(at center top, rgb(99, 99, 99), rgba(66, 66, 66, 0.5));
 	color: rgb(255, 255, 255);
 	border: #ffffff17 solid 1px;
+	transition: all 0.2s;
 }

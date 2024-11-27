@@ -49,16 +49,20 @@ async function build() {
 	try {
 		console.log("Building");
 
+		let Build_Path = path.join(__dirname, "../out/build");
+
+		fs.copySync(path.join(__dirname, "../src/Extension"), Build_Path);
+
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/Extension/Run.ts")],
+			entryPoints: [path.join(__dirname, "../src/Main/Run.ts")],
 			bundle: true,
-			outfile: path.join(__dirname, "../dist/StyleShift.js"),
+			outfile: path.join(Build_Path, "StyleShift.js"),
 			platform: "browser",
 			minify: isProduction, // Enable minification for production builds
 		});
 
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/Extension/Modules/NormalFunction.ts")],
+			entryPoints: [path.join(__dirname, "../src/Main/Modules/NormalFunction.ts")],
 			outfile: path.join(__dirname, "../temp/NormalFunction.js"),
 			platform: "browser",
 			minify: isProduction,
@@ -66,14 +70,14 @@ async function build() {
 		});
 
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/Extension/Sent_Global_Functions.ts")],
-			outfile: path.join(__dirname, "../dist/Global_Functions.js"),
+			entryPoints: [path.join(__dirname, "../src/Main/Sent_Global_Functions.ts")],
+			outfile: path.join(Build_Path, "Global_Functions.js"),
 			platform: "browser",
 		});
 
 		let Functions_List_Data = "";
 		const Functions_List_Content = fs.readFileSync(
-			path.join(__dirname, "../src/Extension/Recived_Global_Functions.ts"),
+			path.join(__dirname, "../src/Main/Recived_Global_Functions.ts"),
 			"utf-8"
 		);
 		const Functions_List = [...Functions_List_Content.matchAll(/(\w+)\s*:/g)].map(
@@ -88,19 +92,20 @@ async function build() {
 			(
 				await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")
 			).replace(/export /g, "") +
-			(
-				await fs.readFile(path.join(__dirname, "../dist/Global_Functions.js"), "utf8")
-			).replace(/\n/g, "") +
+			(await fs.readFile(path.join(Build_Path, "Global_Functions.js"), "utf8")).replace(
+				/\n/g,
+				""
+			) +
 			Functions_List_Data;
 
 		await fs.writeFile(
-			path.join(__dirname, "../dist/Global_Functions.js"),
+			path.join(Build_Path, "Global_Functions.js"),
 			Global_Functions_Data,
 			"utf8"
 		);
 
-		let Chromium = path.join(__dirname, "../out/build/Chromium");
-		let Firefox = path.join(__dirname, "../out/build/Firefox");
+		let Chromium = path.join(__dirname, "../out/dist/Chromium");
+		let Firefox = path.join(__dirname, "../out/dist/Firefox");
 
 		if (fs.existsSync(Chromium)) {
 			fs.rmSync(Chromium, { recursive: true, force: true });
@@ -109,8 +114,8 @@ async function build() {
 			fs.rmSync(Firefox, { recursive: true, force: true });
 		}
 
-		fs.copySync(path.join(__dirname, "../dist"), Chromium);
-		fs.copySync(path.join(__dirname, "../dist"), Firefox);
+		fs.copySync(path.join(__dirname, "../out/build"), Chromium);
+		fs.copySync(path.join(__dirname, "../out/build"), Firefox);
 
 		await Replace_for_Firefox(path.join(Firefox, "Style.css"));
 		await Replace_for_Firefox(path.join(Firefox, "StyleShift.js"));
@@ -118,7 +123,9 @@ async function build() {
 		console.log("Built!");
 		console.log("--------------------------------");
 	} catch (error) {
-		console.log("Error!, Trying again!");
+		console.log("Error!");
+		console.log(error);
+		console.log("Trying again!");
 		setTimeout(() => {
 			build();
 		}, 500);
@@ -128,7 +135,9 @@ async function build() {
 	try {
 		fs.removeSync(path.join(__dirname, "../temp"));
 	} catch (error) {
-		console.log("Error!, Trying again!");
+		console.log("Error!");
+		console.log(error);
+		console.log("Trying again!");
 		setTimeout(() => {
 			build();
 		}, 500);
@@ -138,7 +147,7 @@ async function build() {
 if (isOnce) {
 	build();
 } else {
-	chokidar.watch(path.join(__dirname, "../src/Extension")).on("all", async (event, path) => {
+	chokidar.watch(path.join(__dirname, "../src/Main")).on("all", async (event, path) => {
 		console.log(event, path);
 		await build();
 	});

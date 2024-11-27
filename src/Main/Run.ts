@@ -1,5 +1,5 @@
-import { Toggle_Customize } from "./Items_Editor/Editor";
-import { Recreate_Editor_UI } from "./Items_Editor/Editor_UI";
+import { Toggle_Customize } from "./UI/Highlight_UI";
+import { Recreate_Editor_UI } from "./UI/Editor_UI";
 import {
 	Category,
 	Get_ALL_StyleShift_Items,
@@ -22,9 +22,10 @@ import {
 	Create_Extension_Setting,
 	Recreate_Extension_Setting,
 	Toggle_Extension_Setting,
-} from "./Settings/Extension_Setting_UI";
+} from "./UI/Extension_Setting_UI";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
+import { Update_All_UI } from "./UI/Extension_UI";
 
 console.log(Global);
 console.log(window.location.href);
@@ -298,18 +299,20 @@ Main_Run();
 
 chrome.runtime.onMessage.addListener(async function (message) {
 	console.log(message);
-	if (In_Setting_Page) {
-		return;
-	}
-
-	if (message == "Customize") {
-		Toggle_Customize();
-	}
 
 	if (message == "Developer") {
 		await Save("Developer_Mode", !(await Load("Developer_Mode")));
-		Recreate_Editor_UI();
-		Recreate_Extension_Setting();
+		Update_All_UI();
+	}
+
+	//----------------------------------------------
+
+	if (In_Setting_Page) return;
+
+	//----------------------------------------------
+
+	if (message == "Customize") {
+		Toggle_Customize();
 	}
 
 	if (message == "Setting") {

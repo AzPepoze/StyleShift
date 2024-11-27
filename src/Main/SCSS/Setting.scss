@@ -186,7 +186,6 @@
 		padding-inline: 10px;
 		padding-block: 20px;
 		display: flex;
-		gap: 3px;
 	}
 
 	.STYLESHIFT-Config-Sub-Frame {
@@ -200,7 +199,6 @@
 	}
 
 	.STYLESHIFT-Collapse {
-		overflow: hidden;
 		width: -webkit-fill-available;
 	}
 
@@ -362,6 +360,7 @@
 		overflow: hidden;
 		border-radius: 16px;
 		height: 15px;
+		filter: drop-shadow(1px 1px 4px #0000006e);
 
 		&::-webkit-slider-runnable-track {
 			height: 15px;
@@ -400,7 +399,7 @@
 		width: 50px;
 		min-height: 50px;
 		height: 50px;
-		box-shadow: rgba(255, 255, 255, 0.34) 0px 0px 5px;
+		box-shadow: rgba(0, 0, 0, 0.34) 1px 1px 7px;
 		transition: 0.2s;
 		border-radius: 100px;
 		background: transparent;

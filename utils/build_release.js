@@ -27,10 +27,9 @@ function zip(inputDir, output) {
 	archive.finalize();
 }
 
-fs.readdirSync(path.join(__dirname, "../out/build")).forEach((file) => {
+fs.readdirSync(path.join(__dirname, "../out/dist")).forEach((file) => {
 	zip(
-		path.join(__dirname, "../out/build", file),
+		path.join(__dirname, "../out/dist", file),
 		path.join(__dirname, "../out/release", file + ".zip")
 	);
 });
-

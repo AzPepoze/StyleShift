@@ -9,33 +9,23 @@ import {
 	Create_Setting_UI_Element_With_Able_Developer_Mode,
 	Dynamic_Append,
 } from "./Settings_UI";
-
-let Setting_Frame: HTMLElement;
-let Setting_BG: HTMLElement;
+import { Create_StyleShift_Window } from "./Extension_UI";
 
 let Scroll_Left: HTMLDivElement;
-let Scroll_Right: HTMLDivElement;
+export let Scroll_Right: HTMLDivElement;
 
-let Skip_Animation = false;
+let Current_Settings_Window: Awaited<ReturnType<typeof Create_StyleShift_Window>>;
 
 let Update_Setting_Interval;
 
-export async function Create_Extension_Setting() {
-	Setting_BG = await Create_Setting_UI_Element("Fill_Screen", false);
+export async function Create_Extension_Setting(Skip_Animation = false) {
+	Current_Settings_Window = await Create_StyleShift_Window(Skip_Animation);
+	const Setting_Frame = Current_Settings_Window.Editor;
 
-	(await GetDocumentBody()).appendChild(Setting_BG);
-
-	Setting_Frame = document.createElement("div");
-	Setting_BG.append(Setting_Frame);
-	Setting_Frame.className = "STYLESHIFT-Main";
-
-	Setting_Frame.style.width = "50%";
+	Setting_Frame.style.width = "47%";
 	Setting_Frame.style.height = "80%";
 	Setting_Frame.style.minWidth = "600px";
 	Setting_Frame.style.minHeight = "250px";
-	Setting_Frame.style.resize = "both";
-	Setting_Frame.style.overflow = "auto";
-	Setting_Frame.style.pointerEvents = "all";
 
 	if (In_Setting_Page) {
 		Setting_Frame.style.width = "100%";
@@ -43,50 +33,62 @@ export async function Create_Extension_Setting() {
 		Setting_Frame.style.resize = "none";
 	}
 
-	//-----------------------------------------------
-
-	let TopBar = document.createElement("div");
-	TopBar.className = "STYLESHIFT-TopBar";
-	Setting_Frame.append(TopBar);
-
-	let Drag_Top = await Create_Setting_UI_Element("Drag", Setting_Frame);
-	Drag_Top.style.width = "calc(100% - 5px - 27px)";
-	TopBar.append(Drag_Top);
-
-	let Close = await Create_Setting_UI_Element("Close");
-	Close.addEventListener(
-		"click",
-		function () {
-			Remove_Extension_Setting();
-		},
-		{ once: true }
-	);
-	TopBar.append(Close);
-
-	// Setting_Frame.append(await Create_Setting_UI_Element("Title", "⚙️ StyleShift Settings ⚙️"));
-
 	//------------------------------------------------
 
-	let Main_Frame = await Create_Setting_UI_Element("Setting_Frame", false, false);
-	Setting_Frame.append(Main_Frame);
-
-	Scroll_Left = document.createElement("div");
-	Scroll_Left.className = "STYLESHIFT-Scrollable";
-	Scroll_Left.setAttribute("Left", "true");
-	Main_Frame.append(Scroll_Left);
-
-	Scroll_Left.style.minWidth = "100px";
-	Scroll_Left.style.width = "250px";
-
-	Scroll_Right = document.createElement("div");
-	Scroll_Right.className = "STYLESHIFT-Scrollable";
-	Main_Frame.append(Scroll_Right);
-
+	let Main_Frame = await Create_Setting_UI_Element(
+		"Setting_Frame",
+		false,
+		false,
+		{ x: false, y: false },
+		true
+	);
 	Main_Frame.style.width = "calc(100% - 5px)";
 	Main_Frame.style.height = "-webkit-fill-available";
 	Main_Frame.style.gap = "10px";
 	Main_Frame.style.overflow = "hidden";
-	Main_Frame.style.background = "transparent";
+	Setting_Frame.append(Main_Frame);
+
+	//------------------------------------------------
+
+	Scroll_Left = document.createElement("div");
+	Scroll_Left.className = "STYLESHIFT-Scrollable";
+	Scroll_Left.style.minWidth = "100px";
+	Scroll_Left.style.width = "250px";
+	Scroll_Left.setAttribute("Left", "true");
+	Main_Frame.append(Scroll_Left);
+
+	//------------------------------------------------
+
+	const Right_Frame = await Create_Setting_UI_Element(
+		"Setting_Frame",
+		false,
+		true,
+		{ x: false, y: false },
+		true
+	);
+	Right_Frame.style.width = "-webkit-fill-available";
+	Right_Frame.style.height = "100%";
+	Right_Frame.style.gap = "10px";
+	Main_Frame.append(Right_Frame);
+
+	const Search_Input = document.createElement("input");
+	Search_Input.className = "STYLESHIFT-Search";
+	Search_Input.placeholder = "🔍 Search";
+	Right_Frame.append(Search_Input);
+
+	Scroll_Right = document.createElement("div");
+	Scroll_Right.className = "STYLESHIFT-Scrollable";
+	Right_Frame.append(Scroll_Right);
+
+	//---------------------------------------------------
+
+	Current_Settings_Window.Close.addEventListener(
+		"click",
+		() => {
+			Remove_Extension_Setting();
+		},
+		{ once: true }
+	);
 
 	//---------------------------------------------------
 
@@ -94,9 +96,13 @@ export async function Create_Extension_Setting() {
 	let Right_UI = [];
 
 	for (const Selector_Value of await Get_ALL_StyleShift_Items()) {
+		const Category_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+		Category_Frame.className += " STYLESHIFT-Category-Frame";
+		Scroll_Right.append(Category_Frame);
+
 		let Category_Title = (
 			await Create_Setting_UI_Element_With_Able_Developer_Mode(
-				Scroll_Right,
+				Category_Frame,
 				Selector_Value
 			)
 		).Frame;
@@ -116,7 +122,7 @@ export async function Create_Extension_Setting() {
 
 		//------------------------------
 
-		await Create_Inner_UI(Scroll_Right, Selector_Value);
+		await Create_Inner_UI(Category_Frame, Selector_Value);
 
 		//------------------------------
 
@@ -128,7 +134,7 @@ export async function Create_Extension_Setting() {
 			if (Get_Setting_Page_Only) {
 				for (const This_Setting_Only of Get_Setting_Page_Only.Settings) {
 					await Create_Setting_UI_Element_With_Able_Developer_Mode(
-						Scroll_Right,
+						Category_Frame,
 						This_Setting_Only
 					);
 				}
@@ -139,7 +145,7 @@ export async function Create_Extension_Setting() {
 
 		if (await Load("Developer_Mode")) {
 			Dynamic_Append(
-				Scroll_Right,
+				Category_Frame,
 				await Create_Setting_UI_Element("Add_Setting_Button", Selector_Value.Settings)
 			);
 		}
@@ -188,19 +194,20 @@ export async function Create_Extension_Setting() {
 	}, 100);
 }
 
-export function Remove_Extension_Setting() {
-	if (Setting_BG) {
+export function Remove_Extension_Setting(Skip_Animation = false) {
+	if (Current_Settings_Window) {
 		clearInterval(Update_Setting_Interval);
-		Setting_BG.remove();
-		Setting_BG = null;
-		Setting_Frame = null;
-		Scroll_Left = null;
-		Scroll_Right = null;
+		if (Skip_Animation) {
+			Current_Settings_Window.Setting_BG.remove();
+		} else {
+			Current_Settings_Window.Close.click();
+		}
+		Current_Settings_Window = null;
 	}
 }
 
 export async function Toggle_Extension_Setting() {
-	if (Setting_BG) {
+	if (Current_Settings_Window) {
 		Remove_Extension_Setting();
 	} else {
 		Create_Extension_Setting();
@@ -208,22 +215,15 @@ export async function Toggle_Extension_Setting() {
 }
 
 export async function Recreate_Extension_Setting() {
-	if (Setting_BG) {
+	if (Current_Settings_Window) {
 		let Last_Scroll = Scroll_Left.scrollTop;
 		let Right_Scroll = Scroll_Right.scrollTop;
-		let Last_Style = Setting_Frame.style.cssText;
-		Remove_Extension_Setting();
-		Skip_Animation = true;
-		await Create_Extension_Setting();
-		Skip_Animation = false;
-		Setting_Frame.style.cssText = Last_Style;
+		Current_Settings_Window.Editor.style.animation = "";
+		let Last_Style = Current_Settings_Window.Editor.style.cssText;
+		Remove_Extension_Setting(true);
+		await Create_Extension_Setting(true);
+		Current_Settings_Window.Editor.style.cssText = Last_Style;
 		Scroll_Left.scrollTo(0, Last_Scroll);
 		Scroll_Right.scrollTo(0, Right_Scroll);
 	}
-}
-
-export async function Show_Confirm(ask) {
-	return new Promise((resolve, reject) => {
-		resolve(confirm(ask));
-	});
 }

@@ -17,7 +17,7 @@ const workerEntryPoints = [
 		),
 		bundle: true,
 		format: "iife",
-		outdir: path.join(__dirname, "../dist/Setting_Page/monaco"),
+		outdir: path.join(__dirname, "../out/build/Setting_Page/monaco"),
 		minify: true,
 		loader: {
 			".ttf": "file",
@@ -28,7 +28,7 @@ const workerEntryPoints = [
 		entryPoints: [path.join(__dirname, "../src/Setting_Page/index.js")],
 		bundle: true,
 		format: "iife",
-		outfile: path.join(__dirname, "../dist/Setting_Page/index.js"),
+		outfile: path.join(__dirname, "../out/build/Setting_Page/index.js"),
 		minify: true,
 		loader: {
 			".ttf": "file",
@@ -52,7 +52,7 @@ const workerEntryPoints = [
 	}
 
 	File_Content_Replace(
-		path.join(__dirname, "../dist/Setting_Page/index.js"),
+		path.join(__dirname, "../out/build/Setting_Page/index.js"),
 		/"Monaco_All_Themes"/g,
 		JSON.stringify(getLocalThemes())
 	);
