@@ -38,7 +38,7 @@ Follow these steps to install and set up `StyleShift`:
 
 4. **Edit Default Items**:
 
-     - Edit Default Items in `src > Extension > Default_Items.ts`
+     - Edit Default Items in `src > Main > Default_Items.ts`
 
 5. **Build the project**:
 
@@ -46,10 +46,10 @@ Follow these steps to install and set up `StyleShift`:
      npm run build
      ```
 
-     - This will create both Chrome and Firefox versions in the `out > build` folder.
+     - This will create both Chrome and Firefox versions in the `out > dist` folder.
 
 6. **Load the extension into your browser**:
-     - For **Chrome**: Open `chrome://extensions/` and enable "Developer mode," then load the unpacked extension from the `out > build > chrome` folder.
-     - For **Firefox**: Open `about:debugging`, click "This Firefox," and load the extension from the `out > build > firefox` folder.
+     - For **Chrome**: Open `chrome://extensions/` and enable "Developer mode," then load the unpacked extension from the `out > dist > chrome` folder.
+     - For **Firefox**: Open `about:debugging`, click "This Firefox," and load the extension from the `out > dist > firefox` folder.
 
 ---
