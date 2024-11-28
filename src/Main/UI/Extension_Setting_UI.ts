@@ -178,7 +178,9 @@ export async function Create_Extension_Setting(Skip_Animation = false) {
 				index == Last_Index ||
 				(Right_UI[index].getBoundingClientRect().top - 10 <= Scroll_Right_Box.top &&
 					Right_UI[index + 1].getBoundingClientRect().top - 10 >=
-						Scroll_Right_Box.top)
+						Scroll_Right_Box.top) ||
+				(index == 0 &&
+					Right_UI[index].getBoundingClientRect().top >= Scroll_Right_Box.top)
 			) {
 				if (Current_Selected == Left_UI[index]) {
 					break;

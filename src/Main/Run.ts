@@ -1,12 +1,3 @@
-import { Toggle_Customize } from "./UI/Highlight_UI";
-import { Recreate_Editor_UI } from "./UI/Editor_UI";
-import {
-	Category,
-	Get_ALL_StyleShift_Items,
-	Get_ALL_StyleShift_Settings,
-	Get_Settings_List,
-	Update_StyleShift_Items,
-} from "./Settings/StyleShift_Items";
 import { In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
@@ -18,14 +9,21 @@ import {
 	Set_Null_Save,
 } from "./Modules/Save";
 import * as Global from "./Recived_Global_Functions";
-import {
-	Create_Extension_Setting,
-	Recreate_Extension_Setting,
-	Toggle_Extension_Setting,
-} from "./UI/Extension_Setting_UI";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
+import {
+	Category,
+	Get_ALL_StyleShift_Items,
+	Get_ALL_StyleShift_Settings,
+	Get_Settings_List,
+	Update_StyleShift_Items,
+} from "./Settings/StyleShift_Items";
+import {
+	Create_Extension_Setting,
+	Toggle_Extension_Setting
+} from "./UI/Extension_Setting_UI";
 import { Update_All_UI } from "./UI/Extension_UI";
+import { Toggle_Customize } from "./UI/Highlight_UI";
 
 console.log(Global);
 console.log(window.location.href);
@@ -261,6 +259,25 @@ let Test_Editable_Items: Category[] = [
 
 async function Main_Run() {
 	// await ClearSave();
+
+	let Global_Functions = await (
+		await fetch(chrome.runtime.getURL("Global_Functions.js"))
+	).text();
+	// Global_Functions =
+	// 	`window["StyleShift"] = {};` +
+	// 	Global_Functions.replace(
+	// 		/\b(async\s+)?function\s+([\w$]+)\s*\(/g,
+	// 		'window["StyleShift"]["$2"] = $1function('
+	// 	).replace(/}window/g, "};window");
+	// +`console.log(window["StyleShift"])`;
+
+	// console.log(Global_Functions);
+
+	Run_Text_Script(Global_Functions);
+	Run_Text_Script(`window["StyleShift"]["_Variables"] = {};`);
+
+	// await Inject_Text_Script(Global_Functions);
+
 	await Load_ThisWeb_Save();
 	await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();

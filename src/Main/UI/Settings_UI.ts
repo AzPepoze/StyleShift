@@ -983,19 +983,26 @@ const Advance_Setting_UI = {
 
 		Frame.innerHTML = This_Category.Category;
 
-		let Config_UI_Function = await Create_Config_UI_Function(false, async function (Parent) {
-			let Selector_Frame = await Create_Setting_UI_Element("Setting_Frame", true, true);
+		let Config_UI_Function = await Create_Config_UI_Function(
+			This_Category.Editable,
+			async function (Parent) {
+				let Selector_Frame = await Create_Setting_UI_Element(
+					"Setting_Frame",
+					true,
+					true
+				);
 
-			Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
+				Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
 
-			await Create_Setting_UI_Element(
-				"Selector_Text_Editor",
-				Selector_Frame,
-				This_Category
-			);
+				await Create_Setting_UI_Element(
+					"Selector_Text_Editor",
+					Selector_Frame,
+					This_Category
+				);
 
-			Parent.append(Selector_Frame);
-		});
+				Parent.append(Selector_Frame);
+			}
+		);
 
 		return { Frame, Config_UI_Function };
 	},
@@ -1650,7 +1657,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 		ThisSetting as any
 	);
 
-	if (await Load("Developer_Mode")) {
+	if ((await Load("Developer_Mode")) && ThisSetting.Editable) {
 		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
 		Frame.className += " STYLESHIFT-Config-Frame";
 		Parent.append(Frame);

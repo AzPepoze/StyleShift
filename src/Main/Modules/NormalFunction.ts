@@ -430,3 +430,16 @@ export function Get_Current_URL_Parameters() {
 	});
 	return result;
 }
+
+// export async function Inject_Text_Script(Text) {
+// 	console.log("Inject_Text_Script", Text);
+// 	try {
+// 		const script = document.createElement("script");
+// 		script.textContent = Text;
+// 		(await GetDocumentHead()).appendChild(script);
+// 		script.remove();
+// 	} catch (e) {
+// 		await sleep(100);
+// 		Inject_Text_Script(Text);
+// 	}
+// }

@@ -29,6 +29,8 @@ export async function Show_Config_UI(Inner_Content_Function: Function) {
 }
 
 export async function Recreate_Config_UI() {
+	if (!Config_Window) return;
+
 	Scrollable.innerHTML = "";
 	Current_Content_Function(Scrollable);
 }

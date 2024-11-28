@@ -1,4 +1,3 @@
-import { Category, Get_Custom_Items } from "./Settings/StyleShift_Items";
 import {
 	deepClone,
 	Download_File,
@@ -9,6 +8,7 @@ import {
 } from "./Modules/NormalFunction";
 import { Settings_Current_State } from "./Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "./Settings/Settings_StyleSheet";
+import { Get_Custom_Items } from "./Settings/StyleShift_Items";
 
 let JSzip: typeof import("jszip");
 
@@ -185,6 +185,18 @@ export let StyleShift_Functions = {
 
 	Get: function (id) {
 		return Settings_Current_State[id];
+	},
+
+	//---------------------------------------
+
+	Set_Variable: function (id, value) {
+		setTimeout(() => {
+			`window["StyleShift"]["_Variables"]["${id}"] = ${value};`;
+		}, 0);
+	},
+
+	Get_Variable: function (id) {
+		return window["StyleShift"]["_Variables"][id];
 	},
 };
 

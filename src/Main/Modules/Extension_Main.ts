@@ -1,5 +1,5 @@
 import { color_obj } from "../Settings/StyleShift_Items";
-import { HEX_to_RBGA, sleep } from "./NormalFunction";
+import { GetDocumentHead, HEX_to_RBGA, sleep } from "./NormalFunction";
 
 export let Ver = chrome.runtime.getManifest().version;
 
@@ -40,14 +40,18 @@ export async function Run_Text_Script(Text) {
 	console.log("Trying to run script");
 	console.log(Text);
 
-	if (Text != null && Text != "") {
-		if (!In_Setting_Page) {
-			chrome.runtime.sendMessage({
-				Command: "RunScript",
-				Script: Text,
-			});
-		}
-	}
+	setTimeout(Text, 0);
+
+	// Inject_Text_Script(Text);
+
+	// if (Text != null && Text != "") {
+	// 	if (!In_Setting_Page) {
+	// 		chrome.runtime.sendMessage({
+	// 			Command: "RunScript",
+	// 			Script: Text,
+	// 		});
+	// 	}
+	// }
 }
 
 //----------------------------------------------

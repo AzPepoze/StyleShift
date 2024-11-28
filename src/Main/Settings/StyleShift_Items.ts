@@ -16,6 +16,7 @@ export type Category = {
 	Rainbow?: boolean;
 	Selector?: string;
 
+	Editable?: boolean;
 	Settings: Setting[];
 	Highlight_Color?: string;
 };
@@ -190,6 +191,10 @@ export async function Update_StyleShift_Items() {
 		return This_Setting.Settings;
 	})) {
 		This_Setting.Editable = false;
+	}
+
+	for (const This_Category of StyleShift_Items.Custom) {
+		This_Category.Editable = true;
 	}
 
 	for (const This_Setting of StyleShift_Items.Custom.flatMap(function (This_Setting) {

@@ -1,10 +1,6 @@
 // @ts-nocheck
 
-//---------------------------------------------------------
-// Setup Main Functions
-//---------------------------------------------------------
-
-function StyleShift(function_name, ...args) {
+StyleShift["_Call_Function"] = function (function_name, ...args) {
 	const remote_id = Create_UniqueID(10);
 
 	const Sent_Event = new CustomEvent(`StyleShift_${function_name}`, {
@@ -27,8 +23,4 @@ function StyleShift(function_name, ...args) {
 			{ once: true }
 		);
 	});
-}
-
-//---------------------------------------------------------
-// List Functions
-//---------------------------------------------------------
+};

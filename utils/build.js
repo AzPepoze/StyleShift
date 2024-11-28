@@ -61,8 +61,29 @@ async function build() {
 			minify: isProduction, // Enable minification for production builds
 		});
 
+		fs.copySync(
+			path.join(__dirname, "../src/Main/Modules/NormalFunction.ts"),
+			path.join(__dirname, "../temp/NormalFunction.ts")
+		);
+
+		fs.writeFileSync(
+			path.join(__dirname, "../temp/NormalFunction.ts"),
+			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.ts"), "utf8"))
+				.replace(/export /g, "")
+				.replace(
+					/\b(async\s+)?function\s+([\w$]+)\s*\(/g,
+					(match, asyncKeyword, functionName) => {
+						if (asyncKeyword) {
+							return `StyleShift["${functionName}"] = async function(`;
+						} else {
+							return `StyleShift["${functionName}"] = function(`;
+						}
+					}
+				)
+		);
+
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/Main/Modules/NormalFunction.ts")],
+			entryPoints: [path.join(__dirname, "../temp/NormalFunction.ts")],
 			outfile: path.join(__dirname, "../temp/NormalFunction.js"),
 			platform: "browser",
 			minify: isProduction,
@@ -85,13 +106,12 @@ async function build() {
 		);
 
 		for (const Function_Name of Functions_List) {
-			Functions_List_Data += `async function ${Function_Name}(...args){return await StyleShift("${Function_Name}",...args)};`;
+			Functions_List_Data += `StyleShift["${Function_Name}"] = async function(...args){return await StyleShift["_Call_Function"]("${Function_Name}",...args)};`;
 		}
 
 		let Global_Functions_Data =
-			(
-				await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")
-			).replace(/export /g, "") +
+			`StyleShift = {};` +
+			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")) +
 			(await fs.readFile(path.join(Build_Path, "Global_Functions.js"), "utf8")).replace(
 				/\n/g,
 				""

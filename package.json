@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.268",
-		"@types/node": "^22.9.1",
+		"@types/node": "^22.10.0",
 		"archiver": "^7.0.1",
 		"azpepoze.node_tools": "^1.0.0",
 		"chokidar": "^4.0.1",
@@ -32,6 +32,6 @@
 		"npm-run-all": "^4.1.5",
 		"sass": "^1.81.0",
 		"ts-loader": "^9.5.1",
-		"typescript": "^5.6.3"
+		"typescript": "^5.7.2"
 	}
 }

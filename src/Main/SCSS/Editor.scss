@@ -53,8 +53,8 @@
 		font-size: 17px;
 		margin-top: 3px;
 
-		::placeholder {
-			color: #ff8888;
+		&::placeholder {
+			color: #b8b8b8;
 		}
 	}
 
@@ -138,6 +138,12 @@
 
 	.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
 	.STYLESHIFT-Main-Setting-Frame {
+		// &:hover {
+		// 	filter: drop-shadow(0px 0px 10px white);
+		// 	background: radial-gradient(at center top, rgb(104, 104, 104), rgb(64, 64, 64));
+		// }
+
+		// transition: all 0.2s;
 		background: radial-gradient(
 			at center top,
 			rgba(255, 255, 255, 0.23),
