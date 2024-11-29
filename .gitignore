@@ -1,13 +1,3 @@
 .vscode
-
-dist/StyleShift.js
-dist/Style.css
-dist/Global_Functions.js
-
-dist/Setting_Page/monaco
-dist/Setting_Page/codicon-37A3DWZT.ttf
-dist/Setting_Page/index.css
-dist/Setting_Page/index.js
-
 node_modules
 out
