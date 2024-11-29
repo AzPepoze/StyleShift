@@ -9,10 +9,10 @@ import {
 import { Settings_Current_State } from "./Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "./Settings/Settings_StyleSheet";
 import { Get_Custom_Items } from "./Settings/StyleShift_Items";
-
-let JSzip: typeof import("jszip");
+import { JSzip } from "./UI/Extension_UI";
 
 export let StyleShift_Functions = {
+	// Danger Zone !!!
 	Enable_Extension_Function: function () {
 		Show_StyleSheet();
 	},
@@ -52,8 +52,6 @@ export let StyleShift_Functions = {
 	},
 
 	Export_JSON_To_ZIP: async (jsonData, zipFileName) => {
-		JSzip = window["JSzip"].default;
-
 		console.log("Data", jsonData);
 
 		try {
@@ -119,8 +117,6 @@ export let StyleShift_Functions = {
 	},
 
 	Import_ZIP_TO_JSON: async (zipData) => {
-		JSzip = window["JSzip"].default;
-
 		const JSON_Data = {};
 
 		try {
@@ -183,21 +179,11 @@ export let StyleShift_Functions = {
 	RGB_to_HSV: RGB_to_HSV,
 	HSV_to_RGB: HSV_to_RGB,
 
-	Get: function (id) {
+	Get_StyleShift_Value: function (id) {
 		return Settings_Current_State[id];
 	},
 
-	//---------------------------------------
-
-	Set_Variable: function (id, value) {
-		setTimeout(() => {
-			`window["StyleShift"]["_Variables"]["${id}"] = ${value};`;
-		}, 0);
-	},
-
-	Get_Variable: function (id) {
-		return window["StyleShift"]["_Variables"][id];
-	},
+	//---------------------------------------------
 };
 
 for (const This_Function_Name of Object.keys(StyleShift_Functions)) {

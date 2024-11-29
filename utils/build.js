@@ -74,9 +74,9 @@ async function build() {
 					/\b(async\s+)?function\s+([\w$]+)\s*\(/g,
 					(match, asyncKeyword, functionName) => {
 						if (asyncKeyword) {
-							return `StyleShift["${functionName}"] = async function(`;
+							return `StyleShift["Build-in"]["${functionName}"] = async function(`;
 						} else {
-							return `StyleShift["${functionName}"] = function(`;
+							return `StyleShift["Build-in"]["${functionName}"] = function(`;
 						}
 					}
 				)
@@ -101,22 +101,26 @@ async function build() {
 			path.join(__dirname, "../src/Main/Recived_Global_Functions.ts"),
 			"utf-8"
 		);
-		const Functions_List = [...Functions_List_Content.matchAll(/(\w+)\s*:/g)].map(
-			(x) => x[1]
-		);
+		const Functions_List = [
+			...Functions_List_Content.matchAll(
+				/(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g
+			),
+		].map((x) => x[1]);
 
 		for (const Function_Name of Functions_List) {
-			Functions_List_Data += `StyleShift["${Function_Name}"] = async function(...args){return await StyleShift["_Call_Function"]("${Function_Name}",...args)};`;
+			Functions_List_Data += `StyleShift["Build-in"]["${Function_Name}"] = async function(...args){return await StyleShift["Build-in"]["_Call_Function"]("${Function_Name}",...args)};`;
 		}
 
+		Functions_List_Data += "window['StyleShift'] = StyleShift;";
+
 		let Global_Functions_Data =
-			`StyleShift = {};` +
+			`StyleShift = {"Build-in":{},"Custom":{}};` +
 			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")) +
 			(await fs.readFile(path.join(Build_Path, "Global_Functions.js"), "utf8")).replace(
 				/\n/g,
 				""
 			) +
-			Functions_List_Data;
+			Functions_List_Data;	
 
 		await fs.writeFile(
 			path.join(Build_Path, "Global_Functions.js"),

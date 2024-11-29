@@ -74,81 +74,127 @@
 			opacity: 1;
 		}
 	}
-}
 
-.STYLESHIFT-Glow-Hover:hover {
-	filter: brightness(1.4);
-}
+	//----------------------------------------
 
-.STYLESHIFT-TopBar {
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	user-select: none;
-}
-
-.STYLESHIFT-Drag-Top {
-	width: 100%;
-	height: 20px;
-	text-align: center;
-	background: var(--Drag-Top-BG);
-	transition: 0.2s all;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 20px;
-	border-radius: 100px;
-}
-
-.STYLESHIFT-Scrollable {
-	position: relative;
-	overflow-y: auto;
-	width: 100%;
-	height: 100%;
-	border-radius: var(--Border-Radius);
-	transform: translateZ(0px);
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	&[Left] {
-		resize: horizontal;
-		background: var(--Category-Left-BG);
+	.STYLESHIFT-Glow-Hover:hover {
+		filter: brightness(1.4);
 	}
 
-	::-webkit-scrollbar {
-		width: 10px;
+	.STYLESHIFT-TopBar {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		user-select: none;
 	}
 
-	::-webkit-scrollbar-track {
-		background: transparent;
+	.STYLESHIFT-Drag-Top {
+		width: 100%;
+		height: 20px;
+		text-align: center;
+		background: var(--Drag-Top-BG);
+		transition: 0.2s all;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 20px;
+		border-radius: 100px;
 	}
 
-	::-webkit-scrollbar-thumb {
-		background: #888;
+	.STYLESHIFT-Scrollable {
+		position: relative;
+		overflow-y: auto;
+		width: 100%;
+		height: 100%;
+		border-radius: var(--Border-Radius);
+		transform: translateZ(0px);
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+
+		&[Left] {
+			resize: horizontal;
+			background: var(--Category-Left-BG);
+		}
+
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #888;
+		}
+
+		scrollbar-color: #888 transparent;
+		scrollbar-width: thin;
+
+		.STYLESHIFT-Category-Frame {
+			background: var(--Setting-Frame-BG);
+		}
+
+		.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
+		.STYLESHIFT-Main-Setting-Frame {
+			// &:hover {
+			// 	filter: drop-shadow(0px 0px 10px white);
+			// 	background: radial-gradient(at center top, rgb(104, 104, 104), rgb(64, 64, 64));
+			// }
+
+			// transition: all 0.2s;
+			background: radial-gradient(
+				at center top,
+				rgba(255, 255, 255, 0.23),
+				rgba(255, 255, 255, 0.1)
+			);
+		}
 	}
 
-	scrollbar-color: #888 transparent;
-	scrollbar-width: thin;
+	//----------------------------------------
 
-	.STYLESHIFT-Category-Frame {
-		background: var(--Setting-Frame-BG);
+	.STYLESHIFT-Scrollable .STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame {
+		gap: 0px;
+
+		.STYLESHIFT-Config-Button {
+			--Config-Button-Size: 40px;
+
+			transition: all 0.2s;
+			opacity: 0;
+			min-width: 0px;
+			min-height: 0px;
+			max-width: 0px;
+			max-height: 0px;
+			padding: 0px;
+			border-width: 0px;
+		}
+
+		&:hover {
+			gap: 10px;
+
+			.STYLESHIFT-Config-Button {
+				opacity: 1;
+				min-width: var(--Config-Button-Size);
+				min-height: var(--Config-Button-Size);
+				max-width: var(--Config-Button-Size);
+				max-height: var(--Config-Button-Size);
+				border-width: 1px;
+			}
+		}
 	}
 
-	.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
-	.STYLESHIFT-Main-Setting-Frame {
-		// &:hover {
-		// 	filter: drop-shadow(0px 0px 10px white);
-		// 	background: radial-gradient(at center top, rgb(104, 104, 104), rgb(64, 64, 64));
-		// }
+	.STYLESHIFT-Scrollable {
+		.STYLESHIFT-Add-Category-Button {
+			opacity: 0;
+		}
 
-		// transition: all 0.2s;
-		background: radial-gradient(
-			at center top,
-			rgba(255, 255, 255, 0.23),
-			rgba(255, 255, 255, 0.1)
-		);
+		&:hover {
+			.STYLESHIFT-Add-Category-Button {
+				opacity: 1;
+			}
+		}
 	}
 }
 
@@ -188,34 +234,6 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	align-items: center;
 	z-index: 10000;
 	background: #000000a1;
-}
-
-.STYLESHIFT-Main .STYLESHIFT-Scrollable .STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame {
-	gap: 0px;
-
-	.STYLESHIFT-Config-Button {
-		--Config-Button-Size: 40px;
-
-		transition: all 0.2s;
-		opacity: 0;
-		min-width: 0px;
-		min-height: 0px;
-		max-width: 0px;
-		max-height: 0px;
-		padding: 0px;
-	}
-
-	&:hover {
-		gap: 10px;
-
-		.STYLESHIFT-Config-Button {
-			opacity: 1;
-			min-width: var(--Config-Button-Size);
-			min-height: var(--Config-Button-Size);
-			max-width: var(--Config-Button-Size);
-			max-height: var(--Config-Button-Size);
-		}
-	}
 }
 
 .STYLESHIFT-DropDown-Container {

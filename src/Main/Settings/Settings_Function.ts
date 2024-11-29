@@ -1,6 +1,11 @@
 import { Recreate_Editor_UI } from "../UI/Editor_UI";
 import { Setting, Update_StyleShift_Items } from "./StyleShift_Items";
-import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Extension_Main";
+import {
+	Color_OBJ_to_HEX,
+	HEX_to_Color_OBJ,
+	Run_Text_Script,
+	Update_StyleShift_Functions_List,
+} from "../Modules/Extension_Main";
 import { Is_Same_OBJ } from "../Modules/NormalFunction";
 import { Load_Any } from "../Modules/Save";
 import { Recreate_Extension_Setting } from "../UI/Extension_Setting_UI";
@@ -215,9 +220,4 @@ export async function Update_Setting_Function(id) {
 	console.log("Update", id, Settings_Update_Function[id]);
 	Settings_Update_Function[id]();
 	console.log(Settings_Update_Function[id].toString());
-}
-
-export function Update_All() {
-	Update_StyleShift_Items();
-	Update_All_UI();
 }

@@ -1,4 +1,8 @@
-import { In_Setting_Page, Run_Text_Script } from "./Modules/Extension_Main";
+import {
+	In_Setting_Page,
+	Run_Text_Script,
+	Update_StyleShift_Functions_List,
+} from "./Modules/Extension_Main";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
 	Clear_Unnessary_Save,
@@ -18,11 +22,8 @@ import {
 	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Settings/StyleShift_Items";
-import {
-	Create_Extension_Setting,
-	Toggle_Extension_Setting
-} from "./UI/Extension_Setting_UI";
-import { Update_All_UI } from "./UI/Extension_UI";
+import { Create_Extension_Setting, Toggle_Extension_Setting } from "./UI/Extension_Setting_UI";
+import { Load_Developer_Modules, Update_All_UI } from "./UI/Extension_UI";
 import { Toggle_Customize } from "./UI/Highlight_UI";
 
 console.log(Global);
@@ -164,8 +165,7 @@ let Test_Editable_Items: Category[] = [
 				icon: "",
 				color: "#1932ffff",
 				font_size: 15,
-				click_function:
-					'await StyleShift("Copy_to_clipboard",await StyleShift("Export_Custom_Items_Text"));',
+				click_function: "await Copy_to_clipboard(await Export_Custom_Items_Text());",
 				text_align: "center",
 				description: "",
 				id: "",
@@ -253,39 +253,53 @@ let Test_Editable_Items: Category[] = [
 		Category: "📰 Thumbnail",
 		Selector:
 			"ytd-watch-next-secondary-results-renderer #contents > .ytd-item-section-renderer:not(ytd-reel-shelf-renderer),\nytd-rich-grid-renderer #contents > .ytd-rich-grid-renderer:(ytd-rich-item-renderer)",
-		Settings: [],
+		Settings: [
+			{
+				type: "Checkbox",
+				id: "TESTTTTT",
+				name: "Enable",
+				value: true,
+				setup_function: `Set_Value("TEST","YAY")`,
+				enable_function: `alert(Get_Value("TEST"))`,
+				disable_function: "Disable_Extension_Function()",
+				enable_css: "wad",
+				setup_css: "",
+			},
+		],
 	},
 ];
 
+export function Update_All() {
+	Update_StyleShift_Functions_List();
+	Update_StyleShift_Items();
+	Update_All_UI();
+}
+
 async function Main_Run() {
+	if (!In_Setting_Page) {
+		let Global_Functions = await (
+			await fetch(chrome.runtime.getURL("Global_Functions.js"))
+		).text();
+
+		Run_Text_Script(Global_Functions, false);
+
+		console.log(window);
+	}
+
+	//------------------------------------------
+
 	// await ClearSave();
-
-	let Global_Functions = await (
-		await fetch(chrome.runtime.getURL("Global_Functions.js"))
-	).text();
-	// Global_Functions =
-	// 	`window["StyleShift"] = {};` +
-	// 	Global_Functions.replace(
-	// 		/\b(async\s+)?function\s+([\w$]+)\s*\(/g,
-	// 		'window["StyleShift"]["$2"] = $1function('
-	// 	).replace(/}window/g, "};window");
-	// +`console.log(window["StyleShift"])`;
-
-	// console.log(Global_Functions);
-
-	Run_Text_Script(Global_Functions);
-	Run_Text_Script(`window["StyleShift"]["_Variables"] = {};`);
-
-	// await Inject_Text_Script(Global_Functions);
-
+	console.log("Loading");
 	await Load_ThisWeb_Save();
+	console.log("Listing Functions");
+	await Update_StyleShift_Functions_List();
+
+	console.log("Set Defult Items");
 	await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
 	await Set_Null_Save();
 	console.log("Settings_List", await Get_Settings_List());
-
-	//------------------------------------------
 
 	//------------------------------------------
 
@@ -310,6 +324,10 @@ async function Main_Run() {
 		console.log("Window Variable", window);
 	}, 1);
 	Run_Text_Script(`console.log("Window Variable 2", window);`);
+
+	if (In_Setting_Page) {
+		Create_Extension_Setting();
+	}
 }
 
 Main_Run();
@@ -336,7 +354,3 @@ chrome.runtime.onMessage.addListener(async function (message) {
 		Toggle_Extension_Setting();
 	}
 });
-
-if (In_Setting_Page) {
-	Create_Extension_Setting();
-}

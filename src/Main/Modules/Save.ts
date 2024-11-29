@@ -16,6 +16,7 @@ if (In_Setting_Page) {
 	if (URL_Parameters.Save_Domain) {
 		Save_Name = URL_Parameters.Save_Domain;
 	} else {
+		Save_Name = "youtube.com";
 	}
 } else {
 	Save_Name = Get_Current_Domain();

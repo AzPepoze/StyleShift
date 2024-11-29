@@ -1,25 +1,29 @@
-import {
-	Color_OBJ_to_HEX,
-	HEX_to_Color_OBJ,
-	In_Setting_Page,
-	Run_Text_Script,
-} from "../Modules/Extension_Main";
+import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Extension_Main";
 import {
 	Apply_Drag,
 	HEX_to_RBG,
 	HSV_to_RGB,
 	ReArrange_Selector,
 	RGB_to_HSV,
-	sleep,
 } from "../Modules/NormalFunction";
 import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
-import { Update_All, Update_Setting_Function } from "../Settings/Settings_Function";
-import { Add_Setting, Category, Remove_Setting, Setting } from "../Settings/StyleShift_Items";
+import { Update_Setting_Function } from "../Settings/Settings_Function";
+import {
+	Add_Setting,
+	Category,
+	Get_StyleShift_Data_Type,
+	Remove_Category,
+	Remove_Setting,
+	Setting,
+} from "../Settings/StyleShift_Items";
 import { Show_Config_UI } from "./Config_UI";
-import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "./Extension_UI";
-
-let Monaco: typeof import("monaco-editor");
-let Monaco_Themes;
+import {
+	Animation_Time,
+	Hide_Window_Animation,
+	Loaded_Developer_Modules,
+	Monaco,
+	Show_Window_Animation,
+} from "./Extension_UI";
 
 // import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
@@ -39,6 +43,11 @@ async function Set_And_Save(This_Setting, value) {
 	// This_Setting.value = value;
 	// await Save_All();
 	await Save_Any(This_Setting.id, value);
+}
+
+export function Setup_Left_Title_Animation(Title) {
+	Title.style.transform = "translateY(40px)";
+	Title.style.opacity = "0";
 }
 
 let Main_Setting_UI = {
@@ -845,40 +854,11 @@ const Advance_Setting_UI = {
 	},
 
 	["Code_Editor"]: async function (OBJ, key, language) {
-		if (Monaco == null) {
-			if (window["Monaco"] == null) {
-				await sleep(10);
-				return await Settings_UI["Code_Editor"](OBJ, key, language);
-			} else {
-				Monaco = window["Monaco"];
-				Monaco_Themes = window["Monaco_Themes"];
-
-				for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [
-					string,
-					any
-				][]) {
-					if (Theme_Name == "themelist") continue;
-					console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
-					Monaco.editor.defineTheme(
-						Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""),
-						Theme_Content
-					);
-				}
-				Monaco.editor.setTheme("Dracula");
-			}
-		}
-
 		const Frame = document.createElement("div");
 		Frame.style.width = "-webkit-fill-available";
 		Frame.style.height = "400px";
 		Frame.style.position = "relative";
 		Frame.className += " STYLESHIFT-Code-Editor";
-
-		// await new Promise((resolve, reject) => {
-		// 	requestAnimationFrame(function () {
-		// 		resolve(true);
-		// 	});
-		// });
 
 		console.log("HEY!!!", Monaco.languages.getLanguages());
 
@@ -981,26 +961,23 @@ const Advance_Setting_UI = {
 			Frame.className += " STYLESHIFT-Category-Title-Rainbow";
 		}
 
-		Frame.innerHTML = This_Category.Category;
+		function Update_UI() {
+			Frame.innerHTML = This_Category.Category;
+		}
+		Update_UI();
 
 		let Config_UI_Function = await Create_Config_UI_Function(
 			This_Category.Editable,
 			async function (Parent) {
-				let Selector_Frame = await Create_Setting_UI_Element(
-					"Setting_Frame",
-					true,
-					true
+				await Settings_UI["Config_Section_1"](
+					Parent,
+					This_Category,
+					{
+						Name: ["Category", Frame],
+						Selector: "Selector",
+					},
+					Update_UI
 				);
-
-				Selector_Frame.append(await Create_Setting_UI_Element("Sub_Title", "Selector"));
-
-				await Create_Setting_UI_Element(
-					"Selector_Text_Editor",
-					Selector_Frame,
-					This_Category
-				);
-
-				Parent.append(Selector_Frame);
 			}
 		);
 
@@ -1016,8 +993,7 @@ const Advance_Setting_UI = {
 		Text.textContent = Category;
 
 		if (!Skip_Animation) {
-			Title.style.transform = "translateY(40px)";
-			Title.style.opacity = "0";
+			Setup_Left_Title_Animation(Title);
 		}
 
 		Title.append(Text);
@@ -1044,6 +1020,8 @@ const Advance_Setting_UI = {
 			TargetElement.style.maxHeight = "0px";
 			TargetElement.style.padding = "0px";
 			TargetElement.style.opacity = "0";
+			TargetElement.style.marginTop = "-10px";
+			TargetElement.style.pointerEvents = "none";
 		}
 		function Show_Function() {
 			console.log(Save_Style);
@@ -1314,7 +1292,10 @@ let Developer_Setting_UI = {
 
 			This_Frame.append(Settings_UI["Sub_Title"](This_Type_Name));
 
-			if (In_Setting_Page && (This_Type_Name == "JS" || This_Type_Name == "CSS")) {
+			if (
+				Loaded_Developer_Modules &&
+				(This_Type_Name == "JS" || This_Type_Name == "CSS")
+			) {
 				if (This_Type_Name == "JS") {
 					This_Type_Name = "javascript";
 				}
@@ -1650,14 +1631,15 @@ export async function Create_Config_UI_Function(
 
 export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 	Parent: HTMLDivElement,
-	ThisSetting
+	This_Data
 ) {
+	const Data_Type = Get_StyleShift_Data_Type(This_Data);
 	const Main_Element = await Create_Setting_UI_Element(
-		ThisSetting.Category != null ? "Title" : ThisSetting.type,
-		ThisSetting as any
+		Data_Type == "Category" ? "Title" : This_Data.type,
+		This_Data as any
 	);
 
-	if ((await Load("Developer_Mode")) && ThisSetting.Editable) {
+	if ((await Load("Developer_Mode")) && This_Data.Editable) {
 		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
 		Frame.className += " STYLESHIFT-Config-Frame";
 		Parent.append(Frame);
@@ -1680,7 +1662,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 			false,
 			false,
 			{ x: true, y: true },
-			ThisSetting.type == "Button" || ThisSetting.Category != null
+			This_Data.type == "Button" || Data_Type == "Category"
 		);
 		Main_Frame.className += " STYLESHIFT-Main-Setting-Frame";
 		Frame.append(Main_Frame);
@@ -1708,10 +1690,14 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 				name: "🗑️",
 				text_align: "center",
 				color: "#FF0000",
-				click_function: async function () {
-					Remove_Setting(ThisSetting);
-					Update_All();
-				},
+				click_function:
+					Data_Type == "Category"
+						? async function () {
+								Remove_Category(This_Data);
+						  }
+						: async function () {
+								Remove_Setting(This_Data);
+						  },
 			})
 		).Button;
 		Delete_Button.className += " STYLESHIFT-Config-Button";
@@ -1727,7 +1713,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 }
 
 export async function Create_Inner_UI(Parent, Selector_Value) {
-	for (const ThisSetting of Selector_Value.Settings) {
-		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, ThisSetting);
+	for (const This_Data of Selector_Value.Settings) {
+		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Data);
 	}
 }

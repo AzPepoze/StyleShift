@@ -1,4 +1,4 @@
-import { Get_ALL_StyleShift_Items } from "../Settings/StyleShift_Items";
+import { Add_Category, Get_ALL_StyleShift_Items } from "../Settings/StyleShift_Items";
 import { In_Setting_Page } from "../Modules/Extension_Main";
 import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
 import { Load } from "../Modules/Save";
@@ -8,6 +8,7 @@ import {
 	Create_Setting_UI_Element,
 	Create_Setting_UI_Element_With_Able_Developer_Mode,
 	Dynamic_Append,
+	Setup_Left_Title_Animation,
 } from "./Settings_UI";
 import { Create_StyleShift_Window } from "./Extension_UI";
 
@@ -155,17 +156,44 @@ export async function Create_Extension_Setting(Skip_Animation = false) {
 		//------------------------------------------------------
 	}
 
+	let Add_Button = (
+		await Create_Setting_UI_Element("Button", {
+			name: "+",
+			color: "#FFFFFF",
+			text_align: "center",
+			click_function: function () {
+				Add_Category("🥳 New_Category");
+			},
+		})
+	).Button;
+	Add_Button.className += " STYLESHIFT-Add-Category-Button";
+
+	Add_Button.style.padding = "5px";
+	Add_Button.style.marginInline = "10px";
+	Add_Button.style.marginTop = "3px";
+
+	Left_UI.push(Add_Button);
+	Scroll_Left.append(Add_Button);
+
+	if (!Skip_Animation) {
+		Setup_Left_Title_Animation(Add_Button);
+	}
+
+	//------------------------------------------------------
+
 	if (!Skip_Animation) {
 		requestAnimationFrame(function () {
 			for (let Left_Order = 0; Left_Order < Left_UI.length; Left_Order++) {
 				const Left_Category_Title = Left_UI[Left_Order];
 				setTimeout(() => {
 					Left_Category_Title.style.transform = "";
-					Left_Category_Title.style.opacity = "1";
+					Left_Category_Title.style.opacity = "";
 				}, 50 * Left_Order);
 			}
 		});
 	}
+
+	//------------------------------------------------------
 
 	let Current_Selected: HTMLElement;
 

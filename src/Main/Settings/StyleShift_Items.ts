@@ -1,7 +1,8 @@
 import { Get_Default_Items } from "../Default_Items";
 import { Random } from "../Modules/NormalFunction";
-import { Load, Save_Any } from "../Modules/Save";
-import { SetUp_Setting_Function, Update_All } from "./Settings_Function";
+import { Load, Save_All, Save_Any } from "../Modules/Save";
+import { Update_All } from "../Run";
+import { SetUp_Setting_Function } from "./Settings_Function";
 
 let Highlight_Colors = [
 	`255, 109, 109`,
@@ -170,6 +171,12 @@ export function Find_Exist_Settings(Setting: Setting) {
 	);
 }
 
+export function Find_Exist_Category(Category: Category) {
+	return Get_ALL_StyleShift_Items().some(
+		(This_Category) => This_Category.Category === Category.Category
+	);
+}
+
 function Auto_Add_HightLight(Array) {
 	for (const Category_OBJ of Array) {
 		if (Category_OBJ.Highlight_Color == null) {
@@ -231,18 +238,7 @@ export async function Get_Settings_List(Force = false): Promise<Setting[] | {}> 
 	return Settings_List;
 }
 
-export async function Remove_Setting(This_Setting) {
-	for (const This_Category of Get_Custom_Items()) {
-		const index = (This_Category.Settings || []).findIndex(
-			(Check_Setting) => Check_Setting === This_Setting
-		);
-
-		if (index > -1) {
-			This_Category.Settings.splice(index, 1);
-		}
-	}
-	Update_All();
-}
+//--------------------------------------------------
 
 export async function Add_Setting(Category_Settings: Setting[], This_Setting) {
 	let Find_Similar = Find_Exist_Settings(This_Setting);
@@ -271,4 +267,72 @@ export async function Add_Setting(Category_Settings: Setting[], This_Setting) {
 
 	SetUp_Setting_Function(This_Setting);
 	Update_All();
+}
+
+export async function Remove_Setting(This_Setting) {
+	for (const This_Category of Get_Custom_Items()) {
+		const index = (This_Category.Settings || []).findIndex(
+			(Check_Setting) => Check_Setting === This_Setting
+		);
+
+		if (index > -1) {
+			This_Category.Settings.splice(index, 1);
+		}
+	}
+	Update_All();
+}
+
+//--------------------------------------------------
+
+export async function Add_Category(Category_Name: string) {
+	let This_Category: Category = {
+		Category: Category_Name,
+		Settings: [],
+	};
+
+	let Find_Similar = Find_Exist_Category(This_Category);
+	let New_Category: Category;
+	let Times = 0;
+
+	while (Find_Similar) {
+		Times++;
+		New_Category = Object.assign({}, This_Category);
+		New_Category.Category += `_${Times}`;
+		Find_Similar = Find_Exist_Category(New_Category);
+		console.log(Find_Similar, Times, New_Category);
+	}
+
+	if (New_Category) {
+		This_Category = New_Category;
+	}
+
+	const Custom_Items = Get_Custom_Items();
+
+	Custom_Items.push(This_Category);
+	console.log("Added Category", Custom_Items);
+
+	Save_All();
+	Update_All();
+}
+
+export async function Remove_Category(This_Category) {
+	const Custom_Items = Get_Custom_Items();
+
+	const index = Custom_Items.findIndex((Check_Category) => Check_Category === This_Category);
+
+	if (index > -1) {
+		Custom_Items.splice(index, 1);
+	}
+
+	Update_All();
+}
+
+//-------------------------------------------------
+
+export function Get_StyleShift_Data_Type(This_Data) {
+	if (This_Data.Category != null) {
+		return "Category";
+	}
+
+	return "Setting";
 }
