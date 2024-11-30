@@ -431,15 +431,74 @@ export function Get_Current_URL_Parameters() {
 	return result;
 }
 
-// export async function Inject_Text_Script(Text) {
-// 	console.log("Inject_Text_Script", Text);
-// 	try {
-// 		const script = document.createElement("script");
-// 		script.textContent = Text;
-// 		(await GetDocumentHead()).appendChild(script);
-// 		script.remove();
-// 	} catch (e) {
-// 		await sleep(100);
-// 		Inject_Text_Script(Text);
-// 	}
-// }
+//---------------------------------------------
+export async function Fire_Function_Event(Prefix = "Function", Function_Name, ...args) {
+	const Sent_Event = new CustomEvent(`${Prefix}_${Function_Name}`, {
+		detail: { data: args },
+	});
+	console.log("Sent", Sent_Event);
+	window.dispatchEvent(Sent_Event);
+}
+
+export async function Fire_Function_Event_With_Return(Prefix = "Function", Function_Name, ...args) {
+	const remote_id = Create_UniqueID(10);
+
+	const Sent_Event = new CustomEvent(`${Prefix}_${Function_Name}`, {
+		detail: { remote_id: remote_id, data: args },
+	});
+
+	console.log("Sent", Sent_Event);
+
+	window.dispatchEvent(Sent_Event);
+
+	return new Promise((resolve, reject) => {
+		window.addEventListener(
+			`${Prefix}_${Function_Name}_${remote_id}`,
+			function (event) {
+				console.log(
+					"Return Data",
+					`${Prefix}_${Function_Name}_${remote_id}`,
+					//@ts-ignore
+					event.detail
+				);
+				//@ts-ignore
+				resolve(event.detail);
+			},
+			{ once: true }
+		);
+	});
+}
+
+export async function On_Function_Event(
+	Prefix = "Function",
+	Function_Name: string,
+	callback: Function
+) {
+	window.addEventListener(`${Prefix}_${Function_Name}`, async function (event) {
+		console.log("Recived", event);
+
+		//@ts-ignore
+		let remote_id = event.detail.remote_id;
+		//@ts-ignore
+		// delete event.detail.remote_id;
+		//@ts-ignore
+		let Get_Return;
+
+		if (
+			//@ts-ignore
+			event.detail.data &&
+			//@ts-ignore
+			Object.keys(event.detail.data).length > 0
+		) {
+			//@ts-ignore
+			Get_Return = await callback(...event.detail.data);
+		} else {
+			Get_Return = await callback();
+		}
+		window.dispatchEvent(
+			new CustomEvent(`${Prefix}_${Function_Name}_${remote_id}`, {
+				detail: Get_Return,
+			})
+		);
+	});
+}

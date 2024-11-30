@@ -5,7 +5,7 @@ import {
 	HEX_to_Color_OBJ,
 	Run_Text_Script,
 	Update_StyleShift_Functions_List,
-} from "../Modules/Extension_Main";
+} from "../Modules/Main_Function";
 import { Is_Same_OBJ } from "../Modules/NormalFunction";
 import { Load_Any } from "../Modules/Save";
 import { Recreate_Extension_Setting } from "../UI/Extension_Setting_UI";

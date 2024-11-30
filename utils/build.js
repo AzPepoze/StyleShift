@@ -66,21 +66,35 @@ async function build() {
 			path.join(__dirname, "../temp/NormalFunction.ts")
 		);
 
-		fs.writeFileSync(
-			path.join(__dirname, "../temp/NormalFunction.ts"),
-			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.ts"), "utf8"))
-				.replace(/export /g, "")
-				.replace(
-					/\b(async\s+)?function\s+([\w$]+)\s*\(/g,
-					(match, asyncKeyword, functionName) => {
-						if (asyncKeyword) {
-							return `StyleShift["Build-in"]["${functionName}"] = async function(`;
-						} else {
-							return `StyleShift["Build-in"]["${functionName}"] = function(`;
-						}
-					}
-				)
+		//---------------------------------------------
+
+		const codePath = path.join(__dirname, "../temp/NormalFunction.ts");
+		let code = await fs.readFile(codePath, "utf8");
+
+		const functionNames = [];
+		code = code.replace(
+			/\bexport\s+(async\s+)?function\s+([\w$]+)\s*\(/g,
+			(_, asyncKeyword, name) => {
+				functionNames.push(name);
+				return `${asyncKeyword || ""}function ${name}(`;
+			}
 		);
+
+		functionNames.forEach((name) => {
+			const wrapRegex = new RegExp(`\\b(async\\s+)?function\\s+${name}\\s*\\(`, "g");
+			const callRegex = new RegExp(`\\b${name}\\s*\\(`, "g");
+			code = code
+				.replace(
+					wrapRegex,
+					(_, asyncKeyword) =>
+						`StyleShift["Build-in"]["${name}"] = ${asyncKeyword || ""}function (`
+				)
+				.replace(callRegex, `StyleShift["Build-in"]["${name}"](`);
+		});
+
+		fs.writeFileSync(codePath, code);
+
+		//---------------------------------------------
 
 		await esbuild.build({
 			entryPoints: [path.join(__dirname, "../temp/NormalFunction.ts")],
@@ -91,14 +105,16 @@ async function build() {
 		});
 
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/Main/Sent_Global_Functions.ts")],
-			outfile: path.join(Build_Path, "Global_Functions.js"),
+			entryPoints: [
+				path.join(__dirname, "../src/Main/Transaction_Functions/Webpage_Functions.ts"),
+			],
+			outfile: path.join(Build_Path, "Build_in_Functions.js"),
 			platform: "browser",
 		});
 
 		let Functions_List_Data = "";
 		const Functions_List_Content = fs.readFileSync(
-			path.join(__dirname, "../src/Main/Recived_Global_Functions.ts"),
+			path.join(__dirname, "../src/Main/Transaction_Functions/Extension_Functions.ts"),
 			"utf-8"
 		);
 		const Functions_List = [
@@ -113,18 +129,18 @@ async function build() {
 
 		Functions_List_Data += "window['StyleShift'] = StyleShift;";
 
-		let Global_Functions_Data =
+		let Build_in_Functions_Data =
 			`StyleShift = {"Build-in":{},"Custom":{}};` +
 			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")) +
-			(await fs.readFile(path.join(Build_Path, "Global_Functions.js"), "utf8")).replace(
+			(await fs.readFile(path.join(Build_Path, "Build_in_Functions.js"), "utf8")).replace(
 				/\n/g,
 				""
 			) +
-			Functions_List_Data;	
+			Functions_List_Data;
 
 		await fs.writeFile(
-			path.join(Build_Path, "Global_Functions.js"),
-			Global_Functions_Data,
+			path.join(Build_Path, "Build_in_Functions.js"),
+			Build_in_Functions_Data,
 			"utf8"
 		);
 

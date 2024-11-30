@@ -1,4 +1,4 @@
-import { Get_Global_Data, Run_Text_Script } from "../Modules/Extension_Main";
+import { Get_Global_Data, Run_Text_Script } from "../Modules/Main_Function";
 import { GetDocumentBody, sleep } from "../Modules/NormalFunction";
 import { Load } from "../Modules/Save";
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";

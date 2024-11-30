@@ -1,6 +1,7 @@
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 import * as jszip from "jszip";
 import * as Monaco_Themes from "monaco-themes";
+import { Fire_Function_Event } from "../Main/Modules/NormalFunction";
 
 function Run() {
 	if (window["StyleShift"] == null) {
@@ -28,6 +29,8 @@ function Run() {
 			return "./monaco/editor/editor.worker.js";
 		},
 	};
+
+	Fire_Function_Event("StyleShift", "Loaded_External_Modules");
 }
 
 Run();

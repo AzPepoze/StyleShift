@@ -1,5 +1,5 @@
 import { Add_Category, Get_ALL_StyleShift_Items } from "../Settings/StyleShift_Items";
-import { In_Setting_Page } from "../Modules/Extension_Main";
+import { In_Setting_Page } from "../Modules/Main_Function";
 import { Click_To_Scroll, GetDocumentBody, sleep } from "../Modules/NormalFunction";
 import { Load } from "../Modules/Save";
 import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
@@ -156,27 +156,29 @@ export async function Create_Extension_Setting(Skip_Animation = false) {
 		//------------------------------------------------------
 	}
 
-	let Add_Button = (
-		await Create_Setting_UI_Element("Button", {
-			name: "+",
-			color: "#FFFFFF",
-			text_align: "center",
-			click_function: function () {
-				Add_Category("🥳 New_Category");
-			},
-		})
-	).Button;
-	Add_Button.className += " STYLESHIFT-Add-Category-Button";
+	if (await Load("Developer_Mode")) {
+		let Add_Button = (
+			await Create_Setting_UI_Element("Button", {
+				name: "+",
+				color: "#FFFFFF",
+				text_align: "center",
+				click_function: function () {
+					Add_Category("🥳 New_Category");
+				},
+			})
+		).Button;
+		Add_Button.className += " STYLESHIFT-Add-Category-Button";
 
-	Add_Button.style.padding = "5px";
-	Add_Button.style.marginInline = "10px";
-	Add_Button.style.marginTop = "3px";
+		Add_Button.style.padding = "5px";
+		Add_Button.style.marginInline = "10px";
+		Add_Button.style.marginTop = "3px";
 
-	Left_UI.push(Add_Button);
-	Scroll_Left.append(Add_Button);
+		Left_UI.push(Add_Button);
+		Scroll_Left.append(Add_Button);
 
-	if (!Skip_Animation) {
-		Setup_Left_Title_Animation(Add_Button);
+		if (!Skip_Animation) {
+			Setup_Left_Title_Animation(Add_Button);
+		}
 	}
 
 	//------------------------------------------------------

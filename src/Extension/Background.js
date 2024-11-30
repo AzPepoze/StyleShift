@@ -34,16 +34,16 @@ chrome.commands.onCommand.addListener(async (command) => {
 	chrome.tabs.sendMessage(tab.id, command);
 });
 
-let Global_Functions_Data;
+let Build_in_Functions_Data;
 
-fetch(chrome.runtime.getURL("Global_Functions.js"))
+fetch(chrome.runtime.getURL("Build_in_Functions.js"))
 	.then((response) => response.text())
 	.then((data) => {
-		Global_Functions_Data = data;
+		Build_in_Functions_Data = data;
 	});
 
 async function Excute_Function(Excute_Text) {
-	setTimeout(Excute_Text, 1);
+	setTimeout(Excute_Text, 0);
 }
 
 chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
@@ -51,12 +51,12 @@ chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
 
 	switch (Recived_Message.Command) {
 		case "RunScript":
-			while (!Global_Functions_Data) {
-				console.log(Global_Functions_Data);
+			while (!Build_in_Functions_Data) {
+				console.log(Build_in_Functions_Data);
 				await sleep(10);
 			}
 
-			// const Excute_Data = `${Global_Functions_Data}(async () => {${Recived_Message.Script}})()`;
+			// const Excute_Data = `${Build_in_Functions_Data}(async () => {${Recived_Message.Script}})()`;
 			const Excute_Data = `(async () => {${Recived_Message.Script}})()`;
 
 			const Result = await chrome.scripting.executeScript({

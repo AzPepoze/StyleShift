@@ -17,9 +17,6 @@ export async function Create_StyleSheet_Holder() {
 export function Create_StyleSheet(id) {
 	let StyleSheet = document.createElement("style");
 	StyleSheet.setAttribute("STYLESHIFT_StyleSheet_id", id);
-	if (StyleSheet_Holder == null) {
-		StyleSheet_Holder = document.getElementById("STYLESHIFT_StyleSheet_Holder");
-	}
 	StyleSheet_Holder.append(StyleSheet);
 	return StyleSheet;
 }

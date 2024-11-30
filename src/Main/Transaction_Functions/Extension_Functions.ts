@@ -3,13 +3,14 @@ import {
 	Download_File,
 	HEX_to_RBGA,
 	HSV_to_RGB,
+	On_Function_Event,
 	RGB_to_HSV,
 	RGBA_to_HEX,
-} from "./Modules/NormalFunction";
-import { Settings_Current_State } from "./Settings/Settings_Function";
-import { Hide_StyleSheet, Show_StyleSheet } from "./Settings/Settings_StyleSheet";
-import { Get_Custom_Items } from "./Settings/StyleShift_Items";
-import { JSzip } from "./UI/Extension_UI";
+} from "../Modules/NormalFunction";
+import { Settings_Current_State } from "../Settings/Settings_Function";
+import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
+import { Get_Custom_Items } from "../Settings/StyleShift_Items";
+import { JSzip } from "../UI/Extension_UI";
 
 export let StyleShift_Functions = {
 	// Danger Zone !!!
@@ -187,33 +188,5 @@ export let StyleShift_Functions = {
 };
 
 for (const This_Function_Name of Object.keys(StyleShift_Functions)) {
-	window.addEventListener(`StyleShift_${This_Function_Name}`, async function (event) {
-		console.log("Recived", event);
-
-		//@ts-ignore
-		let remote_id = event.detail.remote_id;
-		//@ts-ignore
-		// delete event.detail.remote_id;
-		//@ts-ignore
-		let Get_Return;
-
-		if (
-			//@ts-ignore
-			event.detail.data &&
-			//@ts-ignore
-			Object.keys(event.detail.data).length > 0
-		) {
-			Get_Return = await StyleShift_Functions[This_Function_Name](
-				//@ts-ignore
-				...event.detail.data
-			);
-		} else {
-			Get_Return = await StyleShift_Functions[This_Function_Name]();
-		}
-		window.dispatchEvent(
-			new CustomEvent(`StyleShift_${remote_id}`, {
-				detail: Get_Return,
-			})
-		);
-	});
+	On_Function_Event("StyleShift", This_Function_Name, StyleShift_Functions[This_Function_Name]);
 }

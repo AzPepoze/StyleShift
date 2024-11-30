@@ -25,7 +25,7 @@ const workerEntryPoints = [
 	});
 
 	await esbuild.build({
-		entryPoints: [path.join(__dirname, "../src/Setting_Page/index.js")],
+		entryPoints: [path.join(__dirname, "../src/External_Modules/index.js")],
 		bundle: true,
 		format: "iife",
 		outfile: path.join(__dirname, "../out/build/Setting_Page/index.js"),

@@ -1,4 +1,4 @@
-import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Extension_Main";
+import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Main_Function";
 import {
 	Apply_Drag,
 	HEX_to_RBG,

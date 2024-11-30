@@ -1,5 +1,5 @@
 import { Category } from "./Settings/StyleShift_Items";
-import { StyleShift_Functions } from "./Recived_Global_Functions";
+import { StyleShift_Functions } from "./Transaction_Functions/Extension_Functions";
 
 let Setting_Page_Items: Category[] = [
 	{

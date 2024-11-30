@@ -1,9 +1,8 @@
 import {
-	Get_Custom_Items,
 	Get_Settings_List,
-	Update_StyleShift_Items,
+	Update_StyleShift_Items
 } from "../Settings/StyleShift_Items";
-import { Color_OBJ_to_HEX, In_Setting_Page } from "./Extension_Main";
+import { In_Setting_Page } from "./Main_Function";
 import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "./NormalFunction";
 
 //Save

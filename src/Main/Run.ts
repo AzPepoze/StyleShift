@@ -2,7 +2,7 @@ import {
 	In_Setting_Page,
 	Run_Text_Script,
 	Update_StyleShift_Functions_List,
-} from "./Modules/Extension_Main";
+} from "./Modules/Main_Function";
 import { ReArrange_Selector } from "./Modules/NormalFunction";
 import {
 	Clear_Unnessary_Save,
@@ -12,7 +12,7 @@ import {
 	Save_All,
 	Set_Null_Save,
 } from "./Modules/Save";
-import * as Global from "./Recived_Global_Functions";
+import * as Global from "./Transaction_Functions/Extension_Functions";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 import {
@@ -277,11 +277,11 @@ export function Update_All() {
 
 async function Main_Run() {
 	if (!In_Setting_Page) {
-		let Global_Functions = await (
-			await fetch(chrome.runtime.getURL("Global_Functions.js"))
+		let Build_in_Functions = await (
+			await fetch(chrome.runtime.getURL("Build_in_Functions.js"))
 		).text();
 
-		Run_Text_Script(Global_Functions, false);
+		Run_Text_Script(Build_in_Functions, false);
 
 		console.log(window);
 	}
