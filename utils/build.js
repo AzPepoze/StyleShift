@@ -51,7 +51,15 @@ async function build() {
 
 		let Build_Path = path.join(__dirname, "../out/build");
 
-		fs.copySync(path.join(__dirname, "../src/Extension"), Build_Path);
+		fs.copySync(path.join(__dirname, "../src/Extension"), Build_Path, {
+			filter: (src) => {
+				const relativePath = path.relative(
+					path.join(__dirname, "../src/Extension"),
+					src
+				);
+				return !relativePath.startsWith("External_Modules");
+			},
+		});
 
 		await esbuild.build({
 			entryPoints: [path.join(__dirname, "../src/Main/Run.ts")],
@@ -106,7 +114,7 @@ async function build() {
 
 		await esbuild.build({
 			entryPoints: [
-				path.join(__dirname, "../src/Main/Transaction_Functions/Webpage_Functions.ts"),
+				path.join(__dirname, "../src/Main/Transfer_Functions/Webpage_Functions.ts"),
 			],
 			outfile: path.join(Build_Path, "Build_in_Functions.js"),
 			platform: "browser",
@@ -114,7 +122,7 @@ async function build() {
 
 		let Functions_List_Data = "";
 		const Functions_List_Content = fs.readFileSync(
-			path.join(__dirname, "../src/Main/Transaction_Functions/Extension_Functions.ts"),
+			path.join(__dirname, "../src/Main/Transfer_Functions/Extension_Functions.ts"),
 			"utf-8"
 		);
 		const Functions_List = [

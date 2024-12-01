@@ -1,3 +1,4 @@
+import { JSzip } from "../Modules/Main_Function";
 import {
 	deepClone,
 	Download_File,
@@ -10,7 +11,6 @@ import {
 import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { Get_Custom_Items } from "../Settings/StyleShift_Items";
-import { JSzip } from "../UI/Extension_UI";
 
 export let StyleShift_Functions = {
 	// Danger Zone !!!

@@ -1,7 +1,7 @@
 import {
 	Create_UniqueID,
 	WaitDocumentLoaded,
-	When_Element_Remove,
+	Once_Element_Remove,
 } from "../Modules/NormalFunction";
 import { Create_Editor_UI, Remove_Editor_UI } from "./Editor_UI";
 import { Get_StyleShift_Items } from "../Settings/StyleShift_Items";
@@ -76,7 +76,7 @@ function Add_Highlight(targetElement: HTMLElement, Selector_Value) {
 	}
 
 	// Stop updating position when the element is removed
-	When_Element_Remove(targetElement, function () {
+	Once_Element_Remove(targetElement, function () {
 		Stop();
 	});
 

@@ -169,7 +169,7 @@ export async function GetDocumentHead() {
 	}
 }
 
-export function When_Element_Remove(targetElement: HTMLElement, callback: Function) {
+export function Once_Element_Remove(targetElement: HTMLElement, callback: Function) {
 	let observer = new MutationObserver((mutationsList, observer) => {
 		for (const mutation of mutationsList) {
 			if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
@@ -444,7 +444,7 @@ export async function Fire_Function_Event_With_Return(Prefix = "Function", Funct
 	const remote_id = Create_UniqueID(10);
 
 	const Sent_Event = new CustomEvent(`${Prefix}_${Function_Name}`, {
-		detail: { remote_id: remote_id, data: args },
+		detail: JSON.stringify({ remote_id: remote_id, data: args }),
 	});
 
 	console.log("Sent", Sent_Event);
@@ -455,14 +455,10 @@ export async function Fire_Function_Event_With_Return(Prefix = "Function", Funct
 		window.addEventListener(
 			`${Prefix}_${Function_Name}_${remote_id}`,
 			function (event) {
-				console.log(
-					"Return Data",
-					`${Prefix}_${Function_Name}_${remote_id}`,
-					//@ts-ignore
-					event.detail
-				);
 				//@ts-ignore
-				resolve(event.detail);
+				const Detail = JSON.parse(event.detail);
+				console.log("Return Data", `${Prefix}_${Function_Name}_${remote_id}`, Detail);
+				resolve(Detail);
 			},
 			{ once: true }
 		);
@@ -474,11 +470,12 @@ export async function On_Function_Event(
 	Function_Name: string,
 	callback: Function
 ) {
-	window.addEventListener(`${Prefix}_${Function_Name}`, async function (event) {
+	const On_Event_Run_Function = async function (event) {
+		const Detail = JSON.parse(event.detail);
 		console.log("Recived", event);
 
 		//@ts-ignore
-		let remote_id = event.detail.remote_id;
+		let remote_id = Detail.remote_id;
 		//@ts-ignore
 		// delete event.detail.remote_id;
 		//@ts-ignore
@@ -486,19 +483,27 @@ export async function On_Function_Event(
 
 		if (
 			//@ts-ignore
-			event.detail.data &&
+			Detail.data &&
 			//@ts-ignore
-			Object.keys(event.detail.data).length > 0
+			Object.keys(Detail.data).length > 0
 		) {
 			//@ts-ignore
-			Get_Return = await callback(...event.detail.data);
+			Get_Return = await callback(...Detail.data);
 		} else {
 			Get_Return = await callback();
 		}
 		window.dispatchEvent(
 			new CustomEvent(`${Prefix}_${Function_Name}_${remote_id}`, {
-				detail: Get_Return,
+				detail: JSON.stringify(Get_Return),
 			})
 		);
-	});
+	};
+
+	window.addEventListener(`${Prefix}_${Function_Name}`, On_Event_Run_Function);
+
+	return {
+		Cancel: function () {
+			window.removeEventListener(`${Prefix}_${Function_Name}`, On_Event_Run_Function);
+		},
+	};
 }

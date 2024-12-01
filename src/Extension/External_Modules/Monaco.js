@@ -1,7 +1,5 @@
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.main.js";
-import * as jszip from "jszip";
 import * as Monaco_Themes from "monaco-themes";
-import { Fire_Function_Event } from "../Main/Modules/NormalFunction";
 
 function Run() {
 	if (window["StyleShift"] == null) {
@@ -9,7 +7,6 @@ function Run() {
 		return;
 	}
 	window["StyleShift"]["Build-in"]["Monaco"] = Monaco;
-	window["StyleShift"]["Build-in"]["JSzip"] = jszip;
 	window["StyleShift"]["Build-in"]["Monaco_Themes"] = "Monaco_All_Themes";
 
 	self.MonacoEnvironment = {
@@ -30,7 +27,23 @@ function Run() {
 		},
 	};
 
-	Fire_Function_Event("StyleShift", "Loaded_External_Modules");
+	// On_Function_Event("StyleShift", "Monaco_Create_Code_Editor", (Ediot_OBJ) => {
+	// 	const frame_id = Ediot_OBJ.frame_id;
+	// 	delete Ediot_OBJ.frame_id;
+	// 	const Frame = document.getElementById(frame_id);
+
+	// 	console.log(Frame);
+
+	// 	const Code_Editor = Monaco.editor.create(Frame, Ediot_OBJ);
+
+	// 	Code_Editor.onKeyDown(function () {
+	// 		Fire_Function_Event("onKeyDown", frame_id, Code_Editor.getValue());
+	// 	});
+
+	// 	Code_Editor.onDidBlurEditorWidget(function () {
+	// 		Fire_Function_Event("onBlur", frame_id, Code_Editor.getValue());
+	// 	});
+	// });
 }
 
 Run();

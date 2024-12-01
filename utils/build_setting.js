@@ -17,7 +17,7 @@ const workerEntryPoints = [
 		),
 		bundle: true,
 		format: "iife",
-		outdir: path.join(__dirname, "../out/build/Setting_Page/monaco"),
+		outdir: path.join(__dirname, "../out/build/External_Modules/monaco"),
 		minify: true,
 		loader: {
 			".ttf": "file",
@@ -25,14 +25,22 @@ const workerEntryPoints = [
 	});
 
 	await esbuild.build({
-		entryPoints: [path.join(__dirname, "../src/External_Modules/index.js")],
+		entryPoints: [path.join(__dirname, "../src/Extension/External_Modules/Monaco.js")],
 		bundle: true,
 		format: "iife",
-		outfile: path.join(__dirname, "../out/build/Setting_Page/index.js"),
+		outfile: path.join(__dirname, "../out/build/External_Modules/Monaco.js"),
 		minify: true,
 		loader: {
 			".ttf": "file",
 		},
+	});
+
+	await esbuild.build({
+		entryPoints: [path.join(__dirname, "../src/Extension/External_Modules/JSzip.js")],
+		bundle: true,
+		format: "iife",
+		outfile: path.join(__dirname, "../out/build/External_Modules/JSzip.js"),
+		minify: true,
 	});
 
 	function getLocalThemes() {
@@ -52,7 +60,7 @@ const workerEntryPoints = [
 	}
 
 	File_Content_Replace(
-		path.join(__dirname, "../out/build/Setting_Page/index.js"),
+		path.join(__dirname, "../out/build/External_Modules/Monaco.js"),
 		/"Monaco_All_Themes"/g,
 		JSON.stringify(getLocalThemes())
 	);

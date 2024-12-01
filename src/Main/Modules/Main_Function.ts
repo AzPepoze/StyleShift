@@ -1,9 +1,11 @@
+import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { color_obj } from "../Settings/StyleShift_Items";
 import { Create_UniqueID, GetDocumentHead, sleep } from "./NormalFunction";
 
 export let Ver = chrome.runtime.getManifest().version;
 
 export let isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+console.log("isFirefox", navigator.userAgent.toLowerCase(), isFirefox);
 
 let inIframe;
 try {
@@ -15,26 +17,18 @@ try {
 let DefaultYouTubeLogo = `https://www.youtube.com/s/desktop/6588612c/img/favicon.ico`;
 let DefaultNewTubeLogo = `https://i.ibb.co/tD2VTyg/1705431438657.png`;
 
-let Extension_Location = chrome.runtime.getURL("");
-let Extension_ID = Extension_Location.slice(19, -1);
+export let Extension_Location = chrome.runtime.getURL("").slice(0, -1);
+export let Extension_ID = Extension_Location.slice(19, 0);
 
 export let In_Setting_Page;
 
-if (window.location.origin == Get_Extension_Location().slice(0, -1)) {
+if (window.location.origin == Extension_Location) {
 	In_Setting_Page = true;
 } else {
 	In_Setting_Page = false;
 }
 
 console.log(In_Setting_Page);
-
-export function Get_Extension_ID() {
-	return Extension_ID;
-}
-
-export function Get_Extension_Location() {
-	return Extension_Location;
-}
 
 // export async function Get_Global_Data(Mode: "Build-in" | "Custom", Key: string): Promise<any> {
 // 	const remote_id = Create_UniqueID(8);
@@ -195,6 +189,72 @@ export async function Inject_Text_Script(Text: string) {
 	} catch (e) {
 		await sleep(100);
 		Inject_Text_Script(Text);
+	}
+}
+
+export let Loaded_Developer_Modules = false;
+
+export let Monaco: typeof import("monaco-editor");
+export let Monaco_Themes;
+export let JSzip: typeof import("jszip");
+
+export async function Load_Developer_Modules() {
+	if (Loaded_Developer_Modules) {
+		return;
+	}
+
+	Loaded_Developer_Modules = true;
+
+	if (!isFirefox || In_Setting_Page) {
+		//---------------------------------------------------------------------
+
+		let Monaco_Data = await (
+			await fetch(chrome.runtime.getURL("External_Modules/Monaco.js"))
+		).text();
+
+		// if (isFirefox) {
+		// 	console.log("StyleShift_Extension_ID", Extension_Location);
+		// 	Modules_Data = Modules_Data.replace("StyleShift_Extension_ID", Extension_Location);
+		// }
+
+		Run_Text_Script(Monaco_Data, false);
+
+		let JSzip_Data = await (
+			await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))
+		).text();
+		Run_Text_Script(JSzip_Data, false);
+
+		//---------------------------------------------------------------------
+
+		Create_StyleSheet("Monaco").textContent = await (
+			await fetch(chrome.runtime.getURL("External_Modules/Monaco.css"))
+		).text();
+
+		//---------------------------------------------------------------------
+
+		Monaco = await Get_Global_Data("Build-in", "Monaco");
+		Monaco_Themes = await Get_Global_Data("Build-in", "Monaco_Themes");
+
+		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [
+			string,
+			any
+		][]) {
+			if (Theme_Name == "themelist") continue;
+			console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
+			Monaco.editor.defineTheme(
+				Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""),
+				Theme_Content
+			);
+		}
+
+		Monaco.editor.setTheme("Dracula");
+
+		//----------------------------------------------
+
+		JSzip = await Get_Global_Data("Build-in", "JSzip");
+	}
+
+	if (isFirefox && !In_Setting_Page) {
 	}
 }
 

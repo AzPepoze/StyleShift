@@ -1,8 +1,20 @@
-import { Color_OBJ_to_HEX, HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Main_Function";
+import {
+	Color_OBJ_to_HEX,
+	HEX_to_Color_OBJ,
+	In_Setting_Page,
+	isFirefox,
+	Loaded_Developer_Modules,
+	Monaco,
+	Run_Text_Script,
+} from "../Modules/Main_Function";
 import {
 	Apply_Drag,
+	Create_UniqueID,
+	Fire_Function_Event_With_Return,
 	HEX_to_RBG,
 	HSV_to_RGB,
+	On_Function_Event,
+	Once_Element_Remove,
 	ReArrange_Selector,
 	RGB_to_HSV,
 } from "../Modules/NormalFunction";
@@ -17,13 +29,7 @@ import {
 	Setting,
 } from "../Settings/StyleShift_Items";
 import { Show_Config_UI } from "./Config_UI";
-import {
-	Animation_Time,
-	Hide_Window_Animation,
-	Loaded_Developer_Modules,
-	Monaco,
-	Show_Window_Animation,
-} from "./Extension_UI";
+import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "./Extension_UI";
 
 // import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
@@ -853,25 +859,19 @@ const Advance_Setting_UI = {
 		};
 	},
 
-	["Code_Editor"]: async function (OBJ, key, language) {
+	["Code_Editor"]: async function (Parent: HTMLDivElement, OBJ, key, language) {
 		const Frame = document.createElement("div");
 		Frame.style.width = "-webkit-fill-available";
 		Frame.style.height = "400px";
 		Frame.style.position = "relative";
 		Frame.className += " STYLESHIFT-Code-Editor";
+		Parent.append(Frame);
 
-		console.log("HEY!!!", Monaco.languages.getLanguages());
-
-		let Code_Editor = Monaco.editor.create(Frame, {
-			value: OBJ[key] || "",
-			automaticLayout: true,
-			language: language || "plaintext",
-		});
-
+		let Code_Editor;
 		let Additinal_OnChange: Function = null;
 		let ReArrange_Value: Function = null;
 
-		let OnChange = async function (Value) {
+		let OnChange = async function (Value: string) {
 			OBJ[key] = Value;
 			Save_All();
 			if (Additinal_OnChange) {
@@ -880,12 +880,7 @@ const Advance_Setting_UI = {
 			}
 		};
 
-		Code_Editor.onKeyDown(async function () {
-			OnChange(Code_Editor.getValue());
-		});
-
-		Code_Editor.onDidBlurEditorWidget(async function () {
-			let Value = Code_Editor.getValue();
+		const OnBlur = async function (Value) {
 			if (ReArrange_Value) {
 				console.log("Before", Value);
 				Value = await ReArrange_Value(Value);
@@ -893,10 +888,47 @@ const Advance_Setting_UI = {
 				Code_Editor.setValue(Value);
 			}
 			OnChange(Value);
+		};
+
+		const Ediot_OBJ: { [string: string]: any } = {
+			value: OBJ[key] || "",
+			automaticLayout: true,
+			language: language || "plaintext",
+		};
+
+		// if (isFirefox) {
+		// 	Frame.id = `StyleShift_Code_Editor_${Create_UniqueID(5)}`;
+		// 	Ediot_OBJ.frame_id = Frame.id;
+
+		// 	await Fire_Function_Event_With_Return(
+		// 		"StyleShift",
+		// 		"Monaco_Create_Code_Editor",
+		// 		Ediot_OBJ
+		// 	);
+
+		// 	let Code_Functions = [
+		// 		await On_Function_Event("onKeyDown", Frame.id, OnChange),
+		// 		await On_Function_Event("onBlur", Frame.id, OnBlur),
+		// 	];
+
+		// 	Once_Element_Remove(Frame, function () {
+		// 		for (const This_Code_Function of Code_Functions) {
+		// 			This_Code_Function.Cancel();
+		// 		}
+		// 	});
+		// } else {
+		Code_Editor = Monaco.editor.create(Frame, Ediot_OBJ);
+
+		Code_Editor.onKeyDown(function () {
+			OnChange(Code_Editor.getValue());
 		});
 
+		Code_Editor.onDidBlurEditorWidget(function () {
+			OnBlur(Code_Editor.getValue());
+		});
+		// }
+
 		return {
-			Code_Editor: Code_Editor,
 			OnChange: function (callback) {
 				OnChange = callback;
 			},
@@ -1262,10 +1294,14 @@ let Developer_Setting_UI = {
 		let Background_Color = `${BG_Color.r},${BG_Color.g},${BG_Color.b}`;
 		let Border_Color = `${r + 150},${g + 150},${b + 150}`;
 
+		//---------------------------
+
 		let This_Frame = Settings_UI["Setting_Frame"](true, true);
 		This_Frame.style.paddingBottom = "10px";
 		This_Frame.style.background = `radial-gradient(at center top, rgb(${Background_TOP_Color}), rgb(${Background_Color}, 0.5))`;
 		This_Frame.style.border = `rgb(${Border_Color}) 1px solid`;
+
+		//---------------------------
 
 		let Collapsed_Button = await Settings_UI["Collapsed_Button"](
 			This_RunType_Name,
@@ -1273,6 +1309,11 @@ let Developer_Setting_UI = {
 			This_Frame
 		);
 		Collapsed_Button.Button.style.borderBottom = "solid 1px white";
+
+		//---------------------------
+
+		Parent.append(Collapsed_Button.Button);
+		Parent.append(This_Frame);
 
 		for (const ext of ext_array) {
 			let This_Type_Name;
@@ -1293,6 +1334,7 @@ let Developer_Setting_UI = {
 			This_Frame.append(Settings_UI["Sub_Title"](This_Type_Name));
 
 			if (
+				(!isFirefox || In_Setting_Page) &&
 				Loaded_Developer_Modules &&
 				(This_Type_Name == "JS" || This_Type_Name == "CSS")
 			) {
@@ -1304,13 +1346,12 @@ let Developer_Setting_UI = {
 					This_Type_Name = "css";
 				}
 
-				let Editor = await Settings_UI["Code_Editor"](
+				await Settings_UI["Code_Editor"](
+					This_Frame,
 					This_Setting,
 					RunType + "_" + ext,
 					This_Type_Name
 				);
-
-				This_Frame.append(Editor.Frame);
 
 				continue;
 			}
@@ -1319,9 +1360,6 @@ let Developer_Setting_UI = {
 			This_Frame.append(Editor.Text_Editor);
 			Editor.Text_Editor.style.height = "100px";
 		}
-
-		Parent.append(Collapsed_Button.Button);
-		Parent.append(This_Frame);
 
 		return This_Frame;
 	},
