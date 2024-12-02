@@ -2,6 +2,7 @@ import { GetDocumentHead, sleep } from "../Modules/NormalFunction";
 import { Load } from "../Modules/Save";
 
 let StyleSheet_Holder: HTMLElement;
+let StyleSheet_Holder_Constant: HTMLElement;
 
 export async function Create_StyleSheet_Holder() {
 	StyleSheet_Holder = document.createElement("fieldset");
@@ -12,12 +13,22 @@ export async function Create_StyleSheet_Holder() {
 	} else {
 		Hide_StyleSheet();
 	}
+
+	StyleSheet_Holder_Constant = document.createElement("fieldset");
+	StyleSheet_Holder_Constant.id = "STYLESHIFT_StyleSheet_Holder_Constant";
+	(await GetDocumentHead()).append(StyleSheet_Holder_Constant);
 }
 
-export function Create_StyleSheet(id) {
+export function Create_StyleSheet(id: string, constant: boolean = false) {
 	let StyleSheet = document.createElement("style");
 	StyleSheet.setAttribute("STYLESHIFT_StyleSheet_id", id);
-	StyleSheet_Holder.append(StyleSheet);
+
+	if (constant) {
+		StyleSheet_Holder_Constant.append(StyleSheet);
+	} else {
+		StyleSheet_Holder.append(StyleSheet);
+	}
+
 	return StyleSheet;
 }
 

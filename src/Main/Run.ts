@@ -12,7 +12,6 @@ import {
 	Save_All,
 	Set_Null_Save,
 } from "./Modules/Save";
-import * as Global from "./Transfer_Functions/Extension_Functions";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 import {
@@ -22,8 +21,9 @@ import {
 	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Settings/StyleShift_Items";
+import * as Global from "./Transfer_Functions/Extension_Functions";
 import { Create_Extension_Setting, Toggle_Extension_Setting } from "./UI/Extension_Setting_UI";
-import { Load_Developer_Modules, Update_All_UI } from "./UI/Extension_UI";
+import { Update_All_UI } from "./UI/Extension_UI";
 import { Toggle_Customize } from "./UI/Highlight_UI";
 
 console.log(Global);

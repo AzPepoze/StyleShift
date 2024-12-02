@@ -226,7 +226,7 @@ export async function Load_Developer_Modules() {
 
 		//---------------------------------------------------------------------
 
-		Create_StyleSheet("Monaco").textContent = await (
+		Create_StyleSheet("Monaco", true).textContent = await (
 			await fetch(chrome.runtime.getURL("External_Modules/Monaco.css"))
 		).text();
 
