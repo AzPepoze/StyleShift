@@ -9,18 +9,17 @@ import {
 } from "../Modules/Main_Function";
 import {
 	Apply_Drag,
-	Create_UniqueID,
-	Fire_Function_Event_With_Return,
 	HEX_to_RBG,
 	HSV_to_RGB,
-	On_Function_Event,
-	Once_Element_Remove,
 	ReArrange_Selector,
 	RGB_to_HSV,
+	Scroll_On_Click,
 } from "../Modules/NormalFunction";
 import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
+import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
 import { Update_Setting_Function } from "../Settings/Settings_Function";
 import {
+	Add_Category,
 	Add_Setting,
 	Category,
 	Get_StyleShift_Data_Type,
@@ -29,7 +28,12 @@ import {
 	Setting,
 } from "../Settings/StyleShift_Items";
 import { Show_Config_UI } from "./Config_UI";
-import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "./Extension_UI";
+import {
+	Animation_Time,
+	Create_StyleShift_Window,
+	Hide_Window_Animation,
+	Show_Window_Animation,
+} from "./Extension_UI";
 
 // import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 
@@ -1356,12 +1360,26 @@ let Developer_Setting_UI = {
 				continue;
 			}
 
-			let Editor = Settings_UI["Text_Editor"](This_Setting, RunType + "_" + ext);
-			This_Frame.append(Editor.Text_Editor);
-			Editor.Text_Editor.style.height = "100px";
+			let Editor = Settings_UI["Default_Config_Editor"](
+				This_Frame,
+				This_Setting,
+				RunType,
+				ext
+			);
+
+			if (This_Type_Name == "JS" || This_Type_Name == "CSS") {
+				Editor.Text_Editor.style.height = "400px";
+			}
 		}
 
 		return This_Frame;
+	},
+
+	["Default_Config_Editor"]: function (Parent, This_Setting, RunType, ext) {
+		let Editor = Settings_UI["Text_Editor"](This_Setting, RunType + "_" + ext);
+		Parent.append(Editor.Text_Editor);
+		Editor.Text_Editor.style.height = "100px";
+		return Editor;
 	},
 
 	["Config_Section_1"]: async function (Parent, This_Setting, Props, Update_UI) {
@@ -1495,8 +1513,8 @@ let Developer_Setting_UI = {
 		}
 	},
 
-	["Selector_Text_Editor"]: async function (Parent, Selector_Value) {
-		let Selector_Text_Editor = await Settings_UI["Text_Editor"](Selector_Value, "Selector");
+	["Selector_Text_Editor"]: async function (Parent, This_Category) {
+		let Selector_Text_Editor = await Settings_UI["Text_Editor"](This_Category, "Selector");
 		Selector_Text_Editor.Text_Editor.className += " STYLESHIFT-Selector-Text-Editor";
 		Selector_Text_Editor.ReArrange_Value(function (value: string) {
 			return ReArrange_Selector(value);
@@ -1656,6 +1674,306 @@ export function Dynamic_Append(Parent: HTMLDivElement, Child) {
 	Parent.appendChild(Child);
 }
 
+export async function Create_Main_Settings_UI({
+	Show_Category_List = true,
+	On_Create = null as (
+		StyleShift_Window: Awaited<ReturnType<typeof Create_StyleShift_Window>>
+	) => void,
+	On_Remove = null as () => void,
+	Get_Category = null as () => Category[] | Promise<Category[]>,
+}) {
+	let Settings_Window, Update_Setting_Interval, Scroll_Category, Scroll_Settings;
+
+	const Return_OBJ = {
+		Create_UI: async function (Skip_Animation = false) {
+			console.log(Settings_Window);
+			if (Settings_Window) {
+				Return_OBJ.Recreate_UI();
+				return;
+			}
+
+			Settings_Window = await Create_StyleShift_Window({
+				Skip_Animation,
+			});
+			const Window = Settings_Window.Window;
+
+			Window.style.width = "47%";
+			Window.style.height = "80%";
+			Window.style.minWidth = "600px";
+			Window.style.minHeight = "250px";
+
+			if (In_Setting_Page) {
+				Window.style.width = "100%";
+				Window.style.height = "100%";
+				Window.style.resize = "none";
+			}
+
+			//------------------------------------------------
+
+			const Main_Frame = await Create_Setting_UI_Element(
+				"Setting_Frame",
+				false,
+				false,
+				{ x: false, y: false },
+				true
+			);
+			Main_Frame.style.width = "calc(100% - 5px)";
+			Main_Frame.style.height = "-webkit-fill-available";
+			Main_Frame.style.gap = "10px";
+			Main_Frame.style.overflow = "hidden";
+			Window.append(Main_Frame);
+
+			//------------------------------------------------
+
+			if (Show_Category_List) {
+				Scroll_Category = document.createElement("div");
+				Scroll_Category.className = "STYLESHIFT-Scrollable";
+				Scroll_Category.style.minWidth = "100px";
+				Scroll_Category.style.width = "250px";
+				Scroll_Category.setAttribute("Left", "true");
+				Main_Frame.append(Scroll_Category);
+			}
+
+			//------------------------------------------------
+
+			const Settings_Frame = await Create_Setting_UI_Element(
+				"Setting_Frame",
+				false,
+				true,
+				{ x: false, y: false },
+				true
+			);
+			Settings_Frame.style.width = "-webkit-fill-available";
+			Settings_Frame.style.height = "100%";
+			Settings_Frame.style.gap = "10px";
+			Main_Frame.append(Settings_Frame);
+
+			const Search_Input = document.createElement("input");
+			Search_Input.className = "STYLESHIFT-Search";
+			Search_Input.placeholder = "🔍 Search";
+			Settings_Frame.append(Search_Input);
+
+			Scroll_Settings = document.createElement("div");
+			Scroll_Settings.className = "STYLESHIFT-Scrollable";
+			Settings_Frame.append(Scroll_Settings);
+
+			//---------------------------------------------------
+
+			Settings_Window.Close.addEventListener(
+				"click",
+				() => {
+					Return_OBJ.Remove_UI();
+				},
+				{ once: true }
+			);
+
+			//---------------------------------------------------
+
+			let Left_UI = [];
+			let Right_UI = [];
+
+			for (const This_Category of await Get_Category()) {
+				const Category_Frame = await Create_Setting_UI_Element(
+					"Setting_Frame",
+					true,
+					true
+				);
+				Category_Frame.className += " STYLESHIFT-Category-Frame";
+				Scroll_Settings.append(Category_Frame);
+
+				let Category_Title = (
+					await Create_Setting_UI_Element_With_Able_Developer_Mode(
+						Category_Frame,
+						This_Category
+					)
+				).Frame;
+
+				let Left_Category_Title = await Create_Setting_UI_Element(
+					"Left-Title",
+					This_Category.Category,
+					Skip_Animation
+				);
+
+				Scroll_On_Click(Left_Category_Title, Category_Title);
+
+				if (Show_Category_List) {
+					Left_UI.push(Left_Category_Title);
+					Scroll_Category.append(Left_Category_Title);
+				}
+
+				Right_UI.push(Category_Title);
+
+				//------------------------------
+
+				await Create_Inner_UI(Category_Frame, This_Category);
+
+				//------------------------------
+
+				if (In_Setting_Page) {
+					const Get_Setting_Page_Only = Get_Setting_Page_Only_Items().filter(
+						(x) => x.Category === This_Category.Category
+					)[0];
+
+					if (Get_Setting_Page_Only) {
+						for (const This_Setting_Only of Get_Setting_Page_Only.Settings) {
+							await Create_Setting_UI_Element_With_Able_Developer_Mode(
+								Category_Frame,
+								This_Setting_Only
+							);
+						}
+					}
+				}
+
+				//------------------------------
+
+				if (await Load("Developer_Mode")) {
+					Dynamic_Append(
+						Category_Frame,
+						await Create_Setting_UI_Element(
+							"Add_Setting_Button",
+							This_Category.Settings
+						)
+					);
+				}
+
+				await Create_Setting_UI_Element("Space", Scroll_Settings);
+
+				//------------------------------------------------------
+			}
+
+			if (Show_Category_List && (await Load("Developer_Mode"))) {
+				let Add_Button = (
+					await Create_Setting_UI_Element("Button", {
+						name: "+",
+						color: "#FFFFFF",
+						text_align: "center",
+						click_function: function () {
+							Add_Category("🥳 New_Category");
+						},
+					})
+				).Button;
+				Add_Button.className += " STYLESHIFT-Add-Category-Button";
+
+				Add_Button.style.padding = "5px";
+				Add_Button.style.marginInline = "10px";
+				Add_Button.style.marginTop = "3px";
+
+				Left_UI.push(Add_Button);
+				Scroll_Category.append(Add_Button);
+
+				if (!Skip_Animation) {
+					Setup_Left_Title_Animation(Add_Button);
+				}
+			}
+
+			//------------------------------------------------------
+
+			if (Show_Category_List && !Skip_Animation) {
+				requestAnimationFrame(function () {
+					for (let Left_Order = 0; Left_Order < Left_UI.length; Left_Order++) {
+						const Left_Category_Title = Left_UI[Left_Order];
+						setTimeout(() => {
+							Left_Category_Title.style.transform = "";
+							Left_Category_Title.style.opacity = "";
+						}, 50 * Left_Order);
+					}
+				});
+			}
+
+			//------------------------------------------------------
+
+			let Current_Selected: HTMLElement;
+
+			if (Show_Category_List) {
+				Update_Setting_Interval = setInterval(async function () {
+					const Last_Index = Right_UI.length - 1;
+
+					for (let index = 0; index <= Last_Index; index++) {
+						const Scroll_Settings_Box = Scroll_Settings.getBoundingClientRect();
+						if (
+							index == Last_Index ||
+							(Right_UI[index].getBoundingClientRect().top - 10 <=
+								Scroll_Settings_Box.top &&
+								Right_UI[index + 1].getBoundingClientRect().top - 10 >=
+									Scroll_Settings_Box.top) ||
+							(index == 0 &&
+								Right_UI[index].getBoundingClientRect().top >=
+									Scroll_Settings_Box.top)
+						) {
+							if (Current_Selected == Left_UI[index]) {
+								break;
+							}
+							if (Current_Selected) {
+								Current_Selected.removeAttribute("Selected");
+							}
+							Current_Selected = Left_UI[index];
+							Current_Selected.setAttribute("Selected", "");
+							break;
+						}
+					}
+				}, 100);
+			}
+
+			if (On_Create) {
+				On_Create(Settings_Window);
+			}
+		},
+		Remove_UI: function (Skip_Animation = false) {
+			if (Settings_Window) {
+				clearInterval(Update_Setting_Interval);
+				if (Skip_Animation) {
+					Settings_Window.BG_Frame.remove();
+				} else {
+					Settings_Window.Run_Close();
+				}
+				Settings_Window = null;
+			}
+		},
+		Recreate_UI: async function () {
+			if (Settings_Window) {
+				let Last_Scroll = [0, 0];
+
+				if (Show_Category_List) {
+					Last_Scroll[0] = Scroll_Category.scrollTop;
+				}
+				Last_Scroll[1] = Scroll_Settings.scrollTop;
+
+				Settings_Window.Window.style.animation = "";
+				let Last_Style = Settings_Window.Window.style.cssText;
+				console.log(Last_Style);
+				Return_OBJ.Remove_UI(true);
+
+				//----------------------------------------
+
+				await Return_OBJ.Create_UI(true);
+				Settings_Window.Window.style.cssText = Last_Style;
+
+				if (Show_Category_List) {
+					Scroll_Category.scrollTo(0, Last_Scroll[0]);
+				}
+
+				Scroll_Settings.scrollTo(0, Last_Scroll[1]);
+			}
+		},
+		Toggle: function () {
+			if (Settings_Window) {
+				Return_OBJ.Remove_UI();
+			} else {
+				Return_OBJ.Create_UI();
+			}
+		},
+
+		Set_Get_Category: function (New_Function: () => Category[] | Promise<Category[]> | null) {
+			Get_Category = New_Function;
+			if (Settings_Window) {
+				Return_OBJ.Recreate_UI();
+			}
+		},
+	};
+
+	return Return_OBJ;
+}
+
 //------------------------------
 
 export async function Create_Config_UI_Function(
@@ -1750,8 +2068,8 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 	return Main_Element;
 }
 
-export async function Create_Inner_UI(Parent, Selector_Value) {
-	for (const This_Data of Selector_Value.Settings) {
+export async function Create_Inner_UI(Parent, This_Category) {
+	for (const This_Data of This_Category.Settings) {
 		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Data);
 	}
 }

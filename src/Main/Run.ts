@@ -22,7 +22,7 @@ import {
 	Update_StyleShift_Items,
 } from "./Settings/StyleShift_Items";
 import * as Global from "./Transfer_Functions/Extension_Functions";
-import { Create_Extension_Setting, Toggle_Extension_Setting } from "./UI/Extension_Setting_UI";
+import { Extension_Settings_UI } from "./UI/Extension_Setting_UI";
 import { Update_All_UI } from "./UI/Extension_UI";
 import { Toggle_Customize } from "./UI/Highlight_UI";
 
@@ -260,7 +260,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Enable",
 				value: true,
 				setup_function: `Set_Value("TEST","YAY")`,
-				enable_function: `alert(Get_Value("TEST"))`,
+				enable_function: `//alert(Get_Value("TEST"))`,
 				disable_function: "Disable_Extension_Function()",
 				enable_css: "wad",
 				setup_css: "",
@@ -295,7 +295,7 @@ async function Main_Run() {
 	await Update_StyleShift_Functions_List();
 
 	console.log("Set Defult Items");
-	await Save("Custom_StyleShift_Items", Test_Editable_Items);
+	// await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
 	await Set_Null_Save();
@@ -326,7 +326,7 @@ async function Main_Run() {
 	Run_Text_Script(`console.log("Window Variable 2", window);`);
 
 	if (In_Setting_Page) {
-		Create_Extension_Setting();
+		Extension_Settings_UI.Create_UI();
 	}
 }
 
@@ -351,6 +351,6 @@ chrome.runtime.onMessage.addListener(async function (message) {
 	}
 
 	if (message == "Setting") {
-		Toggle_Extension_Setting();
+		Extension_Settings_UI.Toggle();
 	}
 });

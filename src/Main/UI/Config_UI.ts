@@ -5,10 +5,10 @@ let Scrollable: HTMLElement;
 let Current_Content_Function;
 
 export async function Create_Config_UI(Skip_Animation = false) {
-	Config_Window = await Create_StyleShift_Window(Skip_Animation);
+	Config_Window = await Create_StyleShift_Window({ Skip_Animation });
 	Scrollable = document.createElement("div");
 	Scrollable.className = "STYLESHIFT-Scrollable";
-	Config_Window.Editor.append(Scrollable);
+	Config_Window.Window.append(Scrollable);
 	Config_Window.Close.addEventListener(
 		"click",
 		function () {
@@ -38,7 +38,7 @@ export async function Recreate_Config_UI() {
 export function Remove_Config_UI(Skip_Animation = false) {
 	if (Config_Window) {
 		if (Skip_Animation) {
-			Config_Window.Setting_BG.remove();
+			Config_Window.BG_Frame.remove();
 		} else {
 			Config_Window.Close.click();
 		}

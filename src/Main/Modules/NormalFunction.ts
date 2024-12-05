@@ -304,7 +304,7 @@ export function Get_Current_Domain() {
 	return domain;
 }
 
-export function Click_To_Scroll(Button, Target) {
+export function Scroll_On_Click(Button, Target) {
 	Button.addEventListener("click", function () {
 		Target.scrollIntoView({ behavior: "smooth" });
 	});

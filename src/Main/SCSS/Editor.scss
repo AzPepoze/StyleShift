@@ -214,11 +214,9 @@
 	}
 }
 
-.STYLESHIFT-Editor {
+.STYLESHIFT-Window {
 	resize: both;
 	overflow: auto;
-	height: 80%;
-	width: 30%;
 }
 
 textarea.STYLESHIFT-Selector-Text-Editor {
@@ -257,4 +255,36 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	color: rgb(255, 255, 255);
 	border: #ffffff17 solid 1px;
 	transition: all 0.2s;
+}
+
+.STYLESHIFT-Notification {
+	background: linear-gradient(-45deg, rgba(10, 10, 10, 0.8), rgba(43, 43, 43, 0.8));
+	padding: 10px;
+	border-radius: 10px;
+	border: solid rgba(255, 255, 255, 0.527) 1px;
+	right: 10px;
+	bottom: 10px;
+	position: absolute;
+	width: 400px;
+	display: flex;
+	gap: 10px;
+	font-size: 16px;
+
+	.STYLESHIFT-Notification-Icon {
+		font-size: 20px;
+	}
+
+	.STYLESHIFT-Notification-Content-Frame {
+		display: flex;
+		gap: 5px;
+	}
+
+	.STYLESHIFT-Notification-Title {
+		font-weight: 500;
+		color: white;
+	}
+
+	.STYLESHIFT-Notification-Content {
+		color: white;
+	}
 }

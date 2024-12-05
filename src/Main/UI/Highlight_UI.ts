@@ -3,7 +3,7 @@ import {
 	WaitDocumentLoaded,
 	Once_Element_Remove,
 } from "../Modules/NormalFunction";
-import { Create_Editor_UI, Remove_Editor_UI } from "./Editor_UI";
+import { Create_Editor_UI, Editor_UI } from "./Editor_UI";
 import { Get_StyleShift_Items } from "../Settings/StyleShift_Items";
 import { Show_Confirm } from "./Extension_UI";
 
@@ -232,7 +232,7 @@ export function Stop_Customize() {
 export async function Toggle_Customize() {
 	if (Running_Cusomize) {
 		Stop_Customize();
-		Remove_Editor_UI();
+		Editor_UI.Remove_UI(false);
 	} else {
 		Start_Customize();
 	}

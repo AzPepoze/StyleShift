@@ -1,16 +1,8 @@
-import { Recreate_Editor_UI } from "../UI/Editor_UI";
-import { Setting, Update_StyleShift_Items } from "./StyleShift_Items";
-import {
-	Color_OBJ_to_HEX,
-	HEX_to_Color_OBJ,
-	Run_Text_Script,
-	Update_StyleShift_Functions_List,
-} from "../Modules/Main_Function";
+import { HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Main_Function";
 import { Is_Same_OBJ } from "../Modules/NormalFunction";
 import { Load_Any } from "../Modules/Save";
-import { Recreate_Extension_Setting } from "../UI/Extension_Setting_UI";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
-import { Update_All_UI } from "../UI/Extension_UI";
+import { Setting } from "./StyleShift_Items";
 
 export let Settings_Current_State = {};
 let Settings_Update_Function: { [key: string]: Function } = {};
@@ -177,9 +169,7 @@ let Settings_Funcion = {
 
 			if (StyleSheet) {
 				StyleSheet.textContent = "";
-				StyleSheet.textContent += `:root{--${This_Setting.id}: ${Color_OBJ_to_HEX(
-					value
-				)}}`;
+				StyleSheet.textContent += `:root{--${This_Setting.id}: ${value}}`;
 				StyleSheet.textContent += This_Setting.setup_css || ``;
 				console.log(StyleSheet.textContent);
 			}

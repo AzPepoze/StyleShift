@@ -1,5 +1,6 @@
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { color_obj } from "../Settings/StyleShift_Items";
+import { Create_Notification } from "../UI/Extension_UI";
 import { Create_UniqueID, GetDocumentHead, sleep } from "./NormalFunction";
 
 export let Ver = chrome.runtime.getManifest().version;
@@ -135,6 +136,37 @@ export async function Get_Global_Data(Mode: "Build-in" | "Custom", Function_Name
 	}
 }
 
+function Is_Safe_Code(code: string) {
+	const LoweredCase_Code = code.toLowerCase();
+
+	const dangerousPatterns = [
+		/window/,
+		/document/,
+		/eval/,
+		/Function/,
+		/import/,
+		/fetch/,
+		/<\/?script>/i,
+		/document\.createElement\s*\(\s*['"]script['"]\s*\)/i,
+		/document\.(body|head)\.append\s*\(/i,
+		/\.innerHTML\s*=/i,
+	];
+
+	// ตรวจสอบโค้ด
+	for (const pattern of dangerousPatterns) {
+		if (pattern.test(LoweredCase_Code)) {
+			Create_Notification({
+				Icon: "🚫",
+				Title: "StyleShift - Error",
+				Content: `"${pattern.source}" is not allowed.`,
+			});
+			return false;
+		}
+	}
+
+	return true;
+}
+
 export async function Run_Text_Script(Text: string | Function, Replace = true) {
 	console.log("Trying to run script");
 	console.log(Text);
@@ -147,7 +179,7 @@ export async function Run_Text_Script(Text: string | Function, Replace = true) {
 
 			// console.log("Before :", Text);
 
-			if (Replace) {
+			if (Replace && Is_Safe_Code(Text) == true) {
 				// console.log(StyleShift_Functions_List);
 				for (const [Function_Mode, Functions_List] of Object.entries(
 					StyleShift_Functions_List
@@ -179,18 +211,18 @@ export async function Run_Text_Script(Text: string | Function, Replace = true) {
 	}
 }
 
-export async function Inject_Text_Script(Text: string) {
-	console.log("Inject_Text_Script", Text);
-	try {
-		const script = document.createElement("script");
-		script.textContent = Text;
-		(await GetDocumentHead()).appendChild(script);
-		script.remove();
-	} catch (e) {
-		await sleep(100);
-		Inject_Text_Script(Text);
-	}
-}
+// export async function Inject_Text_Script(Text: string) {
+// 	console.log("Inject_Text_Script", Text);
+// 	try {
+// 		const script = document.createElement("script");
+// 		script.textContent = Text;
+// 		(await GetDocumentHead()).appendChild(script);
+// 		script.remove();
+// 	} catch (e) {
+// 		await sleep(100);
+// 		Inject_Text_Script(Text);
+// 	}
+// }
 
 export let Loaded_Developer_Modules = false;
 
