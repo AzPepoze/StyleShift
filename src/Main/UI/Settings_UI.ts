@@ -5,23 +5,28 @@ import {
 	isFirefox,
 	Loaded_Developer_Modules,
 	Monaco,
-	Run_Text_Script,
+	Run_Text_Script_From_Setting,
 } from "../Modules/Main_Function";
 import {
 	Apply_Drag,
 	HEX_to_RBG,
 	HSV_to_RGB,
+	insertAfter,
 	ReArrange_Selector,
 	RGB_to_HSV,
 	Scroll_On_Click,
+	sleep,
+	Wait_One_Frame,
 } from "../Modules/NormalFunction";
 import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
+import { Update_All } from "../Run";
 import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
 import { Update_Setting_Function } from "../Settings/Settings_Function";
 import {
 	Add_Category,
 	Add_Setting,
 	Category,
+	Get_Setting_Category,
 	Get_StyleShift_Data_Type,
 	Remove_Category,
 	Remove_Setting,
@@ -30,6 +35,8 @@ import {
 import { Show_Config_UI } from "./Config_UI";
 import {
 	Animation_Time,
+	Create_Error,
+	Create_Notification,
 	Create_StyleShift_Window,
 	Hide_Window_Animation,
 	Show_Window_Animation,
@@ -151,7 +158,7 @@ let Main_Setting_UI = {
 
 			if (typeof This_Setting.click_function == "string") {
 				console.log(This_Setting.click_function);
-				Run_Text_Script(This_Setting.click_function);
+				Run_Text_Script_From_Setting(This_Setting, "click_function");
 			} else {
 				This_Setting.click_function();
 			}
@@ -1985,6 +1992,37 @@ export async function Create_Config_UI_Function(
 	}
 }
 
+function Create_Setting_Space(Size = 20, Gap = 0) {
+	const Space = document.createElement("div");
+	Space.style.height = Size + "px";
+	Space.style.transition = `all ${Animation_Time}s`;
+	Space.style.marginTop = -Gap + "px";
+	Space.style.marginBottom = -Gap + "px";
+
+	async function Show() {
+		Space.style.height = Size + Gap + "px";
+		await sleep(Animation_Time * 1000);
+	}
+
+	async function Hide() {
+		Space.style.height = Gap + "px";
+		await sleep(Animation_Time * 1000);
+	}
+
+	function Set_Size(Value) {
+		Size = Value;
+	}
+
+	return {
+		Show,
+		Hide,
+		Set_Size,
+		Element: Space,
+	};
+}
+
+let Draging_Setting;
+
 export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 	Parent: HTMLDivElement,
 	This_Data
@@ -2011,6 +2049,157 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 		Move_Button.className += " STYLESHIFT-Config-Button";
 
 		Frame.append(Move_Button);
+
+		//-------------------------------
+
+		Move_Button.addEventListener("mousedown", async function (event) {
+			event.preventDefault();
+
+			let Frame_Bound = Frame.getBoundingClientRect();
+			let Offset = event.clientY - Frame_Bound.top;
+
+			Draging_Setting = {
+				Size: Frame_Bound.height,
+				Data: This_Data,
+			};
+
+			Frame.style.width = `${Frame_Bound.width}px`;
+			Frame.style.height = `${Frame_Bound.height}px`;
+			Frame.style.position = "absolute";
+			Frame.style.pointerEvents = "none";
+			Frame.style.zIndex = "1";
+
+			const Space = Create_Setting_Space(
+				Frame_Bound.height,
+				Number(getComputedStyle(Parent).gap.replace("px", ""))
+			);
+			Space.Show();
+			Parent.insertBefore(Space.Element, Frame);
+
+			requestAnimationFrame(() => {
+				Space.Hide();
+			});
+
+			let Scroller = Parent.parentElement;
+			let Current_Mouse_Event = event;
+
+			Scroller.setAttribute("Draging", "");
+
+			//---------------------------------
+
+			let Render_Drag = true;
+
+			function Update_Drag_Function() {
+				if (!Render_Drag) return;
+
+				Frame.style.top = `${
+					Current_Mouse_Event.clientY -
+					Scroller.getBoundingClientRect().top +
+					Scroller.scrollTop -
+					Offset
+				}px`;
+
+				requestAnimationFrame(Update_Drag_Function);
+			}
+			Update_Drag_Function();
+
+			//---------------------------------
+
+			function On_Drag(event) {
+				Current_Mouse_Event = event;
+			}
+
+			document.addEventListener("mousemove", On_Drag);
+
+			document.addEventListener(
+				"mouseup",
+				function () {
+					document.removeEventListener("mousemove", On_Drag);
+					Render_Drag = false;
+
+					Frame.style.width = "";
+					Frame.style.height = "";
+					Frame.style.position = "";
+					Frame.style.pointerEvents = "";
+					Frame.style.zIndex = "";
+
+					Scroller.removeAttribute("Draging");
+
+					Draging_Setting = null;
+					Space.Element.remove();
+				},
+				{ once: true }
+			);
+		});
+
+		const Space = Create_Setting_Space(
+			0,
+			Number(getComputedStyle(Parent).gap.replace("px", ""))
+		);
+		Space.Element.className = "STYLESHIFT-Drag-Hint";
+		Space.Hide();
+
+		insertAfter(Space.Element, Frame);
+
+		let Current_Hover = 0;
+		function Space_Update_Hover(Hover) {
+			Current_Hover += Hover;
+
+			if (Draging_Setting) {
+				if (Current_Hover != 0) {
+					Space.Set_Size(Draging_Setting.Size);
+					Space.Show();
+				}
+			}
+
+			if (Current_Hover == 0) {
+				Space.Hide();
+			}
+		}
+
+		Frame.addEventListener("mouseenter", () => {
+			Space_Update_Hover(1);
+		});
+		Space.Element.addEventListener("mouseenter", () => {
+			Space_Update_Hover(1);
+		});
+
+		Frame.addEventListener("mouseleave", () => {
+			Space_Update_Hover(-1);
+		});
+		Space.Element.addEventListener("mouseleave", function () {
+			Space_Update_Hover(-1);
+		});
+
+		Space.Element.addEventListener("mouseup", () => {
+			if (Draging_Setting) {
+				Remove_Setting(Draging_Setting.Data);
+
+				let This_Category: Category | 0 =
+					Data_Type == "Category" ? This_Data : Get_Setting_Category(This_Data);
+				let This_Setting_Index = 0;
+
+				if (This_Category == 0) {
+					Create_Error(`Category of ${This_Data} not found`);
+					return;
+				}
+
+				if (Data_Type != "Category") {
+					This_Setting_Index =
+						This_Category.Settings.findIndex((Setting) => Setting == This_Data) +
+						1;
+				}
+
+				try {
+					This_Category.Settings.splice(This_Setting_Index, 0, Draging_Setting.Data);
+				} catch (error) {
+					Create_Error(error);
+					return;
+				}
+
+				Update_All();
+			}
+		});
 
 		//---------------------------
 
@@ -2069,7 +2258,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 }
 
 export async function Create_Inner_UI(Parent, This_Category) {
-	for (const This_Data of This_Category.Settings) {
-		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Data);
+	for (const This_Setting of This_Category.Settings) {
+		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Setting);
 	}
 }

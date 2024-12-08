@@ -59,20 +59,36 @@ export async function Create_StyleShift_Window({
 	};
 }
 
-export async function Create_Notification({ Icon = null, Title = "StyleShift", Content = "" }) {
+let Notification_Container;
+
+(async () => {
+	const Notification_BG = await Create_Setting_UI_Element("Fill_Screen", false);
+	(await GetDocumentBody()).append(Notification_BG);
+
+	Notification_Container = document.createElement("div");
+	Notification_Container.className = "STYLESHIFT-Notification-Container";
+	Notification_BG.append(Notification_Container);
+})();
+
+export async function Create_Notification({
+	Icon = null,
+	Title = "StyleShift",
+	Content = "",
+	Timeout = 3000,
+}) {
 	console.log(Title, Content);
-	const BG = await Create_Setting_UI_Element("Fill_Screen", false);
-	(await GetDocumentBody()).append(BG);
 
 	const Notification_Frame = await Create_Setting_UI_Element("Setting_Frame", true, false, {
 		x: false,
 		y: true,
 	});
 	Notification_Frame.className = "STYLESHIFT-Notification";
-	BG.append(Notification_Frame);
+	Notification_Container.append(Notification_Frame);
+
+	let Icon_UI;
 
 	if (Icon) {
-		const Icon_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+		Icon_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
 			x: true,
 			y: true,
 		});
@@ -80,6 +96,8 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
 		Icon_UI.textContent = Icon;
 		Notification_Frame.append(Icon_UI);
 	}
+
+	//---------------------------------
 
 	const Notification_Content_Frame = await Create_Setting_UI_Element(
 		"Setting_Frame",
@@ -102,28 +120,81 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
 		y: true,
 	});
 	Content_UI.className += " STYLESHIFT-Notification-Content";
-	Content_UI.textContent = Content;
 	Notification_Content_Frame.append(Content_UI);
 
-	await Show_Window_Animation(Notification_Frame);
+	let Set_Content = (New_Content) => {
+		Content_UI.innerHTML = New_Content.replaceAll("<script", "").replaceAll("/script>", "");
+	};
 
-	await sleep(2000);
+	Set_Content(Content);
 
-	await Hide_Window_Animation(Notification_Frame);
+	//---------------------------------
 
-	BG.remove();
+	async function Close() {
+		await Run_Animation(Notification_Frame, "Notification-Hide");
+		Notification_Frame.remove();
+	}
+
+	if (Timeout == 0) {
+		const Close_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+			x: true,
+			y: true,
+		});
+		Close_UI.className += " STYLESHIFT-Notification-Close";
+		Close_UI.textContent = "X";
+		Notification_Frame.append(Close_UI);
+
+		Close_UI.addEventListener("click", function (e) {
+			e.preventDefault();
+			Close();
+		});
+	}
+
+	//---------------------------------
+
+	await Run_Animation(Notification_Frame, "Notification-Show");
+	setTimeout(async () => {
+		if (Timeout > 0) {
+			await sleep(Timeout);
+			Close();
+		}
+	}, 0);
+
+	return {
+		Set_Icon: (New_Icon) => {
+			if (Icon_UI) {
+				Icon_UI.textContent = New_Icon;
+			}
+		},
+		Set_Content,
+		Set_Title: (New_Title) => {
+			Title_UI.textContent = New_Title;
+		},
+		Close,
+	};
+}
+
+export async function Create_Error(Content) {
+	return await Create_Notification({
+		Icon: "❌",
+		Title: "StyleShift - Error",
+		Content: Content,
+	});
 }
 
 export let Animation_Time = 0.25;
 
-export async function Show_Window_Animation(Target: HTMLDivElement) {
-	Target.style.animation = `STYLESHIFT-Show-Pop-Animation ${Animation_Time}s forwards`;
+export async function Run_Animation(Target: HTMLDivElement, Animation_Name: string) {
+	Target.style.animation = `STYLESHIFT-${Animation_Name} ${Animation_Time}s forwards`;
 	await sleep(Animation_Time * 1000);
 }
 
+export async function Show_Window_Animation(Target: HTMLDivElement) {
+	await Run_Animation(Target, "Show-Pop-Animation");
+}
+
 export async function Hide_Window_Animation(Target: HTMLDivElement) {
-	Target.style.animation = `STYLESHIFT-Hide-Pop-Animation ${Animation_Time}s forwards`;
-	await sleep(Animation_Time * 1000);
+	await Run_Animation(Target, "Hide-Pop-Animation");
 }
 
 //---------------------------------

@@ -281,7 +281,10 @@ async function Main_Run() {
 			await fetch(chrome.runtime.getURL("Build_in_Functions.js"))
 		).text();
 
-		Run_Text_Script(Build_in_Functions, false);
+		Run_Text_Script({
+			Text: Build_in_Functions,
+			Replace: false,
+		});
 
 		console.log(window);
 	}
@@ -323,7 +326,7 @@ async function Main_Run() {
 	setTimeout(() => {
 		console.log("Window Variable", window);
 	}, 1);
-	Run_Text_Script(`console.log("Window Variable 2", window);`);
+	Run_Text_Script({ Text: `console.log("Window Variable 2", window);`, Replace: false });
 
 	if (In_Setting_Page) {
 		Extension_Settings_UI.Create_UI();

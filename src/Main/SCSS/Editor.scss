@@ -66,16 +66,16 @@
 			transform: scaleY(0);
 			opacity: 0;
 		}
-
-		&:hover .STYLESHIFT-Add-Setting-Button,
-		.STYLESHIFT-Add-Setting-Button[selecting] {
-			margin-top: 0px;
-			transform: scaleY(1);
-			opacity: 1;
-		}
 	}
 
-	//----------------------------------------
+	.STYLESHIFT-Scrollable:not([Draging])
+		.STYLESHIFT-Category-Frame:hover
+		.STYLESHIFT-Add-Setting-Button,
+	.STYLESHIFT-Add-Setting-Button[selecting] {
+		margin-top: 0;
+		transform: scaleY(1);
+		opacity: 1;
+	}
 
 	.STYLESHIFT-Glow-Hover:hover {
 		filter: brightness(1.4);
@@ -108,7 +108,7 @@
 		width: 100%;
 		height: 100%;
 		border-radius: var(--Border-Radius);
-		transform: translateZ(0px);
+		transform: translateZ(0);
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
@@ -139,12 +139,6 @@
 
 		.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
 		.STYLESHIFT-Main-Setting-Frame {
-			// &:hover {
-			// 	filter: drop-shadow(0px 0px 10px white);
-			// 	background: radial-gradient(at center top, rgb(104, 104, 104), rgb(64, 64, 64));
-			// }
-
-			// transition: all 0.2s;
 			background: radial-gradient(
 				at center top,
 				rgba(255, 255, 255, 0.23),
@@ -153,25 +147,24 @@
 		}
 	}
 
-	//----------------------------------------
+	.STYLESHIFT-Scrollable {
+		.STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame {
+			gap: 0;
 
-	.STYLESHIFT-Scrollable .STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame {
-		gap: 0px;
-
-		.STYLESHIFT-Config-Button {
-			--Config-Button-Size: 40px;
-
-			transition: all 0.2s;
-			opacity: 0;
-			min-width: 0px;
-			min-height: 0px;
-			max-width: 0px;
-			max-height: 0px;
-			padding: 0px;
-			border-width: 0px;
+			.STYLESHIFT-Config-Button {
+				--Config-Button-Size: 40px;
+				transition: all 0.2s;
+				opacity: 0;
+				min-width: 0;
+				min-height: 0;
+				max-width: 0;
+				max-height: 0;
+				padding: 0;
+				border-width: 0;
+			}
 		}
 
-		&:hover {
+		&:not([Draging]) .STYLESHIFT-Category-Frame > .STYLESHIFT-Config-Frame:hover {
 			gap: 10px;
 
 			.STYLESHIFT-Config-Button {
@@ -185,15 +178,17 @@
 		}
 	}
 
-	.STYLESHIFT-Scrollable {
-		.STYLESHIFT-Add-Category-Button {
-			opacity: 0;
-		}
+	.STYLESHIFT-Scrollable .STYLESHIFT-Add-Category-Button {
+		opacity: 0;
 
 		&:hover {
-			.STYLESHIFT-Add-Category-Button {
-				opacity: 1;
-			}
+			opacity: 1;
+		}
+	}
+
+	.STYLESHIFT-Scrollable[Draging] {
+		.STYLESHIFT-Drag-Hint:hover {
+			background: rgba(255, 255, 255, 0.5);
 		}
 	}
 }
@@ -236,7 +231,7 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 
 .STYLESHIFT-DropDown-Container {
 	position: fixed;
-	padding: 0px;
+	padding: 0;
 	height: auto;
 	display: flex;
 	z-index: 10000;
@@ -257,18 +252,61 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	transition: all 0.2s;
 }
 
-.STYLESHIFT-Notification {
-	background: linear-gradient(-45deg, rgba(10, 10, 10, 0.8), rgba(43, 43, 43, 0.8));
-	padding: 10px;
-	border-radius: 10px;
-	border: solid rgba(255, 255, 255, 0.527) 1px;
-	right: 10px;
-	bottom: 10px;
+.STYLESHIFT-Notification-Container {
+	right: 0;
 	position: absolute;
 	width: 400px;
+	height: 100%;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column-reverse;
+	padding: 10px;
+	height: -moz-available;
+	bottom: 0;
+}
+
+.STYLESHIFT-Notification {
+	@keyframes STYLESHIFT-Notification-Hide {
+		0% {
+			opacity: 1;
+			max-height: 1000px;
+			padding: 10px;
+			margin-top: 10px;
+		}
+		100% {
+			opacity: 0;
+			max-height: 0;
+			height: 0;
+			padding: 0;
+			margin-top: 0;
+		}
+	}
+
+	@keyframes STYLESHIFT-Notification-Show {
+		0% {
+			opacity: 0;
+			max-height: 0;
+			padding: 0;
+			margin-top: 0;
+		}
+		100% {
+			opacity: 1;
+			max-height: 1000px;
+			padding: 10px;
+			margin-top: 10px;
+		}
+	}
+
+	background: black;
+	border-radius: 10px;
+	border: solid rgba(255, 255, 255, 0.527) 1px;
 	display: flex;
 	gap: 10px;
 	font-size: 16px;
+	pointer-events: all;
+	width: -webkit-fill-available;
+	height: max-content;
+	overflow: hidden;
 
 	.STYLESHIFT-Notification-Icon {
 		font-size: 20px;
@@ -277,6 +315,7 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	.STYLESHIFT-Notification-Content-Frame {
 		display: flex;
 		gap: 5px;
+		width: -webkit-fill-available;
 	}
 
 	.STYLESHIFT-Notification-Title {
@@ -286,5 +325,12 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 
 	.STYLESHIFT-Notification-Content {
 		color: white;
+		white-space: pre;
+	}
+
+	.STYLESHIFT-Notification-Close {
+		padding: 10px;
+		color: white;
+		user-select: none;
 	}
 }

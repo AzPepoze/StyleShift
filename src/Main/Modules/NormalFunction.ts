@@ -359,6 +359,11 @@ export function Apply_Drag(Drag_Object, Target: HTMLElement) {
 	});
 }
 
+export function Update_Drag_Position(Element, event, offsetX, offsetY) {
+	Element.style.left = `${event.clientX - offsetX}px`;
+	Element.style.top = `${event.clientY - offsetY}px`;
+}
+
 export function ReArrange_Selector(value) {
 	return value.replace(/\s+/g, " ").replace(/\n/g, "").replace(/, /g, ",").replace(/,/g, ",\n");
 }
@@ -506,4 +511,16 @@ export async function On_Function_Event(
 			window.removeEventListener(`${Prefix}_${Function_Name}`, On_Event_Run_Function);
 		},
 	};
+}
+
+export function Wait_One_Frame() {
+	return new Promise((resolve) => {
+		requestAnimationFrame(() => {
+			resolve(true);
+		});
+	});
+}
+
+export function insertAfter(newNode, existingNode) {
+	existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }

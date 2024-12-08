@@ -1,5 +1,5 @@
-import { HEX_to_Color_OBJ, Run_Text_Script } from "../Modules/Main_Function";
-import { Is_Same_OBJ } from "../Modules/NormalFunction";
+import { HEX_to_Color_OBJ, Run_Text_Script_From_Setting } from "../Modules/Main_Function";
+import { Is_Same_OBJ, sleep } from "../Modules/NormalFunction";
 import { Load_Any } from "../Modules/Save";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
 import { Setting } from "./StyleShift_Items";
@@ -16,7 +16,7 @@ let Settings_Funcion = {
 		}
 
 		if (This_Setting.setup_function) {
-			Run_Text_Script(This_Setting.setup_function);
+			Run_Text_Script_From_Setting(This_Setting, "setup_function");
 		}
 
 		async function Update_Function() {
@@ -39,14 +39,14 @@ let Settings_Funcion = {
 					StyleSheet.textContent += This_Setting.enable_css || ``;
 				}
 				if (This_Setting.enable_function) {
-					Run_Text_Script(This_Setting.enable_function);
+					Run_Text_Script_From_Setting(This_Setting, "enable_function");
 				}
 			} else {
 				if (StyleSheet) {
 					StyleSheet.textContent += This_Setting.disable_css || ``;
 				}
 				if (This_Setting.disable_function) {
-					Run_Text_Script(This_Setting.disable_function);
+					Run_Text_Script_From_Setting(This_Setting, "disable_function");
 				}
 			}
 		}
@@ -63,7 +63,7 @@ let Settings_Funcion = {
 		}
 
 		if (This_Setting.setup_function) {
-			Run_Text_Script(This_Setting.setup_function);
+			Run_Text_Script_From_Setting(This_Setting, "setup_function");
 		}
 
 		async function Update_Function() {
@@ -88,7 +88,7 @@ let Settings_Funcion = {
 			}
 
 			if (This_Setting.update_function) {
-				Run_Text_Script(This_Setting.update_function);
+				Run_Text_Script_From_Setting(This_Setting, "update_function");
 			}
 		}
 
@@ -101,7 +101,7 @@ let Settings_Funcion = {
 		StyleSheet = Create_StyleSheet(This_Setting.id);
 
 		if (This_Setting.setup_function) {
-			Run_Text_Script(This_Setting.setup_function);
+			Run_Text_Script_From_Setting(This_Setting, "setup_function");
 		}
 
 		async function Update_Function() {
@@ -113,13 +113,13 @@ let Settings_Funcion = {
 			//----------------------
 
 			const Old_Dropdown = This_Setting.options[Settings_Current_State[This_Setting.id]];
-			Run_Text_Script(Old_Dropdown.disable_function);
+			Run_Text_Script_From_Setting(This_Setting, "disable_function");
 
 			//----------------------
 
 			Settings_Current_State[This_Setting.id] = value;
 			const Current_Dropdown = This_Setting.options[value];
-			Run_Text_Script(Current_Dropdown.enable_function);
+			Run_Text_Script_From_Setting(This_Setting, "enable_function");
 
 			//----------------------
 
@@ -145,7 +145,7 @@ let Settings_Funcion = {
 		}
 
 		if (This_Setting.setup_function) {
-			Run_Text_Script(This_Setting.setup_function);
+			Run_Text_Script_From_Setting(This_Setting, "setup_function");
 		}
 
 		async function Update_Function() {
@@ -177,7 +177,7 @@ let Settings_Funcion = {
 			//----------------------
 
 			if (This_Setting.update_function) {
-				Run_Text_Script(This_Setting.update_function);
+				Run_Text_Script_From_Setting(This_Setting, "update_function");
 			}
 		}
 
@@ -206,8 +206,22 @@ export async function SetUp_Setting_Function(This_Setting) {
 	return Update_Function;
 }
 
+let Updating_Setting_Function = {};
+
 export async function Update_Setting_Function(id) {
 	console.log("Update", id, Settings_Update_Function[id]);
-	Settings_Update_Function[id]();
+
+	console.log(Updating_Setting_Function[id]);
+
+	if (Updating_Setting_Function[id]) {
+		return;
+	}
+
+	Updating_Setting_Function[id] = true;
+	await Settings_Update_Function[id]();
+	await sleep(100);
+	await Settings_Update_Function[id]();
+	delete Updating_Setting_Function[id];
+
 	console.log(Settings_Update_Function[id].toString());
 }

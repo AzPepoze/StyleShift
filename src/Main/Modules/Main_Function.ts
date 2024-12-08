@@ -1,7 +1,7 @@
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { color_obj } from "../Settings/StyleShift_Items";
 import { Create_Notification } from "../UI/Extension_UI";
-import { Create_UniqueID, GetDocumentHead, sleep } from "./NormalFunction";
+import { sleep } from "./NormalFunction";
 
 export let Ver = chrome.runtime.getManifest().version;
 
@@ -97,7 +97,8 @@ export async function Update_StyleShift_Functions_List() {
 			{ once: true }
 		);
 
-		Run_Text_Script(`
+		Run_Text_Script({
+			Text: `
 			function Run_StyleShift_Functions_List(){
 
 				if(window["StyleShift"] == null) {
@@ -121,7 +122,9 @@ export async function Update_StyleShift_Functions_List() {
 			}
 			
 			Run_StyleShift_Functions_List();
-		`);
+		`,
+			Replace: false,
+		});
 	});
 }
 
@@ -136,11 +139,11 @@ export async function Get_Global_Data(Mode: "Build-in" | "Custom", Function_Name
 	}
 }
 
-function Is_Safe_Code(code: string) {
+function Is_Safe_Code(code: string, Code_Name: string) {
 	const LoweredCase_Code = code.toLowerCase();
 
 	const dangerousPatterns = [
-		/window/,
+		/\bwindow(?!\.open)/,
 		/document/,
 		/eval/,
 		/Function/,
@@ -152,14 +155,23 @@ function Is_Safe_Code(code: string) {
 		/\.innerHTML\s*=/i,
 	];
 
-	// ตรวจสอบโค้ด
 	for (const pattern of dangerousPatterns) {
 		if (pattern.test(LoweredCase_Code)) {
-			Create_Notification({
-				Icon: "🚫",
-				Title: "StyleShift - Error",
-				Content: `"${pattern.source}" is not allowed.`,
-			});
+			const match = LoweredCase_Code.match(pattern);
+			if (match) {
+				const matchIndex = match.index;
+
+				const beforeMatch = LoweredCase_Code.slice(0, matchIndex);
+				const lineNumber = beforeMatch.split("\n").length;
+				const charPosition = matchIndex - beforeMatch.lastIndexOf("\n");
+
+				Create_Notification({
+					Icon: "🚫",
+					Title: "StyleShift - Error",
+					Content: `<b>"${match[0]}"</b> is not allowed.\nFound at line : <b>${lineNumber}</b> character : <b>${charPosition}</b>\nFrom : <b>${Code_Name}</b>`,
+					Timeout: 0,
+				});
+			}
 			return false;
 		}
 	}
@@ -167,7 +179,11 @@ function Is_Safe_Code(code: string) {
 	return true;
 }
 
-export async function Run_Text_Script(Text: string | Function, Replace = true) {
+export async function Run_Text_Script({
+	Text = null as string | Function,
+	Replace = true,
+	Code_Name = "StyleShift",
+}) {
 	console.log("Trying to run script");
 	console.log(Text);
 
@@ -179,7 +195,7 @@ export async function Run_Text_Script(Text: string | Function, Replace = true) {
 
 			// console.log("Before :", Text);
 
-			if (Replace && Is_Safe_Code(Text) == true) {
+			if (Replace && Is_Safe_Code(Text, Code_Name) == true) {
 				// console.log(StyleShift_Functions_List);
 				for (const [Function_Mode, Functions_List] of Object.entries(
 					StyleShift_Functions_List
@@ -211,6 +227,13 @@ export async function Run_Text_Script(Text: string | Function, Replace = true) {
 	}
 }
 
+export function Run_Text_Script_From_Setting(This_Setting, Function_Name: string = "script") {
+	Run_Text_Script({
+		Text: This_Setting[Function_Name],
+		Code_Name: `${This_Setting.id} : ${Function_Name}`,
+	});
+}
+
 // export async function Inject_Text_Script(Text: string) {
 // 	console.log("Inject_Text_Script", Text);
 // 	try {
@@ -238,6 +261,13 @@ export async function Load_Developer_Modules() {
 	Loaded_Developer_Modules = true;
 
 	if (!isFirefox || In_Setting_Page) {
+		const Loading_UI = await Create_Notification({
+			Icon: "🔃",
+			Title: "StyleShift - Loading Developer Modules",
+			Content: "Loading : Monaco editor (Code editor)",
+			Timeout: -1,
+		});
+
 		//---------------------------------------------------------------------
 
 		let Monaco_Data = await (
@@ -249,12 +279,20 @@ export async function Load_Developer_Modules() {
 		// 	Modules_Data = Modules_Data.replace("StyleShift_Extension_ID", Extension_Location);
 		// }
 
-		Run_Text_Script(Monaco_Data, false);
+		Run_Text_Script({
+			Text: Monaco_Data,
+			Replace: false,
+		});
+
+		Loading_UI.Set_Content("Loading : JSzip (Export theme as zip)");
 
 		let JSzip_Data = await (
 			await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))
 		).text();
-		Run_Text_Script(JSzip_Data, false);
+		Run_Text_Script({
+			Text: JSzip_Data,
+			Replace: false,
+		});
 
 		//---------------------------------------------------------------------
 
@@ -263,6 +301,8 @@ export async function Load_Developer_Modules() {
 		).text();
 
 		//---------------------------------------------------------------------
+
+		Loading_UI.Set_Content("Getting : Monaco editor (Code editor)");
 
 		Monaco = await Get_Global_Data("Build-in", "Monaco");
 		Monaco_Themes = await Get_Global_Data("Build-in", "Monaco_Themes");
@@ -283,7 +323,17 @@ export async function Load_Developer_Modules() {
 
 		//----------------------------------------------
 
+		Loading_UI.Set_Content("Getting : Jzip (Export theme as zip)");
+
 		JSzip = await Get_Global_Data("Build-in", "JSzip");
+
+		Loading_UI.Set_Icon("✅");
+		Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
+		Loading_UI.Set_Content("");
+
+		setTimeout(() => {
+			Loading_UI.Close();
+		}, 4000);
 	}
 
 	if (isFirefox && !In_Setting_Page) {

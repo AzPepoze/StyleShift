@@ -171,6 +171,17 @@ export function Find_Exist_Settings(Setting: Setting) {
 	);
 }
 
+export function Get_Setting_Category(Setting: Setting) {
+	for (const This_Category of Get_ALL_StyleShift_Items()) {
+		for (const This_Setting of This_Category.Settings) {
+			if (This_Setting === Setting) {
+				return This_Category;
+			}
+		}
+	}
+	return 0;
+}
+
 export function Find_Exist_Category(Category: Category) {
 	return Get_ALL_StyleShift_Items().some(
 		(This_Category) => This_Category.Category === Category.Category
