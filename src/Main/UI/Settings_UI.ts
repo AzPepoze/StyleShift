@@ -16,11 +16,10 @@ import {
 	RGB_to_HSV,
 	Scroll_On_Click,
 	sleep,
-	Wait_One_Frame,
 } from "../Modules/NormalFunction";
 import { Load, Load_Any, Save_All, Save_Any } from "../Modules/Save";
 import { Update_All } from "../Run";
-import { Get_Setting_Page_Only_Items } from "../Setting_Only_Items";
+import { Get_Setting_Page_Only_Items } from "../Developer_Only_Items";
 import { Update_Setting_Function } from "../Settings/Settings_Function";
 import {
 	Add_Category,
@@ -36,7 +35,6 @@ import { Show_Config_UI } from "./Config_UI";
 import {
 	Animation_Time,
 	Create_Error,
-	Create_Notification,
 	Create_StyleShift_Window,
 	Hide_Window_Animation,
 	Show_Window_Animation,
@@ -364,6 +362,8 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
+		console.log(This_Setting);
+
 		async function Update_UI() {
 			Frame.id = This_Setting.id || "";
 
@@ -374,10 +374,16 @@ let Main_Setting_UI = {
 			);
 
 			let value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
+			console.log(value);
 			Number_Slide.Number_Slide_UI.value = String(value);
 			Number_Input.value = String(value);
 		}
 		await Update_UI();
+
+		async function Set_Value(value) {
+			This_Setting.value = value;
+			await Update_UI();
+		}
 
 		//-------------------------------------
 
@@ -461,7 +467,7 @@ let Main_Setting_UI = {
 			}
 		);
 
-		return { Frame, Config_UI_Function };
+		return { Frame, Config_UI_Function, Set_Value };
 	},
 
 	["Dropdown"]: async function (This_Setting: Partial<Extract<Setting, { type: "Dropdown" }>>) {
@@ -604,22 +610,20 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Opacity: HTMLDivElement;
+		let Opacity;
 		if (This_Setting.show_alpha_slider != false) {
-			Opacity = (
-				await Settings_UI["Number_Slide"]({
-					min: 0,
-					max: 100,
-					step: 1,
-					value: HEX_to_Color_OBJ(This_Setting.value).Alpha,
-					update_function: function (value) {
-						Update_Value("Alpha", value / 100);
-					},
-				})
-			).Frame;
+			Opacity = await Settings_UI["Number_Slide"]({
+				min: 0,
+				max: 100,
+				step: 1,
+				value: 0,
+				update_function: function (value) {
+					Update_Value("Alpha", value);
+				},
+			});
 
-			Opacity.style.width = "-webkit-fill-available";
-			Sub_Frame.appendChild(Opacity);
+			Opacity.Frame.style.width = "-webkit-fill-available";
+			Sub_Frame.appendChild(Opacity.Frame);
 		}
 
 		//-------------------------------------
@@ -627,13 +631,24 @@ let Main_Setting_UI = {
 		async function Update_UI() {
 			Frame.id = This_Setting.id || "";
 
+			Setting_Name.textContent = This_Setting.name;
+
 			let value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
 			console.log("Value", value, await Load_Any(This_Setting.id));
 			let Color_Usable_OBJ = HEX_to_Color_OBJ(value);
 
 			Color.value = String(Color_Usable_OBJ.HEX);
+			if (Opacity) {
+				Opacity.Set_Value(Color_Usable_OBJ.Alpha);
+			}
 		}
 		Update_UI();
+
+		async function Update_Config() {
+			if (This_Setting.id) {
+				Update_Setting_Function(This_Setting.id);
+			}
+		}
 
 		//-------------------------------------
 
@@ -691,6 +706,7 @@ let Main_Setting_UI = {
 					setup: 0,
 					enable: 0,
 					disable: 0,
+					Update_Config,
 				});
 			}
 		);
@@ -1249,7 +1265,8 @@ let Developer_Setting_UI = {
 		Parent,
 		This_Setting,
 		RunType,
-		ext_array = ["function", "css"]
+		ext_array = ["function", "css"],
+		Update_Config
 	) {
 		let This_RunType_Name = RunType;
 		let Color = "#999999";
@@ -1373,6 +1390,10 @@ let Developer_Setting_UI = {
 				RunType,
 				ext
 			);
+
+			Editor.Additinal_OnChange(function () {
+				Update_Config();
+			});
 
 			if (This_Type_Name == "JS" || This_Type_Name == "CSS") {
 				Editor.Text_Editor.style.height = "400px";
@@ -1501,6 +1522,10 @@ let Developer_Setting_UI = {
 
 	["Config_Section_2"]: async function (Parent, This_Setting, Props) {
 		for (let [Title, Property] of Object.entries(Props)) {
+			if (Title == "Update_Config") {
+				continue;
+			}
+
 			switch (Property) {
 				case 1:
 					Property = ["var"];
@@ -1516,7 +1541,14 @@ let Developer_Setting_UI = {
 					Property = ["css", "function"];
 					break;
 			}
-			Settings_UI["Setting_Developer_Frame"](Parent, This_Setting, Title, Property as any);
+
+			Settings_UI["Setting_Developer_Frame"](
+				Parent,
+				This_Setting,
+				Title,
+				Property as any,
+				Props.Update_Config
+			);
 		}
 	},
 
@@ -1779,6 +1811,8 @@ export async function Create_Main_Settings_UI({
 			let Left_UI = [];
 			let Right_UI = [];
 
+			console.log("Test2", Get_Category());
+
 			for (const This_Category of await Get_Category()) {
 				const Category_Frame = await Create_Setting_UI_Element(
 					"Setting_Frame",
@@ -1816,7 +1850,7 @@ export async function Create_Main_Settings_UI({
 
 				//------------------------------
 
-				if (In_Setting_Page) {
+				if (Loaded_Developer_Modules && (!isFirefox || In_Setting_Page)) {
 					const Get_Setting_Page_Only = Get_Setting_Page_Only_Items().filter(
 						(x) => x.Category === This_Category.Category
 					)[0];
@@ -2040,97 +2074,99 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 
 		//---------------------------
 
-		const Move_Button = (
-			await Settings_UI["Button"]({
-				name: "☰",
-				text_align: "center",
-			})
-		).Button;
-		Move_Button.className += " STYLESHIFT-Config-Button";
+		if (Data_Type != "Category") {
+			const Move_Button = (
+				await Settings_UI["Button"]({
+					name: "☰",
+					text_align: "center",
+				})
+			).Button;
+			Move_Button.className += " STYLESHIFT-Config-Button";
 
-		Frame.append(Move_Button);
+			Frame.append(Move_Button);
 
-		//-------------------------------
+			//-------------------------------
 
-		Move_Button.addEventListener("mousedown", async function (event) {
-			event.preventDefault();
+			Move_Button.addEventListener("mousedown", async function (event) {
+				event.preventDefault();
 
-			let Frame_Bound = Frame.getBoundingClientRect();
-			let Offset = event.clientY - Frame_Bound.top;
+				let Frame_Bound = Frame.getBoundingClientRect();
+				let Offset = event.clientY - Frame_Bound.top;
 
-			Draging_Setting = {
-				Size: Frame_Bound.height,
-				Data: This_Data,
-			};
+				Draging_Setting = {
+					Size: Frame_Bound.height,
+					Data: This_Data,
+				};
 
-			Frame.style.width = `${Frame_Bound.width}px`;
-			Frame.style.height = `${Frame_Bound.height}px`;
-			Frame.style.position = "absolute";
-			Frame.style.pointerEvents = "none";
-			Frame.style.zIndex = "1";
+				Frame.style.width = `${Frame_Bound.width}px`;
+				Frame.style.height = `${Frame_Bound.height}px`;
+				Frame.style.position = "absolute";
+				Frame.style.pointerEvents = "none";
+				Frame.style.zIndex = "1";
 
-			const Space = Create_Setting_Space(
-				Frame_Bound.height,
-				Number(getComputedStyle(Parent).gap.replace("px", ""))
-			);
-			Space.Show();
-			Parent.insertBefore(Space.Element, Frame);
+				const Space = Create_Setting_Space(
+					Frame_Bound.height,
+					Number(getComputedStyle(Parent).gap.replace("px", ""))
+				);
+				Space.Show();
+				Parent.insertBefore(Space.Element, Frame);
 
-			requestAnimationFrame(() => {
-				Space.Hide();
+				requestAnimationFrame(() => {
+					Space.Hide();
+				});
+
+				let Scroller = Parent.parentElement;
+				let Current_Mouse_Event = event;
+
+				Scroller.setAttribute("Draging", "");
+
+				//---------------------------------
+
+				let Render_Drag = true;
+
+				function Update_Drag_Function() {
+					if (!Render_Drag) return;
+
+					Frame.style.top = `${
+						Current_Mouse_Event.clientY -
+						Scroller.getBoundingClientRect().top +
+						Scroller.scrollTop -
+						Offset
+					}px`;
+
+					requestAnimationFrame(Update_Drag_Function);
+				}
+				Update_Drag_Function();
+
+				//---------------------------------
+
+				function On_Drag(event) {
+					Current_Mouse_Event = event;
+				}
+
+				document.addEventListener("mousemove", On_Drag);
+
+				document.addEventListener(
+					"mouseup",
+					function () {
+						document.removeEventListener("mousemove", On_Drag);
+						Render_Drag = false;
+
+						Frame.style.width = "";
+						Frame.style.height = "";
+						Frame.style.position = "";
+						Frame.style.pointerEvents = "";
+						Frame.style.zIndex = "";
+
+						Scroller.removeAttribute("Draging");
+
+						Draging_Setting = null;
+						Space.Element.remove();
+					},
+					{ once: true }
+				);
 			});
-
-			let Scroller = Parent.parentElement;
-			let Current_Mouse_Event = event;
-
-			Scroller.setAttribute("Draging", "");
-
-			//---------------------------------
-
-			let Render_Drag = true;
-
-			function Update_Drag_Function() {
-				if (!Render_Drag) return;
-
-				Frame.style.top = `${
-					Current_Mouse_Event.clientY -
-					Scroller.getBoundingClientRect().top +
-					Scroller.scrollTop -
-					Offset
-				}px`;
-
-				requestAnimationFrame(Update_Drag_Function);
-			}
-			Update_Drag_Function();
-
-			//---------------------------------
-
-			function On_Drag(event) {
-				Current_Mouse_Event = event;
-			}
-
-			document.addEventListener("mousemove", On_Drag);
-
-			document.addEventListener(
-				"mouseup",
-				function () {
-					document.removeEventListener("mousemove", On_Drag);
-					Render_Drag = false;
-
-					Frame.style.width = "";
-					Frame.style.height = "";
-					Frame.style.position = "";
-					Frame.style.pointerEvents = "";
-					Frame.style.zIndex = "";
-
-					Scroller.removeAttribute("Draging");
-
-					Draging_Setting = null;
-					Space.Element.remove();
-				},
-				{ once: true }
-			);
-		});
+		}
 
 		const Space = Create_Setting_Space(
 			0,
@@ -2197,6 +2233,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 					return;
 				}
 
+				Save_All();
 				Update_All();
 			}
 		});

@@ -244,8 +244,6 @@ export async function Get_Settings_List(Force = false): Promise<Setting[] | {}> 
 		} catch (error) {}
 	}
 
-	console.log("Test", Settings_List);
-
 	return Settings_List;
 }
 

@@ -179,6 +179,7 @@ export async function Create_Error(Content) {
 		Icon: "❌",
 		Title: "StyleShift - Error",
 		Content: Content,
+		Timeout: 0,
 	});
 }
 

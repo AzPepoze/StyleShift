@@ -1,7 +1,5 @@
-import {
-	Get_Settings_List,
-	Update_StyleShift_Items
-} from "../Settings/StyleShift_Items";
+import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
+import { Create_Error } from "../UI/Extension_UI";
 import { In_Setting_Page } from "./Main_Function";
 import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "./NormalFunction";
 
@@ -38,8 +36,13 @@ export async function Load_ThisWeb_Save() {
 
 		chrome.storage.local.get(Save_Name, function (Saved: Object) {
 			if (Saved[Save_Name]) {
-				Saved_Data = Saved[Save_Name];
-				console.log("Loaded", Save_Name, JSON.stringify(Saved_Data));
+				try {
+					Saved_Data = Saved[Save_Name];
+					console.log("Loaded", Save_Name, JSON.stringify(Saved_Data));
+				} catch {
+					Create_Error(`Can't load Data : <b>${Save_Name}</b>`);
+					Saved_Data = {};
+				}
 			} else {
 				Saved_Data = {};
 			}

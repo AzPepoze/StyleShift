@@ -11,17 +11,14 @@ import {
 import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { Get_Custom_Items } from "../Settings/StyleShift_Items";
+import { Create_Error, Create_Notification } from "../UI/Extension_UI";
 
 export let StyleShift_Functions = {
-	// Danger Zone !!!
-	Enable_Extension_Function: function () {
-		Show_StyleSheet();
-	},
-
-	Disable_Extension_Function: function () {
-		Hide_StyleSheet();
-	},
-
+	/*
+	-------------------------------------------------------
+	For normal user !!!
+	-------------------------------------------------------
+	*/
 	Copy_to_clipboard: function (text) {
 		navigator.clipboard.writeText(text).then(
 			() => {
@@ -34,11 +31,22 @@ export let StyleShift_Functions = {
 		);
 	},
 
+	Create_Notification: Create_Notification,
+
+	Create_Error: Create_Error,
+
+	/*
+	-------------------------------------------------------
+	For advanced user !!!
+	-------------------------------------------------------
+	*/
+
 	Export_Custom_Items: function () {
 		let Export_Custom_Items = deepClone(Get_Custom_Items());
 
 		for (const This_Category of Export_Custom_Items) {
 			delete This_Category.Highlight_Color;
+			delete This_Category.Editable;
 
 			for (const This_Setting of This_Category.Settings) {
 				delete This_Setting.Editable;
@@ -184,7 +192,18 @@ export let StyleShift_Functions = {
 		return Settings_Current_State[id];
 	},
 
-	//---------------------------------------------
+	/*
+	-------------------------------------------------------
+	Danger functions !!!
+	-------------------------------------------------------
+	*/
+	Enable_Extension_Function: function () {
+		Show_StyleSheet();
+	},
+
+	Disable_Extension_Function: function () {
+		Hide_StyleSheet();
+	},
 };
 
 for (const This_Function_Name of Object.keys(StyleShift_Functions)) {

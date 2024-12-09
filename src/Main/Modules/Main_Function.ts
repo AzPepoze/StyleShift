@@ -325,7 +325,7 @@ export async function Load_Developer_Modules() {
 
 		Loading_UI.Set_Content("Getting : Jzip (Export theme as zip)");
 
-		JSzip = await Get_Global_Data("Build-in", "JSzip");
+		JSzip = (await Get_Global_Data("Build-in", "JSzip")).default;
 
 		Loading_UI.Set_Icon("✅");
 		Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
@@ -353,6 +353,14 @@ export function HEX_to_Color_OBJ(hex: string): { HEX: string; Alpha: number } {
 	const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
 	const rgbHex = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex;
 	const alphaHex = cleanHex.length === 8 ? cleanHex.slice(6) : "FF";
+
+	console.log(
+		"Test Color",
+		alphaHex,
+		alphaHex,
+		parseInt(alphaHex, 16) / 255,
+		Math.round((parseInt(alphaHex, 16) / 255) * 100)
+	);
 
 	return {
 		HEX: `#${rgbHex}`,

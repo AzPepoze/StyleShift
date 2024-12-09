@@ -125,11 +125,17 @@ async function build() {
 			path.join(__dirname, "../src/Main/Transfer_Functions/Extension_Functions.ts"),
 			"utf-8"
 		);
+
 		const Functions_List = [
-			...Functions_List_Content.matchAll(
-				/(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g
+			...new Set(
+				[
+					...Functions_List_Content.matchAll(
+						/\b(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g
+					),
+					...Functions_List_Content.matchAll(/(\w+)\s*:\s*([a-zA-Z_]\w*)/g),
+				].map((x) => x[1])
 			),
-		].map((x) => x[1]);
+		];
 
 		for (const Function_Name of Functions_List) {
 			Functions_List_Data += `StyleShift["Build-in"]["${Function_Name}"] = async function(...args){return await StyleShift["Build-in"]["_Call_Function"]("${Function_Name}",...args)};`;

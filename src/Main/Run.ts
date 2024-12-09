@@ -165,7 +165,8 @@ let Test_Editable_Items: Category[] = [
 				icon: "",
 				color: "#1932ffff",
 				font_size: 15,
-				click_function: "await Copy_to_clipboard(await Export_Custom_Items_Text());",
+				click_function:
+					'await Copy_to_clipboard(await Export_Custom_Items_Text());\n\nCreate_Notification({\nIcon : "✅",\nTitle : "StyleShift",\nContent : "Copied to clipboard!"\n})',
 				text_align: "center",
 				description: "",
 				id: "",
@@ -259,13 +260,19 @@ let Test_Editable_Items: Category[] = [
 				id: "TESTTTTT",
 				name: "Enable",
 				value: true,
-				setup_function: `Set_Value("TEST","YAY")`,
-				enable_function: `//alert(Get_Value("TEST"))`,
+				setup_function: 'Set_Value("TEST","YAY")',
+				enable_function: '//alert(Get_Value("TEST"))',
 				disable_function: "Disable_Extension_Function()",
 				enable_css: "wad",
 				setup_css: "",
 			},
 		],
+	},
+	{
+		Category: "🥳 New_Category",
+		Settings: [],
+		
+		Selector: "",
 	},
 ];
 
@@ -303,6 +310,7 @@ async function Main_Run() {
 	await Update_StyleShift_Items();
 	await Set_Null_Save();
 	console.log("Settings_List", await Get_Settings_List());
+	console.log("Settings_List_Text", JSON.stringify(await Get_Settings_List(), null, 2));
 
 	//------------------------------------------
 

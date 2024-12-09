@@ -223,5 +223,5 @@ export async function Update_Setting_Function(id) {
 	await Settings_Update_Function[id]();
 	delete Updating_Setting_Function[id];
 
-	console.log(Settings_Update_Function[id].toString());
+	// console.log(Settings_Update_Function[id].toString());
 }
