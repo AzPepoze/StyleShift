@@ -1,4 +1,4 @@
-import { Category } from "./Settings/StyleShift_Items";
+import { Category } from "./types/Store_Data";
 
 let Default_StyleShift_Items: Category[] = [];
 

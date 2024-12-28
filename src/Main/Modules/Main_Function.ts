@@ -1,8 +1,8 @@
+import { Create_Notification } from "../Build-in_Functions/Extension_Functions";
+import { sleep } from "../Build-in_Functions/Normal_Functions";
 import { Update_All } from "../Run";
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
-import { color_obj } from "../Settings/StyleShift_Items";
-import { Create_Notification } from "../UI/Extension_UI";
-import { sleep } from "./NormalFunction";
+import { color_obj } from "../types/Store_Data";
 import { Save_All } from "./Save";
 
 export let Ver = chrome.runtime.getManifest().version;

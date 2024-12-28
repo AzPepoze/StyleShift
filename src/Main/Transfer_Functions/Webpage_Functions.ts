@@ -21,18 +21,8 @@ const Build_in_Functions = {
 	*/
 	_Variables: {},
 	_Call_Function: async function (function_name, ...args) {
-		return await StyleShift["Build-in"]["Fire_Function_Event_With_Return"](
-			"StyleShift",
-			function_name,
-			...args
-		);
+		return await StyleShift["Build-in"]["Fire_Function_Event_With_Return"]("StyleShift", function_name, ...args);
 	},
-
-	/*
-	-------------------------------------------------------
-	Other functions !!!
-	-------------------------------------------------------
-	*/
 };
 
 for (const [Function_name, This_function] of Object.entries(Build_in_Functions)) {

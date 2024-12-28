@@ -1,23 +1,24 @@
 import {
-	Run_Text_Script_From_Setting,
-	HEX_to_Color_OBJ,
-	Color_OBJ_to_HEX,
-	Monaco,
-	isFirefox,
-	In_Setting_Page,
-	Loaded_Developer_Modules,
-} from "../../Modules/Main_Function";
-import {
 	Apply_Drag,
 	HEX_to_RBG,
 	HSV_to_RGB,
 	ReArrange_Selector,
 	RGB_to_HSV,
-} from "../../Modules/NormalFunction";
+} from "../../Build-in_Functions/Normal_Functions";
+import {
+	Color_OBJ_to_HEX,
+	HEX_to_Color_OBJ,
+	In_Setting_Page,
+	isFirefox,
+	Loaded_Developer_Modules,
+	Monaco,
+	Run_Text_Script_From_Setting,
+} from "../../Modules/Main_Function";
 import { Load, Load_Any, Save_All, Save_Any } from "../../Modules/Save";
 import { Update_Setting_Function } from "../../Settings/Settings_Function";
-import { Add_Setting, Category, Setting } from "../../Settings/StyleShift_Items";
-import { Show_Window_Animation, Hide_Window_Animation, Animation_Time } from "../Extension_UI";
+import { Add_Setting } from "../../Settings/StyleShift_Items";
+import { Category, Setting } from "../../types/Store_Data";
+import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "../Extension_UI";
 import { Create_Config_UI_Function, Setup_Left_Title_Animation } from "./Settings_UI";
 
 async function Set_And_Save(This_Setting, value) {
@@ -66,28 +67,23 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Text: "html",
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Text: "html",
 
-						["Text align"]: ["text_align", ["left", "center", "right"]],
-						["Font size"]: "font_size",
-					},
-					Update_UI
-				);
-			}
-		);
+					["Text align"]: ["text_align", ["left", "center", "right"]],
+					["Font size"]: "font_size",
+				},
+				Update_UI
+			);
+		});
 
 		return { Frame, Config_UI_Function };
 	},
-	["Setting_Sub_Title"]: async function (
-		This_Setting: Partial<Extract<Setting, { type: "Setting_Sub_Title" }>>
-	) {
+	["Setting_Sub_Title"]: async function (This_Setting: Partial<Extract<Setting, { type: "Setting_Sub_Title" }>>) {
 		let Frame = Settings_UI["Setting_Frame"](true, true);
 
 		//-------------------------------------
@@ -130,23 +126,20 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Text: "text",
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Text: "text",
 
-						["Text align"]: ["text_align", ["left", "center", "right"]],
-						Color: "color",
-						["Font size"]: "font_size",
-					},
-					Update_UI
-				);
-			}
-		);
+					["Text align"]: ["text_align", ["left", "center", "right"]],
+					Color: "color",
+					["Font size"]: "font_size",
+				},
+				Update_UI
+			);
+		});
 
 		return { Frame, Config_UI_Function };
 	},
@@ -260,32 +253,29 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Id: "id",
-						Name: ["name", Button_Text],
-						Description: "description",
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: ["name", Button_Text],
+					Description: "description",
 
-						Icon: "icon",
-						["Text align"]: ["text_align", ["left", "center", "right"]],
-						Color: "color",
-						["Font size"]: "font_size",
-					},
-					Update_UI
-				);
+					Icon: "icon",
+					["Text align"]: ["text_align", ["left", "center", "right"]],
+					Color: "color",
+					["Font size"]: "font_size",
+				},
+				Update_UI
+			);
 
-				//-----------------------------------------------
+			//-----------------------------------------------
 
-				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
-					click: 3,
-				});
-			}
-		);
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				click: 3,
+			});
+		});
 
 		return { Button, Config_UI_Function };
 	},
@@ -340,38 +330,33 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				console.log(Parent);
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			console.log(Parent);
 
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Id: "id",
-						Name: ["name", Setting_Name],
-						Description: "description",
-					},
-					Update_UI
-				);
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: ["name", Setting_Name],
+					Description: "description",
+				},
+				Update_UI
+			);
 
-				//-----------------------------------------------
+			//-----------------------------------------------
 
-				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
-					setup: 0,
-					enable: 0,
-					disable: 0,
-				});
-			}
-		);
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				setup: 0,
+				enable: 0,
+				disable: 0,
+			});
+		});
 
 		return { Frame, Config_UI_Function };
 	},
 
-	["Number_Slide"]: async function (
-		This_Setting: Partial<Extract<Setting, { type: "Number_Slide" }>>
-	) {
+	["Number_Slide"]: async function (This_Setting: Partial<Extract<Setting, { type: "Number_Slide" }>>) {
 		let Frame = Settings_UI["Setting_Frame"](true, true);
 
 		//-------------------------------------
@@ -400,11 +385,7 @@ let Main_Setting_UI = {
 		async function Update_UI() {
 			Frame.id = This_Setting.id || "";
 
-			Number_Slide.Update_Number_Slide(
-				This_Setting.min,
-				This_Setting.max,
-				This_Setting.step
-			);
+			Number_Slide.Update_Number_Slide(This_Setting.min, This_Setting.max, This_Setting.step);
 
 			let value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
 			console.log(value);
@@ -472,33 +453,30 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Id: "id",
-						Name: ["name", Setting_Name],
-						Description: "description",
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: ["name", Setting_Name],
+					Description: "description",
 
-						Min: "min",
-						Max: "max",
-						Step: "step",
-					},
-					Update_UI
-				);
+					Min: "min",
+					Max: "max",
+					Step: "step",
+				},
+				Update_UI
+			);
 
-				//-----------------------------------------------
+			//-----------------------------------------------
 
-				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
-					var: 2,
-					setup: 3,
-					update: 0,
-				});
-			}
-		);
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				var: 2,
+				setup: 3,
+				update: 0,
+			});
+		});
 
 		return { Frame, Config_UI_Function, Set_Value };
 	},
@@ -567,16 +545,11 @@ let Main_Setting_UI = {
 			//-----------------------
 
 			console.log(This_Setting.options);
-			Current_Dropdown = Settings_UI["Show_Dropdown"](
-				Object.keys(This_Setting.options),
-				Dropdown.Button
-			);
+			Current_Dropdown = Settings_UI["Show_Dropdown"](Object.keys(This_Setting.options), Dropdown.Button);
 
 			//-----------------------
 
-			const old_value = This_Setting.id
-				? await Load_Any(This_Setting.id)
-				: This_Setting.value;
+			const old_value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
 			const value = await Current_Dropdown.Selection;
 			Current_Dropdown = null;
 
@@ -593,29 +566,26 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Id: "id",
-						Name: ["name", Setting_Name],
-						Description: "description",
-					},
-					Update_UI
-				);
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: ["name", Setting_Name],
+					Description: "description",
+				},
+				Update_UI
+			);
 
-				//-----------------------------------------------
+			//-----------------------------------------------
 
-				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
-					setup: 0,
-					enable: 0,
-					disable: 0,
-				});
-			}
-		);
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				setup: 0,
+				enable: 0,
+				disable: 0,
+			});
+		});
 
 		return { Frame, Config_UI_Function };
 	},
@@ -719,30 +689,27 @@ let Main_Setting_UI = {
 
 		//-------------------------------------
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Setting.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Setting,
-					{
-						Id: "id",
-						Name: ["name", Setting_Name],
-						Description: "description",
-					},
-					Update_UI
-				);
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: ["name", Setting_Name],
+					Description: "description",
+				},
+				Update_UI
+			);
 
-				//-----------------------------------------------
+			//-----------------------------------------------
 
-				await Settings_UI["Config_Section_2"](Parent, This_Setting, {
-					var: 2,
-					setup: 3,
-					update: 0,
-					Update_Config,
-				});
-			}
-		);
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				var: 2,
+				setup: 3,
+				update: 0,
+				Update_Config,
+			});
+		});
 
 		return { Frame, Config_UI_Function };
 	},
@@ -1037,20 +1004,17 @@ const Advance_Setting_UI = {
 		}
 		Update_UI();
 
-		let Config_UI_Function = await Create_Config_UI_Function(
-			This_Category.Editable,
-			async function (Parent) {
-				await Settings_UI["Config_Section_1"](
-					Parent,
-					This_Category,
-					{
-						Name: ["Category", Frame],
-						Selector: "Selector",
-					},
-					Update_UI
-				);
-			}
-		);
+		let Config_UI_Function = await Create_Config_UI_Function(This_Category.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](
+				Parent,
+				This_Category,
+				{
+					Name: ["Category", Frame],
+					Selector: "Selector",
+				},
+				Update_UI
+			);
+		});
 
 		return { Frame, Config_UI_Function };
 	},
@@ -1259,10 +1223,7 @@ let Developer_Setting_UI = {
 
 		for (const [Title, Property] of Object.entries(this_property)) {
 			Main_UI.append(Settings_UI["Sub_Title"](Title));
-			const Setting_Developer_Text_Editor = Settings_UI["Text_Editor"](
-				This_Setting,
-				Property
-			);
+			const Setting_Developer_Text_Editor = Settings_UI["Text_Editor"](This_Setting, Property);
 			Setting_Developer_Text_Editor.Additinal_OnChange(Update_UI);
 			Main_UI.append(Setting_Developer_Text_Editor.Text_Editor);
 			Text_Editors[Title] = Setting_Developer_Text_Editor;
@@ -1343,11 +1304,7 @@ let Developer_Setting_UI = {
 
 		//---------------------------
 
-		let Collapsed_Button = await Settings_UI["Collapsed_Button"](
-			This_RunType_Name,
-			Color,
-			This_Frame
-		);
+		let Collapsed_Button = await Settings_UI["Collapsed_Button"](This_RunType_Name, Color, This_Frame);
 		Collapsed_Button.Button.style.borderBottom = "solid 1px white";
 
 		//---------------------------
@@ -1396,12 +1353,7 @@ let Developer_Setting_UI = {
 				);
 			} else {
 				// Firefox
-				let Editor = Settings_UI["Default_Config_Editor"](
-					This_Frame,
-					This_Setting,
-					RunType,
-					ext
-				);
+				let Editor = Settings_UI["Default_Config_Editor"](This_Frame, This_Setting, RunType, ext);
 
 				Editor.Additinal_OnChange(function () {
 					Update_Config();
@@ -1510,13 +1462,9 @@ let Developer_Setting_UI = {
 
 			//-----------------------------------
 
-			const Text_Editor = await Settings_UI["Setting_Developer_Text_Editor"](
-				Parent,
-				This_Setting,
-				{
-					[Title]: Property,
-				}
-			);
+			const Text_Editor = await Settings_UI["Setting_Developer_Text_Editor"](Parent, This_Setting, {
+				[Title]: Property,
+			});
 
 			let Update_function;
 
@@ -1612,15 +1560,10 @@ let Developer_Setting_UI = {
 					Current_Dropdown.Cancel();
 					return;
 				}
-				Current_Dropdown = Settings_UI["Show_Dropdown"](
-					Object.keys(Main_Setting_UI),
-					Add_Button.Button
-				);
+				Current_Dropdown = Settings_UI["Show_Dropdown"](Object.keys(Main_Setting_UI), Add_Button.Button);
 				const Selected = await Current_Dropdown.Selection;
 				if (Selected) {
-					let Get_Preset: any = UI_Preset.filter(
-						(This_Preset) => This_Preset.type == Selected
-					)[0];
+					let Get_Preset: any = UI_Preset.filter((This_Preset) => This_Preset.type == Selected)[0];
 
 					console.log("Selected", Selected, Get_Preset);
 

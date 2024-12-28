@@ -1,27 +1,16 @@
-import {
-	In_Setting_Page,
-	Run_Text_Script,
-	Update_StyleShift_Functions_List,
-} from "./Modules/Main_Function";
-import { ReArrange_Selector } from "./Modules/NormalFunction";
-import {
-	Clear_Unnessary_Save,
-	Load,
-	Load_ThisWeb_Save,
-	Save,
-	Save_All,
-	Set_Null_Save,
-} from "./Modules/Save";
+import { ReArrange_Selector } from "./Build-in_Functions/Normal_Functions";
+import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Modules/Main_Function";
+import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All, Set_Null_Save } from "./Modules/Save";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 import {
-	Category,
 	Get_ALL_StyleShift_Items,
 	Get_ALL_StyleShift_Settings,
 	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Settings/StyleShift_Items";
-import * as Global from "./Transfer_Functions/Extension_Functions";
+import * as Global from "./Transfer_Functions/Extension_Functions_Loader";
+import { Category } from "./types/Store_Data";
 import { Extension_Settings_UI } from "./UI/Extension_Setting_UI";
 import { Update_All_UI } from "./UI/Extension_UI";
 import { Toggle_Customize } from "./UI/Highlight_UI";
@@ -225,8 +214,7 @@ let Test_Editable_Items: Category[] = [
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
 				value: "#24db28ff",
-				update_css:
-					".ytp-play-progress{\n     background: var(--Time-Play) !important;\n}",
+				update_css: ".ytp-play-progress{\n     background: var(--Time-Play) !important;\n}",
 				setup_function: "",
 			},
 			{
@@ -284,9 +272,7 @@ export function Update_All() {
 
 async function Main_Run() {
 	if (!In_Setting_Page) {
-		let Build_in_Functions = await (
-			await fetch(chrome.runtime.getURL("Build_in_Functions.js"))
-		).text();
+		let Build_in_Functions = await (await fetch(chrome.runtime.getURL("Build_in_Functions.js"))).text();
 
 		Run_Text_Script({
 			Text: Build_in_Functions,

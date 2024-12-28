@@ -1,6 +1,6 @@
-import { sleep } from "./Modules/NormalFunction";
-import { Category } from "./Settings/StyleShift_Items";
-import { StyleShift_Functions } from "./Transfer_Functions/Extension_Functions";
+import * as StyleShift_Functions from "./Build-in_Functions/Extension_Functions";
+import { sleep } from "./Build-in_Functions/Normal_Functions";
+import { Category } from "./types/Store_Data";
 
 let Setting_Page_Items: Category[] = [
 	{
@@ -30,9 +30,7 @@ let Setting_Page_Items: Category[] = [
 
 					try {
 						StyleShift_Functions["Export_StyleShift_Zip"](
-							JSON.parse(
-								await StyleShift_Functions["Export_Custom_Items_Text"]()
-							),
+							JSON.parse(await StyleShift_Functions["Export_Custom_Items_Text"]()),
 							"Test.StyleShift.zip"
 						);
 

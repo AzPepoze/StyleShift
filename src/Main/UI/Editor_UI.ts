@@ -1,5 +1,5 @@
-import { getElementCenterPosition } from "../Modules/NormalFunction";
-import { Category } from "../Settings/StyleShift_Items";
+import { getElementCenterPosition } from "../Build-in_Functions/Normal_Functions";
+import { Category } from "../types/Store_Data";
 import { Start_Highlighter } from "./Highlight_UI";
 import { Create_Main_Settings_UI } from "./Settings/Settings_UI";
 
@@ -28,8 +28,7 @@ let Editor_Updater_ID;
 					Cal_Position = targetElement.getBoundingClientRect().right + 10;
 				} else {
 					//console.log("Right");
-					Cal_Position =
-						targetElement.getBoundingClientRect().left - Edtior_Width - 20 - 10;
+					Cal_Position = targetElement.getBoundingClientRect().left - Edtior_Width - 20 - 10;
 				}
 
 				if (Cal_Position + Edtior_Width > window.innerWidth) {

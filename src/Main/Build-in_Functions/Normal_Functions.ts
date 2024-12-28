@@ -1,10 +1,20 @@
-export function sleep(delay: number) {
+/**
+ * Pauses execution for a specified delay.
+ * @param {number} delay - The delay in milliseconds.
+ * @returns {Promise<void>}
+ */
+export function sleep(delay: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
 //---------------------------------------------
 
-export function HEX_to_RBGA(hex) {
+/**
+ * Converts a hex color string to an RGBA object.
+ * @param {string} hex - The hex color string.
+ * @returns {{ r: number; g: number; b: number; a: number }}
+ */
+export function HEX_to_RBGA(hex: string): { r: number; g: number; b: number; a: number } {
 	hex = hex.replace(/^#/, "");
 
 	if (hex.length === 6) {
@@ -21,7 +31,12 @@ export function HEX_to_RBGA(hex) {
 	return { r, g, b, a };
 }
 
-export function HEX_to_RBG(hex) {
+/**
+ * Converts a hex color string to an RGB object.
+ * @param {string} hex - The hex color string.
+ * @returns {{ r: number; g: number; b: number }}
+ */
+export function HEX_to_RBG(hex: string): { r: number; g: number; b: number } {
 	hex = hex.replace(/^#/, "");
 
 	if (hex.length === 3) {
@@ -40,7 +55,15 @@ export function HEX_to_RBG(hex) {
 	return { r, g, b };
 }
 
-export function RGBA_to_HEX(r, g, b, a = 1) {
+/**
+ * Converts RGBA values to a hex color string.
+ * @param {number} r - The red value.
+ * @param {number} g - The green value.
+ * @param {number} b - The blue value.
+ * @param {number} [a=1] - The alpha value.
+ * @returns {string}
+ */
+export function RGBA_to_HEX(r: number, g: number, b: number, a: number = 1): string {
 	r = Math.round(Math.min(255, Math.max(0, r)));
 	g = Math.round(Math.min(255, Math.max(0, g)));
 	b = Math.round(Math.min(255, Math.max(0, b)));
@@ -58,7 +81,12 @@ export function RGBA_to_HEX(r, g, b, a = 1) {
 	return hex;
 }
 
-export function RGB_to_HSV(rgb) {
+/**
+ * Converts RGB values to an HSV object.
+ * @param {{ r: number; g: number; b: number }} rgb - The RGB values.
+ * @returns {{ h: number; s: number; v: number }}
+ */
+export function RGB_to_HSV(rgb: { r: number; g: number; b: number }): { h: number; s: number; v: number } {
 	let r = rgb.r,
 		g = rgb.g,
 		b = rgb.b;
@@ -75,61 +103,78 @@ export function RGB_to_HSV(rgb) {
 	};
 }
 
-export function HSV_to_RGB(hsv) {
+/**
+ * Converts HSV values to an RGB object.
+ * @param {{ h: number; s: number; v: number }} hsv - The HSV values.
+ * @returns {{ r: number; g: number; b: number }}
+ */
+export function HSV_to_RGB(hsv: { h: number; s: number; v: number }): { r: number; g: number; b: number } {
 	let h = hsv.h,
 		s = hsv.s,
 		v = hsv.v;
 	s /= 100;
 	v /= 100;
-	let f = (n) =>
-		(v - v * s * Math.max(Math.min((n + h / 60) % 6, 4 - ((n + h / 60) % 6), 1), 0)) * 255;
+	let f = (n: number) => (v - v * s * Math.max(Math.min((n + h / 60) % 6, 4 - ((n + h / 60) % 6), 1), 0)) * 255;
 	return { r: Math.round(f(5)), g: Math.round(f(3)), b: Math.round(f(1)) };
 }
 
 //---------------------------------------------
 
-export function is_Scrollable(element: HTMLElement) {
-	// Check if the element has a vertical scroll bar
+/**
+ * Checks if an element is scrollable.
+ * @param {HTMLElement} element - The element to check.
+ * @returns {boolean}
+ */
+export function is_Scrollable(element: HTMLElement): boolean {
 	const hasVerticalScrollbar = element.scrollHeight > element.clientHeight;
-
-	// Check if the element has a horizontal scroll bar
 	const hasHorizontalScrollbar = element.scrollWidth > element.clientWidth;
-
-	// Return true if either vertical or horizontal scroll bar exists
 	return hasVerticalScrollbar || hasHorizontalScrollbar;
 }
 
-export function Get_Scroll_Parent(element: HTMLElement | null) {
-	// If no element is provided, return null
+/**
+ * Gets the nearest scrollable parent of an element.
+ * @param {HTMLElement | null} element - The element to check.
+ * @returns {HTMLElement | null}
+ */
+export function Get_Scroll_Parent(element: HTMLElement | null): HTMLElement | null {
 	if (!element) {
 		return null;
 	}
 
-	// Start with the parent node
 	let parent = element.parentNode;
 
-	// Traverse up the DOM tree to find a scrollable parent
 	while (parent && parent !== document) {
 		if (is_Scrollable(parent as HTMLElement)) {
-			return parent;
+			return parent as HTMLElement;
 		}
 		parent = parent.parentNode;
 	}
 
-	// If no scrollable parent is found, return the document
 	return document.body;
 }
 
+/**
+ * Converts a string to a number.
+ * @param {string} str - The string to convert.
+ * @returns {number}
+ */
 export function stringToNumber(str: string): number {
 	let hash = 0;
 	for (let i = 0; i < str.length; i++) {
 		const char = str.charCodeAt(i);
 		hash = (hash << 5) - hash + char;
-		hash |= 0; // Convert to 32bit integer
+		hash |= 0;
 	}
 	return Math.abs(hash);
 }
 
+/**
+ * Generates a random number between a minimum and maximum value using a seed.
+ * @param {number} Minimum - The minimum value.
+ * @param {number} Maximum - The maximum value.
+ * @param {string | number} Seed - The seed value.
+ * @returns {number}
+ */
 export function Random(Minimum: number, Maximum: number, Seed: string | number): number {
 	const numericalSeed = typeof Seed === "string" ? stringToNumber(Seed) : Seed;
 
@@ -147,7 +192,11 @@ export function Random(Minimum: number, Maximum: number, Seed: string | number):
 	return Math.floor(Minimum + random() * (Maximum - Minimum + 1));
 }
 
-export async function GetDocumentBody() {
+/**
+ * Gets the document body element, waiting if necessary.
+ * @returns {Promise<HTMLElement>}
+ */
+export async function GetDocumentBody(): Promise<HTMLElement> {
 	let DocumentBody = document.body;
 
 	if (DocumentBody) {
@@ -158,7 +207,11 @@ export async function GetDocumentBody() {
 	}
 }
 
-export async function GetDocumentHead() {
+/**
+ * Gets the document head element, waiting if necessary.
+ * @returns {Promise<HTMLElement>}
+ */
+export async function GetDocumentHead(): Promise<HTMLElement> {
 	let DocumentHead = document.head;
 
 	if (DocumentHead) {
@@ -169,7 +222,12 @@ export async function GetDocumentHead() {
 	}
 }
 
-export function Once_Element_Remove(targetElement: HTMLElement, callback: Function) {
+/**
+ * Executes a callback when a target element is removed from the DOM.
+ * @param {HTMLElement} targetElement - The target element.
+ * @param {Function} callback - The callback function.
+ */
+export function Once_Element_Remove(targetElement: HTMLElement, callback: Function): void {
 	let observer = new MutationObserver((mutationsList, observer) => {
 		for (const mutation of mutationsList) {
 			if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
@@ -186,11 +244,13 @@ export function Once_Element_Remove(targetElement: HTMLElement, callback: Functi
 	observer.observe(document.body, { childList: true });
 }
 
+/**
+ * Gets the center position of an element.
+ * @param {HTMLElement} element - The element to check.
+ * @returns {{ x: number; y: number }}
+ */
 export function getElementCenterPosition(element: HTMLElement): { x: number; y: number } {
-	// Get the bounding rectangle of the element
 	const rect = element.getBoundingClientRect();
-
-	// Calculate the center position
 	const centerX = rect.left + rect.width / 2;
 	const centerY = rect.top + rect.height / 2;
 
@@ -200,16 +260,21 @@ export function getElementCenterPosition(element: HTMLElement): { x: number; y: 
 	};
 }
 
-export async function WaitDocumentLoaded() {
+/**
+ * Waits for the document to be fully loaded.
+ * @returns {Promise<number>}
+ */
+export async function WaitDocumentLoaded(): Promise<number> {
 	while (document.readyState !== "complete") {
 		await sleep(10);
 	}
 	return 0;
 }
+
 /**
- * Generates a unique ID with the specified length.
- * @param length - The desired length of the unique ID.
- * @returns A unique ID string of the specified length.
+ * Creates a unique ID of a specified length.
+ * @param {number} length - The length of the ID.
+ * @returns {string}
  */
 export function Create_UniqueID(length: number): string {
 	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -223,33 +288,29 @@ export function Create_UniqueID(length: number): string {
 	return uniqueID;
 }
 
-export function deepMerge(obj1, obj2) {
+/**
+ * Deep merges two objects.
+ * @param {any} obj1 - The first object.
+ * @param {any} obj2 - The second object.
+ * @returns {any}
+ */
+export function deepMerge(obj1: any, obj2: any): any {
 	if (Array.isArray(obj1) && Array.isArray(obj2)) {
-		// Merge arrays, trying to merge objects within them if they have the same `id`
 		const mergedArray = [...obj1];
 		for (const item2 of obj2) {
-			const matchingIndex = mergedArray.findIndex(
-				(item1) => item1.id && item2.id && item1.id === item2.id
-			);
+			const matchingIndex = mergedArray.findIndex((item1) => item1.id && item2.id && item1.id === item2.id);
 			if (matchingIndex !== -1) {
-				// Merge matching objects
 				mergedArray[matchingIndex] = deepMerge(mergedArray[matchingIndex], item2);
 			} else {
-				// Add new items that don't match
 				mergedArray.push(item2);
 			}
 		}
 		return mergedArray;
 	} else if (typeof obj1 === "object" && typeof obj2 === "object") {
-		// Merge objects deeply
 		const result = { ...obj1 };
 		for (const key in obj2) {
 			if (obj2.hasOwnProperty(key)) {
-				if (
-					obj1[key] &&
-					typeof obj1[key] === "object" &&
-					typeof obj2[key] === "object"
-				) {
+				if (obj1[key] && typeof obj1[key] === "object" && typeof obj2[key] === "object") {
 					result[key] = deepMerge(obj1[key], obj2[key]);
 				} else {
 					result[key] = obj2[key];
@@ -258,19 +319,22 @@ export function deepMerge(obj1, obj2) {
 		}
 		return result;
 	} else {
-		return obj2; // Primitive types or mismatched types are overridden
+		return obj2;
 	}
 }
 
-export function deepMergeInPlace(target, source) {
+/**
+ * Deep merges two objects in place.
+ * @param {any} target - The target object.
+ * @param {any} source - The source object.
+ */
+export function deepMergeInPlace(target: any, source: any): void {
 	if (Array.isArray(target) && Array.isArray(source)) {
 		for (const [index, item] of source.entries()) {
 			if (index < target.length) {
-				// Merge objects within arrays based on `id`
 				if (typeof target[index] === "object" && typeof item === "object") {
 					deepMergeInPlace(target[index], item);
 				} else {
-					// Add new items or overwrite existing ones
 					target[index] = item;
 				}
 			} else {
@@ -281,7 +345,6 @@ export function deepMergeInPlace(target, source) {
 		for (const key in source) {
 			if (source.hasOwnProperty(key)) {
 				if (Array.isArray(target[key]) && Array.isArray(source[key])) {
-					// Merge arrays and remove duplicates
 					target[key] = [...new Set([...target[key], ...source[key]])];
 				} else if (typeof target[key] === "object" && typeof source[key] === "object") {
 					deepMergeInPlace(target[key], source[key]);
@@ -291,12 +354,15 @@ export function deepMergeInPlace(target, source) {
 			}
 		}
 	} else {
-		// Overwrite for non-objects
 		target = source;
 	}
 }
 
-export function Get_Current_Domain() {
+/**
+ * Gets the current domain.
+ * @returns {string}
+ */
+export function Get_Current_Domain(): string {
 	const hostname = window.location.origin;
 	const domainParts = hostname.split(".");
 	const domain = domainParts.slice(-2).join(".");
@@ -304,46 +370,47 @@ export function Get_Current_Domain() {
 	return domain;
 }
 
-export function Scroll_On_Click(Button, Target) {
+/**
+ * Scrolls to a target element when a button is clicked.
+ * @param {HTMLElement} Button - The button element.
+ * @param {HTMLElement} Target - The target element.
+ */
+export function Scroll_On_Click(Button: HTMLElement, Target: HTMLElement): void {
 	Button.addEventListener("click", function () {
 		Target.scrollIntoView({ behavior: "smooth" });
 	});
 }
 
-export function Apply_Drag(Drag_Object, Target: HTMLElement) {
+/**
+ * Applies drag functionality to an element.
+ * @param {HTMLElement} Drag_Object - The draggable object.
+ * @param {HTMLElement} Target - The target element.
+ */
+export function Apply_Drag(Drag_Object: HTMLElement, Target: HTMLElement): void {
 	let isDragging = false;
 	let startX = 0;
 	let startY = 0;
 	let initialTargetX = 0;
 	let initialTargetY = 0;
 
-	// Mouse down event to start dragging
 	Drag_Object.addEventListener("mousedown", function (event) {
 		isDragging = true;
 		startX = event.clientX;
 		startY = event.clientY;
 
-		// Get the current position of the target
 		const rect = Target.getBoundingClientRect();
 		initialTargetX = rect.left;
 		initialTargetY = rect.top;
 
-		// Prevent default to avoid text selection and other default behaviors
 		event.preventDefault();
 	});
 
-	// Mouse move event to drag the target
 	document.addEventListener("mousemove", function (event) {
 		if (!isDragging) return;
 
-		// Calculate the new position based on the difference from the start position
 		const deltaX = event.clientX - startX;
 		const deltaY = event.clientY - startY;
 
-		// Apply the new position to the target, considering the original distance
-		// Target.style.transform = `translate(${initialTargetX + deltaX}px, ${
-		// 	initialTargetY + deltaY
-		// 	}px)`;
 		Target.style.left = `${initialTargetX + deltaX}px`;
 		Target.style.top = `${initialTargetY + deltaY}px`;
 
@@ -352,43 +419,75 @@ export function Apply_Drag(Drag_Object, Target: HTMLElement) {
 		Parent.style.alignItems = "start";
 	});
 
-	// Mouse up event to stop dragging
 	document.addEventListener("mouseup", function () {
 		if (!isDragging) return;
 		isDragging = false;
 	});
 }
 
-export function Update_Drag_Position(Element, event, offsetX, offsetY) {
+/**
+ * Updates the drag position of an element.
+ * @param {HTMLElement} Element - The element to update.
+ * @param {MouseEvent} event - The mouse event.
+ * @param {number} offsetX - The X offset.
+ * @param {number} offsetY - The Y offset.
+ */
+export function Update_Drag_Position(Element: HTMLElement, event: MouseEvent, offsetX: number, offsetY: number): void {
 	Element.style.left = `${event.clientX - offsetX}px`;
 	Element.style.top = `${event.clientY - offsetY}px`;
 }
 
-export function ReArrange_Selector(value) {
+/**
+ * Rearranges a selector string.
+ * @param {string} value - The selector string.
+ * @returns {string}
+ */
+export function ReArrange_Selector(value: string): string {
 	return value.replace(/\s+/g, " ").replace(/\n/g, "").replace(/, /g, ",").replace(/,/g, ",\n");
 }
 
-export function isObjectArray(value) {
-	return (
-		Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null)
-	);
+/**
+ * Checks if a value is an array of objects.
+ * @param {any} value - The value to check.
+ * @returns {boolean}
+ */
+export function isObjectArray(value: any): boolean {
+	return Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null);
 }
 
-export function deepClone(data) {
+/**
+ * Deep clones an object.
+ * @param {any} data - The data to clone.
+ * @returns {any}
+ */
+export function deepClone(data: any): any {
 	return JSON.parse(JSON.stringify(data));
 }
 
-export function Is_Same_OBJ(obj1, obj2) {
+/**
+ * Checks if two objects are the same.
+ * @param {object} obj1 - The first object.
+ * @param {object} obj2 - The second object.
+ * @returns {boolean}
+ */
+export function Is_Same_OBJ(obj1: object, obj2: object): boolean {
 	if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
 	for (let key in obj1) {
 		if (obj1[key] !== obj2[key]) return false;
 	}
 	return true;
 }
-export async function WaitForElement(selector: string, timeout?: number): Promise<Element | null> {
+
+/**
+ * Waits for an element to appear in the DOM.
+ * @param {string} selector - The CSS selector.
+ * @param {number} [timeout] - The timeout in milliseconds.
+ * @returns {Promise<HTMLElement | null>}
+ */
+export async function WaitForElement(selector: string, timeout?: number): Promise<HTMLElement | null> {
 	const startTime = Date.now();
 	while (true) {
-		const element = document.querySelector(selector);
+		const element = document.querySelector(selector) as HTMLElement | null;
 		if (element) {
 			return element;
 		}
@@ -400,7 +499,12 @@ export async function WaitForElement(selector: string, timeout?: number): Promis
 	}
 }
 
-export function Download_File(data, filename) {
+/**
+ * Downloads a file with the specified data and filename.
+ * @param {BlobPart} data - The file data.
+ * @param {string} filename - The filename.
+ */
+export function Download_File(data: BlobPart, filename: string): void {
 	var file = new Blob([data]);
 	var a = document.createElement("a"),
 		url = URL.createObjectURL(file);
@@ -414,7 +518,11 @@ export function Download_File(data, filename) {
 	}, 0);
 }
 
-export function Input_File(Element: HTMLInputElement) {
+/**
+ * Handles file input change event.
+ * @param {HTMLInputElement} Element - The input element.
+ */
+export function Input_File(Element: HTMLInputElement): void {
 	Element.addEventListener("change", async (event: Event) => {
 		const file = (event.target as HTMLInputElement).files[0];
 		if (!file) return;
@@ -427,7 +535,11 @@ export function Input_File(Element: HTMLInputElement) {
 	});
 }
 
-export function Get_Current_URL_Parameters() {
+/**
+ * Gets the current URL parameters.
+ * @returns {{ [key: string]: string }}
+ */
+export function Get_Current_URL_Parameters(): { [key: string]: string } {
 	const searchParams = new URL(window.location.href).searchParams;
 	const result: { [key: string]: string } = {};
 	searchParams.forEach((value, key) => {
@@ -437,7 +549,19 @@ export function Get_Current_URL_Parameters() {
 }
 
 //---------------------------------------------
-export async function Fire_Function_Event(Prefix = "Function", Function_Name, ...args) {
+
+/**
+ * Fires a custom event with the specified function name and arguments.
+ * @param {string} [Prefix="Function"] - The event prefix.
+ * @param {string} Function_Name - The function name.
+ * @param {...any[]} args - The function arguments.
+ * @returns {Promise<void>}
+ */
+export async function Fire_Function_Event(
+	Prefix: string = "Function",
+	Function_Name: string,
+	...args: any[]
+): Promise<void> {
 	const Sent_Event = new CustomEvent(`${Prefix}_${Function_Name}`, {
 		detail: { data: args },
 	});
@@ -445,7 +569,18 @@ export async function Fire_Function_Event(Prefix = "Function", Function_Name, ..
 	window.dispatchEvent(Sent_Event);
 }
 
-export async function Fire_Function_Event_With_Return(Prefix = "Function", Function_Name, ...args) {
+/**
+ * Fires a custom event with the specified function name and arguments, and waits for a return value.
+ * @param {string} [Prefix="Function"] - The event prefix.
+ * @param {string} Function_Name - The function name.
+ * @param {...any[]} args - The function arguments.
+ * @returns {Promise<any>}
+ */
+export async function Fire_Function_Event_With_Return(
+	Prefix: string = "Function",
+	Function_Name: string,
+	...args: any[]
+): Promise<any> {
 	const remote_id = Create_UniqueID(10);
 
 	const Sent_Event = new CustomEvent(`${Prefix}_${Function_Name}`, {
@@ -470,13 +605,20 @@ export async function Fire_Function_Event_With_Return(Prefix = "Function", Funct
 	});
 }
 
+/**
+ * Listens for a custom event with the specified function name and executes a callback.
+ * @param {string} [Prefix="Function"] - The event prefix.
+ * @param {string} Function_Name - The function name.
+ * @param {Function} callback - The callback function.
+ * @returns {Promise<{ Cancel: Function }>}
+ */
 export async function On_Function_Event(
-	Prefix = "Function",
+	Prefix: string = "Function",
 	Function_Name: string,
 	callback: Function
-) {
-	const On_Event_Run_Function = async function (event) {
-		const Detail = JSON.parse(event.detail);
+): Promise<{ Cancel: Function }> {
+	const On_Event_Run_Function = async function (event: Event) {
+		const Detail = JSON.parse((event as CustomEvent).detail);
 		console.log("Recived", event);
 
 		//@ts-ignore
@@ -513,7 +655,11 @@ export async function On_Function_Event(
 	};
 }
 
-export function Wait_One_Frame() {
+/**
+ * Waits for one animation frame.
+ * @returns {Promise<boolean>}
+ */
+export function Wait_One_Frame(): Promise<boolean> {
 	return new Promise((resolve) => {
 		requestAnimationFrame(() => {
 			resolve(true);
@@ -521,6 +667,11 @@ export function Wait_One_Frame() {
 	});
 }
 
-export function insertAfter(newNode, existingNode) {
+/**
+ * Inserts a new node after an existing node.
+ * @param {Node} newNode - The new node.
+ * @param {Node} existingNode - The existing node.
+ */
+export function insertAfter(newNode: Node, existingNode: Node): void {
 	existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }

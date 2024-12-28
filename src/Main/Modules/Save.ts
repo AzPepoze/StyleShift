@@ -1,7 +1,7 @@
 import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
-import { Create_Error } from "../UI/Extension_UI";
 import { In_Setting_Page } from "./Main_Function";
-import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "./NormalFunction";
+import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "../Build-in_Functions/Normal_Functions";
+import { Create_Error } from "../Build-in_Functions/Extension_Functions";
 
 //Save
 let Saved_Data = {};
@@ -167,13 +167,7 @@ export async function LoadRgba(Text) {
 	let HEX = await Load(Text + "C");
 	HEX = HEX.replace("#", "");
 	let aRgbHex = HEX.match(/.{1,2}/g);
-	let aRgb = [
-		parseInt(aRgbHex[0], 16) +
-			"," +
-			parseInt(aRgbHex[1], 16) +
-			"," +
-			parseInt(aRgbHex[2], 16),
-	];
+	let aRgb = [parseInt(aRgbHex[0], 16) + "," + parseInt(aRgbHex[1], 16) + "," + parseInt(aRgbHex[2], 16)];
 
 	return `rgba(` + aRgb + `,` + (await Load(Text + "O")) / 100 + `)`;
 }

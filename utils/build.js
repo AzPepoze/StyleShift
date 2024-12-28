@@ -53,10 +53,7 @@ async function build() {
 
 		fs.copySync(path.join(__dirname, "../src/Extension"), Build_Path, {
 			filter: (src) => {
-				const relativePath = path.relative(
-					path.join(__dirname, "../src/Extension"),
-					src
-				);
+				const relativePath = path.relative(path.join(__dirname, "../src/Extension"), src);
 				return !relativePath.startsWith("External_Modules");
 			},
 		});
@@ -70,23 +67,20 @@ async function build() {
 		});
 
 		fs.copySync(
-			path.join(__dirname, "../src/Main/Modules/NormalFunction.ts"),
-			path.join(__dirname, "../temp/NormalFunction.ts")
+			path.join(__dirname, "../src/Main/Build-in_Functions/Normal_Functions.ts"),
+			path.join(__dirname, "../temp/Normal_Functions.ts")
 		);
 
 		//---------------------------------------------
 
-		const codePath = path.join(__dirname, "../temp/NormalFunction.ts");
+		const codePath = path.join(__dirname, "../temp/Normal_Functions.ts");
 		let code = await fs.readFile(codePath, "utf8");
 
 		const functionNames = [];
-		code = code.replace(
-			/\bexport\s+(async\s+)?function\s+([\w$]+)\s*\(/g,
-			(_, asyncKeyword, name) => {
-				functionNames.push(name);
-				return `${asyncKeyword || ""}function ${name}(`;
-			}
-		);
+		code = code.replace(/\bexport\s+(async\s+)?function\s+([\w$]+)\s*\(/g, (_, asyncKeyword, name) => {
+			functionNames.push(name);
+			return `${asyncKeyword || ""}function ${name}(`;
+		});
 
 		functionNames.forEach((name) => {
 			const wrapRegex = new RegExp(`\\b(async\\s+)?function\\s+${name}\\s*\\(`, "g");
@@ -94,8 +88,7 @@ async function build() {
 			code = code
 				.replace(
 					wrapRegex,
-					(_, asyncKeyword) =>
-						`StyleShift["Build-in"]["${name}"] = ${asyncKeyword || ""}function (`
+					(_, asyncKeyword) => `StyleShift["Build-in"]["${name}"] = ${asyncKeyword || ""}function (`
 				)
 				.replace(callRegex, `StyleShift["Build-in"]["${name}"](`);
 		});
@@ -105,33 +98,29 @@ async function build() {
 		//---------------------------------------------
 
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../temp/NormalFunction.ts")],
-			outfile: path.join(__dirname, "../temp/NormalFunction.js"),
+			entryPoints: [path.join(__dirname, "../temp/Normal_Functions.ts")],
+			outfile: path.join(__dirname, "../temp/Normal_Functions.js"),
 			platform: "browser",
 			minify: isProduction,
 			keepNames: true,
 		});
 
 		await esbuild.build({
-			entryPoints: [
-				path.join(__dirname, "../src/Main/Transfer_Functions/Webpage_Functions.ts"),
-			],
+			entryPoints: [path.join(__dirname, "../src/Main/Transfer_Functions/Webpage_Functions.ts")],
 			outfile: path.join(Build_Path, "Build_in_Functions.js"),
 			platform: "browser",
 		});
 
 		let Functions_List_Data = "";
 		const Functions_List_Content = fs.readFileSync(
-			path.join(__dirname, "../src/Main/Transfer_Functions/Extension_Functions.ts"),
+			path.join(__dirname, "../src/Main/Build-in_Functions/Extension_Functions.ts"),
 			"utf-8"
 		);
 
 		const Functions_List = [
 			...new Set(
 				[
-					...Functions_List_Content.matchAll(
-						/\b(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g
-					),
+					...Functions_List_Content.matchAll(/\b(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g),
 					...Functions_List_Content.matchAll(/(\w+)\s*:\s*([a-zA-Z_]\w*)/g),
 				].map((x) => x[1])
 			),
@@ -145,18 +134,11 @@ async function build() {
 
 		let Build_in_Functions_Data =
 			`StyleShift = {"Build-in":{},"Custom":{}};` +
-			(await fs.readFile(path.join(__dirname, "../temp/NormalFunction.js"), "utf8")) +
-			(await fs.readFile(path.join(Build_Path, "Build_in_Functions.js"), "utf8")).replace(
-				/\n/g,
-				""
-			) +
+			(await fs.readFile(path.join(__dirname, "../temp/Normal_Functions.js"), "utf8")) +
+			(await fs.readFile(path.join(Build_Path, "Build_in_Functions.js"), "utf8")).replace(/\n/g, "") +
 			Functions_List_Data;
 
-		await fs.writeFile(
-			path.join(Build_Path, "Build_in_Functions.js"),
-			Build_in_Functions_Data,
-			"utf8"
-		);
+		await fs.writeFile(path.join(Build_Path, "Build_in_Functions.js"), Build_in_Functions_Data, "utf8");
 
 		let Chromium = path.join(__dirname, "../out/dist/Chromium");
 		let Firefox = path.join(__dirname, "../out/dist/Firefox");

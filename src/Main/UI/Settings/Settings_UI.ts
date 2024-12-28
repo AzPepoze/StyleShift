@@ -1,18 +1,19 @@
+import { Create_Error } from "../../Build-in_Functions/Extension_Functions";
+import { insertAfter, Scroll_On_Click, sleep } from "../../Build-in_Functions/Normal_Functions";
 import { Get_Setting_Page_Only_Items } from "../../Developer_Only_Items";
 import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Modules/Main_Function";
-import { insertAfter, Scroll_On_Click, sleep } from "../../Modules/NormalFunction";
 import { Load, Save_All } from "../../Modules/Save";
 import { Update_All } from "../../Run";
 import {
 	Add_Category,
-	Category,
 	Get_Setting_Category,
 	Get_StyleShift_Data_Type,
 	Remove_Category,
 	Remove_Setting,
 } from "../../Settings/StyleShift_Items";
+import { Category } from "../../types/Store_Data";
 import { Show_Config_UI } from "../Config_UI";
-import { Animation_Time, Create_Error, Create_StyleShift_Window } from "../Extension_UI";
+import { Animation_Time, Create_StyleShift_Window } from "../Extension_UI";
 import { Dynamic_Append, Settings_UI } from "./Settings_UI_Components";
 
 export function Setup_Left_Title_Animation(Title) {
@@ -36,9 +37,7 @@ export function Setup_Left_Title_Animation(Title) {
 
 export async function Create_Main_Settings_UI({
 	Show_Category_List = true,
-	On_Create = null as (
-		StyleShift_Window: Awaited<ReturnType<typeof Create_StyleShift_Window>>
-	) => void,
+	On_Create = null as (StyleShift_Window: Awaited<ReturnType<typeof Create_StyleShift_Window>>) => void,
 	On_Remove = null as () => void,
 	Get_Category = null as () => Category[] | Promise<Category[]>,
 }) {
@@ -70,12 +69,7 @@ export async function Create_Main_Settings_UI({
 
 			//------------------------------------------------
 
-			const Main_Frame = await Settings_UI["Setting_Frame"](
-				false,
-				false,
-				{ x: false, y: false },
-				true
-			);
+			const Main_Frame = await Settings_UI["Setting_Frame"](false, false, { x: false, y: false }, true);
 
 			Main_Frame.style.width = "calc(100% - 5px)";
 			Main_Frame.style.height = "-webkit-fill-available";
@@ -96,12 +90,7 @@ export async function Create_Main_Settings_UI({
 
 			//------------------------------------------------
 
-			const Settings_Frame = await Settings_UI["Setting_Frame"](
-				false,
-				true,
-				{ x: false, y: false },
-				true
-			);
+			const Settings_Frame = await Settings_UI["Setting_Frame"](false, true, { x: false, y: false }, true);
 			Settings_Frame.style.width = "-webkit-fill-available";
 			Settings_Frame.style.height = "100%";
 			Settings_Frame.style.gap = "10px";
@@ -139,16 +128,10 @@ export async function Create_Main_Settings_UI({
 				Scroll_Settings.append(Category_Frame);
 
 				let Category_Title = (
-					await Create_Setting_UI_Element_With_Able_Developer_Mode(
-						Category_Frame,
-						This_Category
-					)
+					await Create_Setting_UI_Element_With_Able_Developer_Mode(Category_Frame, This_Category)
 				).Frame;
 
-				let Left_Category_Title = await Settings_UI["Left-Title"](
-					This_Category.Category,
-					Skip_Animation
-				);
+				let Left_Category_Title = await Settings_UI["Left-Title"](This_Category.Category, Skip_Animation);
 
 				Scroll_On_Click(Left_Category_Title, Category_Title);
 
@@ -245,13 +228,11 @@ export async function Create_Main_Settings_UI({
 						const Scroll_Settings_Box = Scroll_Settings.getBoundingClientRect();
 						if (
 							index == Last_Index ||
-							(Right_UI[index].getBoundingClientRect().top - 10 <=
-								Scroll_Settings_Box.top &&
+							(Right_UI[index].getBoundingClientRect().top - 10 <= Scroll_Settings_Box.top &&
 								Right_UI[index + 1].getBoundingClientRect().top - 10 >=
 									Scroll_Settings_Box.top) ||
 							(index == 0 &&
-								Right_UI[index].getBoundingClientRect().top >=
-									Scroll_Settings_Box.top)
+								Right_UI[index].getBoundingClientRect().top >= Scroll_Settings_Box.top)
 						) {
 							if (Current_Selected == Left_UI[index]) {
 								break;
@@ -329,10 +310,7 @@ export async function Create_Main_Settings_UI({
 
 //------------------------------
 
-export async function Create_Config_UI_Function(
-	Editable = false,
-	Config_Function: Function
-): Promise<Function> {
+export async function Create_Config_UI_Function(Editable = false, Config_Function: Function): Promise<Function> {
 	if (Editable && (await Load("Developer_Mode"))) {
 		return Config_Function;
 	}
@@ -369,15 +347,10 @@ function Create_Setting_Space(Size = 20, Gap = 0) {
 
 let Draging_Setting;
 
-export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
-	Parent: HTMLDivElement,
-	This_Data
-) {
+export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent: HTMLDivElement, This_Data) {
 	const Data_Type = Get_StyleShift_Data_Type(This_Data);
 
-	const Main_Element = await Settings_UI[Data_Type == "Category" ? "Title" : This_Data.type](
-		This_Data as any
-	);
+	const Main_Element = await Settings_UI[Data_Type == "Category" ? "Title" : This_Data.type](This_Data as any);
 
 	if ((await Load("Developer_Mode")) && This_Data.Editable) {
 		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
@@ -480,10 +453,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 			});
 		}
 
-		const Space = Create_Setting_Space(
-			0,
-			Number(getComputedStyle(Parent).gap.replace("px", ""))
-		);
+		const Space = Create_Setting_Space(0, Number(getComputedStyle(Parent).gap.replace("px", "")));
 		Space.Element.className = "STYLESHIFT-Drag-Hint";
 		Space.Hide();
 
@@ -533,9 +503,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(
 				}
 
 				if (Data_Type != "Category") {
-					This_Setting_Index =
-						This_Category.Settings.findIndex((Setting) => Setting == This_Data) +
-						1;
+					This_Setting_Index = This_Category.Settings.findIndex((Setting) => Setting == This_Data) + 1;
 				}
 
 				try {

@@ -1,8 +1,4 @@
-import {
-	Create_UniqueID,
-	WaitDocumentLoaded,
-	Once_Element_Remove,
-} from "../Modules/NormalFunction";
+import { Create_UniqueID, WaitDocumentLoaded, Once_Element_Remove } from "../Build-in_Functions/Normal_Functions";
 import { Create_Editor_UI, Editor_UI } from "./Editor_UI";
 import { Get_StyleShift_Items } from "../Settings/StyleShift_Items";
 import { Show_Confirm } from "./Extension_UI";
@@ -142,15 +138,10 @@ export async function Start_Highlighter() {
 				for (const node of mutation.addedNodes as any) {
 					//console.log("Running Check New Node");
 					if (node.nodeType === Node.ELEMENT_NODE) {
-						for (const Selector_Value of [
-							...Editable_Items.Default,
-							...Editable_Items.Custom,
-						]) {
+						for (const Selector_Value of [...Editable_Items.Default, ...Editable_Items.Custom]) {
 							if (
 								node.matches(Selector_Value.Selector) &&
-								!Exept_Items.some(
-									(item) => item === Selector_Value.Selector
-								)
+								!Exept_Items.some((item) => item === Selector_Value.Selector)
 							) {
 								console.log("Add New Node", Selector_Value.Selector);
 								Add_Highlight(node, Selector_Value);

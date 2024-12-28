@@ -1,8 +1,8 @@
+import { Is_Same_OBJ, sleep } from "../Build-in_Functions/Normal_Functions";
 import { HEX_to_Color_OBJ, Run_Text_Script_From_Setting } from "../Modules/Main_Function";
-import { Is_Same_OBJ, sleep } from "../Modules/NormalFunction";
 import { Load_Any } from "../Modules/Save";
+import { Setting } from "../types/Store_Data";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
-import { Setting } from "./StyleShift_Items";
 
 export let Settings_Current_State = {};
 let Settings_Update_Function: { [key: string]: Function } = {};
