@@ -10,8 +10,32 @@ import {
 } from "../Modules/NormalFunction";
 import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
-import { Get_Custom_Items } from "../Settings/StyleShift_Items";
+import { StyleShift_Property_List, Category, Get_Custom_Items, Setting } from "../Settings/StyleShift_Items";
 import { Create_Error, Create_Notification } from "../UI/Extension_UI";
+
+let Type_Convert_Table = {
+	function: "js",
+	css: "css",
+};
+
+function Clear_Bloat(thisSetting: any): any | null {
+	const settingType = thisSetting.type;
+
+	const Setting_Properties = StyleShift_Property_List[settingType];
+
+	if (!Setting_Properties) {
+		return null;
+	}
+
+	const cleanedSetting: any = {};
+	for (const key of Setting_Properties) {
+		if (key in thisSetting) {
+			cleanedSetting[key] = thisSetting[key];
+		}
+	}
+
+	return cleanedSetting;
+}
 
 export let StyleShift_Functions = {
 	/*
@@ -41,6 +65,29 @@ export let StyleShift_Functions = {
 	-------------------------------------------------------
 	*/
 
+	Get_File: async function (type) {
+		return new Promise((resolve, reject) => {
+			var input = document.createElement("input");
+			input.type = "file";
+			input.accept = type;
+
+			input.click();
+
+			input.addEventListener("change", function () {
+				var file = input.files[0];
+				if (file) {
+					resolve(file);
+				} else {
+					reject(new Error("No file selected"));
+				}
+			});
+
+			input.addEventListener("cancel", () => {
+				reject(new Error("Canceled by the user"));
+			});
+		});
+	},
+
 	Export_Custom_Items: function () {
 		let Export_Custom_Items = deepClone(Get_Custom_Items());
 
@@ -60,127 +107,132 @@ export let StyleShift_Functions = {
 		return JSON.stringify(StyleShift_Functions["Export_Custom_Items"](), null, 2);
 	},
 
-	Export_JSON_To_ZIP: async (jsonData, zipFileName) => {
+	Export_StyleShift_Zip: async (jsonData, zipFileName) => {
 		console.log("Data", jsonData);
 
 		try {
 			const zip = new JSzip();
 
 			for (const [Category_index, This_Category] of jsonData.entries()) {
-				let Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
-
+				const Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
 				const Category_Folder = zip.folder(`${Category_index} - ${Renamed_Category}`);
 
-				if (This_Category.Category != Renamed_Category) {
+				if (This_Category.Category !== Renamed_Category) {
 					Category_Folder.file(
 						"Category_Config.json",
-						JSON.stringify(
-							{
-								Actual_Name: This_Category.Category,
-							},
-							null,
-							2
-						)
+						JSON.stringify({ Actual_Name: This_Category.Category }, null, 2)
 					);
 				}
 
 				if (This_Category.Settings) {
-					for (const [
-						Setting_index,
-						This_Setting,
-					] of This_Category.Settings.entries()) {
-						let Renamed_Setting = This_Setting.name
-							? This_Setting.name.replace(/\/|\n/g, "_")
-							: This_Setting.id.replace(/\/|\n/g, "_");
+					for (const [Setting_index, This_Setting] of This_Category.Settings.entries()) {
+						const Renamed_Setting = (This_Setting.name || This_Setting.id).replace(/\/|\n/g, "_");
+						const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting}`);
 
-						const Settings_Folder = Category_Folder.folder(
-							`${Setting_index} - ${Renamed_Setting}`
-						);
-
-						for (const This_Key of Object.keys(This_Setting) as string[]) {
-							if (This_Key.includes("function")) {
-								Settings_Folder.file(
-									`${This_Key}.js`,
-									This_Setting[This_Key]
-								);
-								delete This_Setting[This_Key];
+						for (const This_Key of Object.keys(This_Setting)) {
+							for (const [StyleShift_Type, Converted_Type] of Object.entries(Type_Convert_Table)) {
+								if (This_Key.endsWith(StyleShift_Type)) {
+									Settings_Folder.file(
+										`${This_Key}.${Converted_Type}`,
+										This_Setting[This_Key]
+									);
+									delete This_Setting[This_Key];
+								}
 							}
 						}
 
-						Settings_Folder.file(
-							"Config.json",
-							JSON.stringify(This_Setting, null, 2)
-						);
+						Settings_Folder.file("Config.json", JSON.stringify(This_Setting, null, 2));
 					}
 				}
 			}
 
-			// Generate the ZIP file
 			const zipBlob = await zip.generateAsync({ type: "blob" });
-
-			// Trigger the download
 			Download_File(zipBlob, zipFileName);
 		} catch (error) {
 			console.error("Error creating structured ZIP file:", error);
 		}
 	},
 
-	Import_ZIP_TO_JSON: async (zipData) => {
-		const JSON_Data = {};
+	Import_StyleShift_Zip: async (zipFile) => {
+		const zip = new JSzip();
 
-		try {
-			const zip = new JSzip();
-			const zipContent = await zip.loadAsync(zipData);
+		const loaded_zip = await zip.loadAsync(zipFile, {
+			createFolders: true,
+		});
 
-			for (let This_Category_Folder_Name of Object.keys(zipContent.files)) {
-				const This_Category_Folder = zip.folder(This_Category_Folder_Name);
+		const StyleShift_Data: Category[] = [];
 
-				const Settings = [];
+		const Category_Folders = Object.keys(loaded_zip.files).filter((path) => {
+			const Path_Array = path.split("/");
+			if (Path_Array.length === 2 && Path_Array[1] == "") {
+				return true;
+			}
+		});
 
-				//--------------------------------
+		for (const Category_Path of Category_Folders) {
+			const Category_Path_Name = Category_Path.slice(0, -1);
+			const Category_Array = Category_Path_Name.split(" - ");
+			const Category_Index = Number(Category_Array[0]);
+			let Category_Name = Category_Array[1];
 
-				for (let This_Setting_Folder_Name of Object.keys(This_Category_Folder.files)) {
-					const This_Setting_Folder =
-						This_Category_Folder.folder(This_Setting_Folder_Name);
+			let Category_Config = loaded_zip.file(`${Category_Path_Name}/Category_Config.json`);
 
-					const Config_File = This_Setting_Folder.file("Config.json");
-					const Config_Data = await Config_File.async("string");
-					const This_Setting_Data = JSON.parse(Config_Data);
+			if (Category_Config) {
+				const ConfigContent = await Category_Config.async("string");
+				const ConfigJson = JSON.parse(ConfigContent);
+				Category_Name = ConfigJson.Actual_Name;
+			}
 
-					for (let This_Setting_Type_Name of Object.keys(
-						This_Category_Folder.files
-					)) {
-						if (This_Setting_Type_Name != "Config.json") {
-							This_Setting_Data[This_Setting_Type_Name] =
-								await This_Setting_Folder.file(
-									`${This_Setting_Type_Name}`
-								).async("string");
+			let Settings: Setting[] = [];
+
+			for (const Setting_Path of Object.keys(loaded_zip.files)) {
+				if (
+					Setting_Path.split("/").length === 3 &&
+					Setting_Path.startsWith(`${Category_Path_Name}/`) &&
+					Setting_Path.endsWith("/")
+				) {
+					let Setting_Path_Name = Setting_Path.slice(Category_Path.length, -1);
+
+					const Setting_Array = Setting_Path_Name.split(" - ");
+					const Setting_Index = Number(Setting_Array[0]);
+
+					let Setting_Data = JSON.parse(
+						await loaded_zip.file(`${Setting_Path}Config.json`).async("string")
+					);
+
+					for (const Setting_Property_Path of Object.keys(loaded_zip.files)) {
+						if (
+							Setting_Property_Path.split("/").length === 3 &&
+							Setting_Property_Path.startsWith(Setting_Path) &&
+							!Setting_Property_Path.endsWith("/") &&
+							!Setting_Property_Path.endsWith("Config.json")
+						) {
+							let Setting_Property_Name = Setting_Property_Path.slice(
+								Setting_Path.length,
+								Setting_Property_Path.lastIndexOf(".")
+							);
+
+							console.log(Setting_Property_Path);
+
+							Setting_Data[Setting_Property_Name] = await loaded_zip
+								.file(Setting_Property_Path)
+								.async("string");
 						}
 					}
 
-					Settings.push(This_Setting_Data);
+					Settings[Setting_Index] = Setting_Data;
 				}
-
-				//--------------------------------
-
-				const Category_Config_File = This_Category_Folder.file("Category_Config.json");
-
-				if (Category_Config_File) {
-					const Category_Config_Data = JSON.parse(
-						await Category_Config_File.async("string")
-					);
-					This_Category_Folder_Name = Category_Config_Data.Actual_Name;
-				}
-
-				//--------------------------------
-
-				JSON_Data[This_Category_Folder_Name] = Settings;
 			}
-		} catch (error) {
-			console.error("Error reading ZIP file:", error);
+
+			StyleShift_Data[Category_Index] = {
+				Category: Category_Name,
+				Settings: Settings,
+			};
 		}
 
-		return JSON_Data;
+		console.log(StyleShift_Data);
+
+		return StyleShift_Data;
 	},
 
 	HEX_to_RBGA: HEX_to_RBGA,

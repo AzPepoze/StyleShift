@@ -1,7 +1,7 @@
 import { getElementCenterPosition } from "../Modules/NormalFunction";
 import { Category } from "../Settings/StyleShift_Items";
 import { Start_Highlighter } from "./Highlight_UI";
-import { Create_Main_Settings_UI } from "./Settings_UI";
+import { Create_Main_Settings_UI } from "./Settings/Settings_UI";
 
 let Edtior_Width = 400;
 

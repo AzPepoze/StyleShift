@@ -157,7 +157,7 @@ let Test_Editable_Items: Category[] = [
 		],
 	},
 	{
-		Category: "📜 Import / Export Style",
+		Category: "⬇️⬆️ Import / Export Theme",
 		Settings: [
 			{
 				type: "Button",
@@ -183,7 +183,7 @@ let Test_Editable_Items: Category[] = [
 				name: "Round edges amount",
 				value: 20,
 				var_css: "--player-edge",
-				setup_css: "video{\tborder-radius: var(--player-edge) !important;}",
+				update_css: "video{\tborder-radius: var(--player-edge) !important;}",
 			},
 			{
 				type: "Checkbox",
@@ -225,7 +225,7 @@ let Test_Editable_Items: Category[] = [
 				description: "Description of this Dropdown",
 				show_alpha_slider: true,
 				value: "#24db28ff",
-				setup_css:
+				update_css:
 					".ytp-play-progress{\n     background: var(--Time-Play) !important;\n}",
 				setup_function: "",
 			},
@@ -271,7 +271,7 @@ let Test_Editable_Items: Category[] = [
 	{
 		Category: "🥳 New_Category",
 		Settings: [],
-		
+
 		Selector: "",
 	},
 ];

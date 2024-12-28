@@ -55,9 +55,9 @@ let Settings_Funcion = {
 
 		return Update_Function;
 	},
-	["Number_Slide"]: async function (This_Setting) {
+	["Number_Slide"]: async function (This_Setting: Partial<Extract<Setting, { type: "Number_Slide" }>>) {
 		let StyleSheet: HTMLElement;
-		if (This_Setting.setup_css || This_Setting.var_css) {
+		if (This_Setting.update_css || This_Setting.var_css) {
 			StyleSheet = Create_StyleSheet(This_Setting.id);
 			console.log(StyleSheet);
 		}
@@ -79,11 +79,11 @@ let Settings_Funcion = {
 
 			if (StyleSheet) {
 				StyleSheet.textContent = "";
-				if (This_Setting.var_css) {
-					StyleSheet.textContent += `:root{${This_Setting.var_css}: ${value}px}`;
-				}
-				if (This_Setting.setup_css) {
-					StyleSheet.textContent += This_Setting.setup_css;
+				StyleSheet.textContent += `:root{${
+					This_Setting.var_css ? This_Setting.var_css : `--${This_Setting.id}`
+				}: ${value}px}`;
+				if (This_Setting.update_css) {
+					StyleSheet.textContent += This_Setting.update_css;
 				}
 			}
 
@@ -139,7 +139,7 @@ let Settings_Funcion = {
 	["Color"]: async function (This_Setting: Partial<Extract<Setting, { type: "Color" }>>) {
 		let StyleSheet: HTMLElement;
 
-		if (This_Setting.setup_css) {
+		if (This_Setting.update_css) {
 			StyleSheet = Create_StyleSheet(This_Setting.id);
 			console.log(StyleSheet);
 		}
@@ -169,8 +169,10 @@ let Settings_Funcion = {
 
 			if (StyleSheet) {
 				StyleSheet.textContent = "";
-				StyleSheet.textContent += `:root{--${This_Setting.id}: ${value}}`;
-				StyleSheet.textContent += This_Setting.setup_css || ``;
+				StyleSheet.textContent += `:root{${
+					This_Setting.var_css ? This_Setting.var_css : `--${This_Setting.id}`
+				}: ${value}}`;
+				StyleSheet.textContent += This_Setting.update_css || ``;
 				console.log(StyleSheet.textContent);
 			}
 

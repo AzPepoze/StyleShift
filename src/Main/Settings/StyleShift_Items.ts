@@ -1,16 +1,10 @@
 import { Get_Default_Items } from "../Default_Items";
+import { Save_And_Update_ALL } from "../Modules/Main_Function";
 import { Random } from "../Modules/NormalFunction";
-import { Load, Save_All, Save_Any } from "../Modules/Save";
-import { Update_All } from "../Run";
+import { Load, Save_Any } from "../Modules/Save";
 import { SetUp_Setting_Function } from "./Settings_Function";
 
-let Highlight_Colors = [
-	`255, 109, 109`,
-	`167, 242, 255`,
-	`255, 167, 248`,
-	`188, 167, 255`,
-	`255, 241, 167`,
-];
+let Highlight_Colors = [`255, 109, 109`, `167, 242, 255`, `255, 167, 248`, `188, 167, 255`, `255, 241, 167`];
 
 export type Category = {
 	Category: string;
@@ -42,7 +36,18 @@ export type Setting =
 			html: string;
 
 			text_align?: "left" | "center" | "right";
-			color?: color_obj;
+			font_size?: number;
+
+			Editable?: boolean;
+	  }
+	| {
+			type: "Setting_Sub_Title";
+			id?: string;
+
+			text: string;
+
+			text_align?: "left" | "center" | "right";
+			color?: string;
 			font_size?: number;
 
 			Editable?: boolean;
@@ -92,12 +97,16 @@ export type Setting =
 			step?: number;
 			value: number;
 
+			//--------------
+
 			var_css?: string;
 
-			setup_css?: string;
 			setup_function?: string | Function;
 
+			update_css?: string | Function;
 			update_function?: string | Function;
+
+			//--------------
 
 			Editable?: boolean;
 	  }
@@ -109,10 +118,14 @@ export type Setting =
 
 			value: string;
 
+			//--------------
+
 			setup_css?: string;
 			setup_function?: string | Function;
 
 			options: { [key: string]: option };
+
+			//--------------
 
 			Editable?: boolean;
 	  }
@@ -125,15 +138,79 @@ export type Setting =
 
 			value: string;
 
+			//--------------
+
 			var_css?: string;
 
-			setup_css?: string;
 			setup_function?: string | Function;
 
+			update_css?: string | Function;
 			update_function?: string | Function;
+
+			//--------------
 
 			Editable?: boolean;
 	  };
+
+export const StyleShift_Property_List: { [key: string]: string[] } = {
+	Text: ["type", "id", "html", "text_align", "color", "font_size", "Editable"],
+	Setting_Sub_Title: ["type", "id", "text", "text_align", "color", "font_size", "Editable"],
+	Button: [
+		"type",
+		"id",
+		"name",
+		"description",
+		"icon",
+		"text_align",
+		"color",
+		"font_size",
+		"click_function",
+		"Editable",
+	],
+	Checkbox: [
+		"type",
+		"id",
+		"name",
+		"description",
+		"value",
+		"setup_css",
+		"setup_function",
+		"enable_css",
+		"enable_function",
+		"disable_css",
+		"disable_function",
+		"Editable",
+	],
+	Number_Slide: [
+		"type",
+		"id",
+		"name",
+		"description",
+		"min",
+		"max",
+		"step",
+		"value",
+		"var_css",
+		"setup_function",
+		"update_css",
+		"update_function",
+		"Editable",
+	],
+	Dropdown: ["type", "id", "name", "description", "value", "setup_css", "setup_function", "options", "Editable"],
+	Color: [
+		"type",
+		"id",
+		"name",
+		"description",
+		"show_alpha_slider",
+		"value",
+		"var_css",
+		"setup_function",
+		"update_css",
+		"update_function",
+		"Editable",
+	],
+};
 
 let StyleShift_Items: { Default: Category[]; Custom: Category[] } = {
 	Default: [],
@@ -183,9 +260,7 @@ export function Get_Setting_Category(Setting: Setting) {
 }
 
 export function Find_Exist_Category(Category: Category) {
-	return Get_ALL_StyleShift_Items().some(
-		(This_Category) => This_Category.Category === Category.Category
-	);
+	return Get_ALL_StyleShift_Items().some((This_Category) => This_Category.Category === Category.Category);
 }
 
 function Auto_Add_HightLight(Array) {
@@ -224,9 +299,9 @@ export async function Update_StyleShift_Items() {
 	console.log("Updated Editable Items", StyleShift_Items);
 }
 
-let Settings_List = {};
+let Settings_List = {} as { [id: string]: Setting };
 
-export async function Get_Settings_List(Force = false): Promise<Setting[] | {}> {
+export async function Get_Settings_List(Force = false): Promise<{ [id: string]: Setting }> {
 	if (!Force && Object.keys(Settings_List).length) {
 		return Settings_List;
 	}
@@ -275,20 +350,20 @@ export async function Add_Setting(Category_Settings: Setting[], This_Setting) {
 	}
 
 	SetUp_Setting_Function(This_Setting);
-	Update_All();
+
+	Save_And_Update_ALL();
 }
 
 export async function Remove_Setting(This_Setting) {
 	for (const This_Category of Get_Custom_Items()) {
-		const index = (This_Category.Settings || []).findIndex(
-			(Check_Setting) => Check_Setting === This_Setting
-		);
+		const index = (This_Category.Settings || []).findIndex((Check_Setting) => Check_Setting === This_Setting);
 
 		if (index > -1) {
 			This_Category.Settings.splice(index, 1);
 		}
 	}
-	Update_All();
+
+	Save_And_Update_ALL();
 }
 
 //--------------------------------------------------
@@ -320,8 +395,7 @@ export async function Add_Category(Category_Name: string) {
 	Custom_Items.push(This_Category);
 	console.log("Added Category", Custom_Items);
 
-	Save_All();
-	Update_All();
+	Save_And_Update_ALL();
 }
 
 export async function Remove_Category(This_Category) {
@@ -333,7 +407,7 @@ export async function Remove_Category(This_Category) {
 		Custom_Items.splice(index, 1);
 	}
 
-	Update_All();
+	Save_And_Update_ALL();
 }
 
 //-------------------------------------------------

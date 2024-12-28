@@ -4,7 +4,7 @@ import { Load } from "../Modules/Save";
 import { Recreate_Config_UI, Remove_Config_UI } from "./Config_UI";
 import { Editor_UI } from "./Editor_UI";
 import { Extension_Settings_UI } from "./Extension_Setting_UI";
-import { Create_Setting_UI_Element } from "./Settings_UI";
+import { Settings_UI } from "./Settings/Settings_UI_Components";
 
 export async function Create_StyleShift_Window({
 	Width = "30%",
@@ -15,7 +15,7 @@ export async function Create_StyleShift_Window({
 		await Load_Developer_Modules();
 	}
 
-	const BG_Frame = await Create_Setting_UI_Element("Fill_Screen", false);
+	const BG_Frame = await Settings_UI["Fill_Screen"](false);
 
 	(await GetDocumentBody()).appendChild(BG_Frame);
 
@@ -35,11 +35,11 @@ export async function Create_StyleShift_Window({
 	TopBar.className = "STYLESHIFT-TopBar";
 	Window.append(TopBar);
 
-	let Drag_Top = await Create_Setting_UI_Element("Drag", Window);
+	let Drag_Top = await Settings_UI["Drag"](Window);
 	Drag_Top.style.width = "calc(100% - 5px - 27px)";
 	TopBar.append(Drag_Top);
 
-	let Close = await Create_Setting_UI_Element("Close");
+	let Close = await Settings_UI["Close"]();
 	TopBar.append(Close);
 
 	let Run_Close = async function () {
@@ -62,7 +62,7 @@ export async function Create_StyleShift_Window({
 let Notification_Container;
 
 (async () => {
-	const Notification_BG = await Create_Setting_UI_Element("Fill_Screen", false);
+	const Notification_BG = await Settings_UI["Fill_Screen"](false);
 	(await GetDocumentBody()).append(Notification_BG);
 
 	Notification_Container = document.createElement("div");
@@ -78,7 +78,7 @@ export async function Create_Notification({
 }) {
 	console.log(Title, Content);
 
-	const Notification_Frame = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+	const Notification_Frame = await Settings_UI["Setting_Frame"](true, false, {
 		x: false,
 		y: true,
 	});
@@ -88,7 +88,7 @@ export async function Create_Notification({
 	let Icon_UI;
 
 	if (Icon) {
-		Icon_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+		Icon_UI = await Settings_UI["Setting_Frame"](true, false, {
 			x: true,
 			y: true,
 		});
@@ -99,15 +99,11 @@ export async function Create_Notification({
 
 	//---------------------------------
 
-	const Notification_Content_Frame = await Create_Setting_UI_Element(
-		"Setting_Frame",
-		false,
-		true
-	);
+	const Notification_Content_Frame = await Settings_UI["Setting_Frame"](false, true);
 	Notification_Content_Frame.className += " STYLESHIFT-Notification-Content-Frame";
 	Notification_Frame.append(Notification_Content_Frame);
 
-	const Title_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+	const Title_UI = await Settings_UI["Setting_Frame"](true, false, {
 		x: false,
 		y: true,
 	});
@@ -115,7 +111,7 @@ export async function Create_Notification({
 	Title_UI.textContent = Title;
 	Notification_Content_Frame.append(Title_UI);
 
-	const Content_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+	const Content_UI = await Settings_UI["Setting_Frame"](true, false, {
 		x: false,
 		y: true,
 	});
@@ -123,6 +119,7 @@ export async function Create_Notification({
 	Notification_Content_Frame.append(Content_UI);
 
 	let Set_Content = (New_Content) => {
+		New_Content = String(New_Content);
 		Content_UI.innerHTML = New_Content.replaceAll("<script", "").replaceAll("/script>", "");
 	};
 
@@ -136,7 +133,7 @@ export async function Create_Notification({
 	}
 
 	if (Timeout == 0) {
-		const Close_UI = await Create_Setting_UI_Element("Setting_Frame", true, false, {
+		const Close_UI = await Settings_UI["Setting_Frame"](true, false, {
 			x: true,
 			y: true,
 		});

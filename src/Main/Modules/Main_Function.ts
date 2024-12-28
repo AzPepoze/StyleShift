@@ -1,7 +1,9 @@
+import { Update_All } from "../Run";
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { color_obj } from "../Settings/StyleShift_Items";
 import { Create_Notification } from "../UI/Extension_UI";
 import { sleep } from "./NormalFunction";
+import { Save_All } from "./Save";
 
 export let Ver = chrome.runtime.getManifest().version;
 
@@ -29,47 +31,10 @@ if (window.location.origin == Extension_Location) {
 	In_Setting_Page = false;
 }
 
-console.log(In_Setting_Page);
-
-// export async function Get_Global_Data(Mode: "Build-in" | "Custom", Key: string): Promise<any> {
-// 	const remote_id = Create_UniqueID(8);
-// 	return new Promise((resolve, reject) => {
-// 		window.addEventListener(
-// 			`StyleShift_Transaction_${Key}_${remote_id}`,
-// 			function (event) {
-// 				//@ts-ignore
-// 				console.log("Recived", remote_id, event.detail);
-// 				//@ts-ignore
-// 				resolve(event.detail);
-// 			},
-// 			{ once: true }
-// 		);
-
-// 		Run_Text_Script(`
-// 			function StyleShift_Run() {
-// 				if (
-// 					window["StyleShift"] == null ||
-// 					window["StyleShift"]["${Mode}"] == null ||
-// 					window["StyleShift"]["${Mode}"]["${Key}"] == null
-// 				) {
-// 					setTimeout(StyleShift_Run, 0);
-// 					return;
-// 				} else {
-// 					let Data = window["StyleShift"]["${Mode}"]["${Key}"];
-
-// 					console.log("Sent", Data);
-
-// 					window.dispatchEvent(
-// 						new CustomEvent("StyleShift_Transaction_${Key}_${remote_id}", {
-// 							detail: Data,
-// 						})
-// 					);
-// 				}
-// 			}
-// 			StyleShift_Run();
-// 		`);
-// 	});
-// }
+export async function Save_And_Update_ALL() {
+	await Save_All();
+	Update_All();
+}
 
 let StyleShift_Functions_List = {};
 
@@ -179,11 +144,7 @@ function Is_Safe_Code(code: string, Code_Name: string) {
 	return true;
 }
 
-export async function Run_Text_Script({
-	Text = null as string | Function,
-	Replace = true,
-	Code_Name = "StyleShift",
-}) {
+export async function Run_Text_Script({ Text = null as string | Function, Replace = true, Code_Name = "StyleShift" }) {
 	console.log("Trying to run script");
 	console.log(Text);
 
@@ -197,9 +158,10 @@ export async function Run_Text_Script({
 
 			if (Replace && Is_Safe_Code(Text, Code_Name) == true) {
 				// console.log(StyleShift_Functions_List);
-				for (const [Function_Mode, Functions_List] of Object.entries(
-					StyleShift_Functions_List
-				) as [string, Array<string>][]) {
+				for (const [Function_Mode, Functions_List] of Object.entries(StyleShift_Functions_List) as [
+					string,
+					Array<string>
+				][]) {
 					for (const Function_Name of Functions_List) {
 						Text = Text.replace(
 							new RegExp(`\\b${Function_Name}\\b`, "g"),
@@ -270,9 +232,7 @@ export async function Load_Developer_Modules() {
 
 		//---------------------------------------------------------------------
 
-		let Monaco_Data = await (
-			await fetch(chrome.runtime.getURL("External_Modules/Monaco.js"))
-		).text();
+		let Monaco_Data = await (await fetch(chrome.runtime.getURL("External_Modules/Monaco.js"))).text();
 
 		// if (isFirefox) {
 		// 	console.log("StyleShift_Extension_ID", Extension_Location);
@@ -286,9 +246,7 @@ export async function Load_Developer_Modules() {
 
 		Loading_UI.Set_Content("Loading : JSzip (Export theme as zip)");
 
-		let JSzip_Data = await (
-			await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))
-		).text();
+		let JSzip_Data = await (await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))).text();
 		Run_Text_Script({
 			Text: JSzip_Data,
 			Replace: false,
@@ -307,16 +265,10 @@ export async function Load_Developer_Modules() {
 		Monaco = await Get_Global_Data("Build-in", "Monaco");
 		Monaco_Themes = await Get_Global_Data("Build-in", "Monaco_Themes");
 
-		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [
-			string,
-			any
-		][]) {
+		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
 			if (Theme_Name == "themelist") continue;
 			console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
-			Monaco.editor.defineTheme(
-				Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""),
-				Theme_Content
-			);
+			Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
 		}
 
 		Monaco.editor.setTheme("Dracula");
