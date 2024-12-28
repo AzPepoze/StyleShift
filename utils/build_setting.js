@@ -49,9 +49,7 @@ const workerEntryPoints = [
 
 		fs.readdirSync(themesDir).forEach((file) => {
 			if (file.endsWith(".json")) {
-				const themeContent = JSON.parse(
-					fs.readFileSync(path.join(themesDir, file), "utf8")
-				);
+				const themeContent = JSON.parse(fs.readFileSync(path.join(themesDir, file), "utf8"));
 				themes[file.replace(".json", "")] = themeContent;
 			}
 		});
