@@ -2,6 +2,8 @@
  * Pauses execution for a specified delay.
  * @param {number} delay - The delay in milliseconds.
  * @returns {Promise<void>}
+ * @example
+ * await sleep(1000); // Pauses execution for 1 second
  */
 export function sleep(delay: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, delay));
@@ -13,6 +15,8 @@ export function sleep(delay: number): Promise<void> {
  * Converts a hex color string to an RGBA object.
  * @param {string} hex - The hex color string.
  * @returns {{ r: number; g: number; b: number; a: number }}
+ * @example
+ * HEX_to_RBGA("#ff5733"); // { r: 255, g: 87, b: 51, a: 1 }
  */
 export function HEX_to_RBGA(hex: string): { r: number; g: number; b: number; a: number } {
 	hex = hex.replace(/^#/, "");
@@ -35,6 +39,8 @@ export function HEX_to_RBGA(hex: string): { r: number; g: number; b: number; a: 
  * Converts a hex color string to an RGB object.
  * @param {string} hex - The hex color string.
  * @returns {{ r: number; g: number; b: number }}
+ * @example
+ * HEX_to_RBG("#ff5733"); // { r: 255, g: 87, b: 51 }
  */
 export function HEX_to_RBG(hex: string): { r: number; g: number; b: number } {
 	hex = hex.replace(/^#/, "");
@@ -62,6 +68,8 @@ export function HEX_to_RBG(hex: string): { r: number; g: number; b: number } {
  * @param {number} b - The blue value.
  * @param {number} [a=1] - The alpha value.
  * @returns {string}
+ * @example
+ * RGBA_to_HEX(255, 87, 51, 0.5); // "#ff573380"
  */
 export function RGBA_to_HEX(r: number, g: number, b: number, a: number = 1): string {
 	r = Math.round(Math.min(255, Math.max(0, r)));
@@ -85,6 +93,8 @@ export function RGBA_to_HEX(r: number, g: number, b: number, a: number = 1): str
  * Converts RGB values to an HSV object.
  * @param {{ r: number; g: number; b: number }} rgb - The RGB values.
  * @returns {{ h: number; s: number; v: number }}
+ * @example
+ * RGB_to_HSV({ r: 255, g: 87, b: 51 }); // { h: 14, s: 80, v: 100 }
  */
 export function RGB_to_HSV(rgb: { r: number; g: number; b: number }): { h: number; s: number; v: number } {
 	let r = rgb.r,
@@ -107,6 +117,8 @@ export function RGB_to_HSV(rgb: { r: number; g: number; b: number }): { h: numbe
  * Converts HSV values to an RGB object.
  * @param {{ h: number; s: number; v: number }} hsv - The HSV values.
  * @returns {{ r: number; g: number; b: number }}
+ * @example
+ * HSV_to_RGB({ h: 14, s: 80, v: 100 }); // { r: 255, g: 87, b: 51 }
  */
 export function HSV_to_RGB(hsv: { h: number; s: number; v: number }): { r: number; g: number; b: number } {
 	let h = hsv.h,
@@ -124,6 +136,8 @@ export function HSV_to_RGB(hsv: { h: number; s: number; v: number }): { r: numbe
  * Checks if an element is scrollable.
  * @param {HTMLElement} element - The element to check.
  * @returns {boolean}
+ * @example
+ * is_Scrollable(document.body); // true or false depending on the body scrollability
  */
 export function is_Scrollable(element: HTMLElement): boolean {
 	const hasVerticalScrollbar = element.scrollHeight > element.clientHeight;
@@ -135,6 +149,8 @@ export function is_Scrollable(element: HTMLElement): boolean {
  * Gets the nearest scrollable parent of an element.
  * @param {HTMLElement | null} element - The element to check.
  * @returns {HTMLElement | null}
+ * @example
+ * Get_Scroll_Parent(document.querySelector("#myElement")); // Returns the nearest scrollable parent
  */
 export function Get_Scroll_Parent(element: HTMLElement | null): HTMLElement | null {
 	if (!element) {
@@ -157,6 +173,8 @@ export function Get_Scroll_Parent(element: HTMLElement | null): HTMLElement | nu
  * Converts a string to a number.
  * @param {string} str - The string to convert.
  * @returns {number}
+ * @example
+ * stringToNumber("example"); // Returns a numerical hash of the string
  */
 export function stringToNumber(str: string): number {
 	let hash = 0;
@@ -174,6 +192,8 @@ export function stringToNumber(str: string): number {
  * @param {number} Maximum - The maximum value.
  * @param {string | number} Seed - The seed value.
  * @returns {number}
+ * @example
+ * Random(1, 100, "seed"); // Returns a random number between 1 and 100 based on the seed
  */
 export function Random(Minimum: number, Maximum: number, Seed: string | number): number {
 	const numericalSeed = typeof Seed === "string" ? stringToNumber(Seed) : Seed;
@@ -195,6 +215,8 @@ export function Random(Minimum: number, Maximum: number, Seed: string | number):
 /**
  * Gets the document body element, waiting if necessary.
  * @returns {Promise<HTMLElement>}
+ * @example
+ * await GetDocumentBody(); // Returns the document body element
  */
 export async function GetDocumentBody(): Promise<HTMLElement> {
 	let DocumentBody = document.body;
@@ -210,6 +232,8 @@ export async function GetDocumentBody(): Promise<HTMLElement> {
 /**
  * Gets the document head element, waiting if necessary.
  * @returns {Promise<HTMLElement>}
+ * @example
+ * await GetDocumentHead(); // Returns the document head element
  */
 export async function GetDocumentHead(): Promise<HTMLElement> {
 	let DocumentHead = document.head;
@@ -226,6 +250,8 @@ export async function GetDocumentHead(): Promise<HTMLElement> {
  * Executes a callback when a target element is removed from the DOM.
  * @param {HTMLElement} targetElement - The target element.
  * @param {Function} callback - The callback function.
+ * @example
+ * Once_Element_Remove(document.querySelector("#myElement"),() => console.log("Element removed"));
  */
 export function Once_Element_Remove(targetElement: HTMLElement, callback: Function): void {
 	let observer = new MutationObserver((mutationsList, observer) => {
@@ -248,6 +274,8 @@ export function Once_Element_Remove(targetElement: HTMLElement, callback: Functi
  * Gets the center position of an element.
  * @param {HTMLElement} element - The element to check.
  * @returns {{ x: number; y: number }}
+ * @example
+ * getElementCenterPosition(document.querySelector("#myElement")); // { x: number, y: number }
  */
 export function getElementCenterPosition(element: HTMLElement): { x: number; y: number } {
 	const rect = element.getBoundingClientRect();
@@ -263,6 +291,8 @@ export function getElementCenterPosition(element: HTMLElement): { x: number; y: 
 /**
  * Waits for the document to be fully loaded.
  * @returns {Promise<number>}
+ * @example
+ * await WaitDocumentLoaded(); // Waits until the document is fully loaded
  */
 export async function WaitDocumentLoaded(): Promise<number> {
 	while (document.readyState !== "complete") {
@@ -275,6 +305,8 @@ export async function WaitDocumentLoaded(): Promise<number> {
  * Creates a unique ID of a specified length.
  * @param {number} length - The length of the ID.
  * @returns {string}
+ * @example
+ * Create_UniqueID(10); // Returns a unique ID of length 10
  */
 export function Create_UniqueID(length: number): string {
 	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -293,6 +325,8 @@ export function Create_UniqueID(length: number): string {
  * @param {any} obj1 - The first object.
  * @param {any} obj2 - The second object.
  * @returns {any}
+ * @example
+ * deepMerge({ a: 1 }, { b: 2 }); // { a: 1, b: 2 }
  */
 export function deepMerge(obj1: any, obj2: any): any {
 	if (Array.isArray(obj1) && Array.isArray(obj2)) {
@@ -327,6 +361,10 @@ export function deepMerge(obj1: any, obj2: any): any {
  * Deep merges two objects in place.
  * @param {any} target - The target object.
  * @param {any} source - The source object.
+ * @example
+ * const target = { a: 1 };
+ * const source = { b: 2 };
+ * deepMergeInPlace(target, source); // target is now { a: 1, b: 2 }
  */
 export function deepMergeInPlace(target: any, source: any): void {
 	if (Array.isArray(target) && Array.isArray(source)) {
@@ -361,6 +399,8 @@ export function deepMergeInPlace(target: any, source: any): void {
 /**
  * Gets the current domain.
  * @returns {string}
+ * @example
+ * Get_Current_Domain(); // Returns the current domain
  */
 export function Get_Current_Domain(): string {
 	const hostname = window.location.origin;
@@ -374,6 +414,8 @@ export function Get_Current_Domain(): string {
  * Scrolls to a target element when a button is clicked.
  * @param {HTMLElement} Button - The button element.
  * @param {HTMLElement} Target - The target element.
+ * @example
+ * Scroll_On_Click(document.querySelector("#myButton"), document.querySelector("#myTarget"));
  */
 export function Scroll_On_Click(Button: HTMLElement, Target: HTMLElement): void {
 	Button.addEventListener("click", function () {
@@ -385,6 +427,8 @@ export function Scroll_On_Click(Button: HTMLElement, Target: HTMLElement): void 
  * Applies drag functionality to an element.
  * @param {HTMLElement} Drag_Object - The draggable object.
  * @param {HTMLElement} Target - The target element.
+ * @example
+ * Apply_Drag(document.querySelector("#dragObject"), document.querySelector("#target"));
  */
 export function Apply_Drag(Drag_Object: HTMLElement, Target: HTMLElement): void {
 	let isDragging = false;
@@ -431,6 +475,8 @@ export function Apply_Drag(Drag_Object: HTMLElement, Target: HTMLElement): void 
  * @param {MouseEvent} event - The mouse event.
  * @param {number} offsetX - The X offset.
  * @param {number} offsetY - The Y offset.
+ * @example
+ * Update_Drag_Position(document.querySelector("#element"), event, 10, 10);
  */
 export function Update_Drag_Position(Element: HTMLElement, event: MouseEvent, offsetX: number, offsetY: number): void {
 	Element.style.left = `${event.clientX - offsetX}px`;
@@ -441,6 +487,8 @@ export function Update_Drag_Position(Element: HTMLElement, event: MouseEvent, of
  * Rearranges a selector string.
  * @param {string} value - The selector string.
  * @returns {string}
+ * @example
+ * ReArrange_Selector("div, span"); // "div,\nspan"
  */
 export function ReArrange_Selector(value: string): string {
 	return value.replace(/\s+/g, " ").replace(/\n/g, "").replace(/, /g, ",").replace(/,/g, ",\n");
@@ -450,6 +498,8 @@ export function ReArrange_Selector(value: string): string {
  * Checks if a value is an array of objects.
  * @param {any} value - The value to check.
  * @returns {boolean}
+ * @example
+ * isObjectArray([{ a: 1 }, { b: 2 }]); // true
  */
 export function isObjectArray(value: any): boolean {
 	return Array.isArray(value) && value.every((item) => typeof item === "object" && item !== null);
@@ -459,6 +509,8 @@ export function isObjectArray(value: any): boolean {
  * Deep clones an object.
  * @param {any} data - The data to clone.
  * @returns {any}
+ * @example
+ * deepClone({ a: 1 }); // { a: 1 }
  */
 export function deepClone(data: any): any {
 	return JSON.parse(JSON.stringify(data));
@@ -469,6 +521,8 @@ export function deepClone(data: any): any {
  * @param {object} obj1 - The first object.
  * @param {object} obj2 - The second object.
  * @returns {boolean}
+ * @example
+ * Is_Same_OBJ({ a: 1 }, { a: 1 }); // true
  */
 export function Is_Same_OBJ(obj1: object, obj2: object): boolean {
 	if (Object.keys(obj1).length !== Object.keys(obj2).length) return false;
@@ -483,6 +537,8 @@ export function Is_Same_OBJ(obj1: object, obj2: object): boolean {
  * @param {string} selector - The CSS selector.
  * @param {number} [timeout] - The timeout in milliseconds.
  * @returns {Promise<HTMLElement | null>}
+ * @example
+ * await WaitForElement("#myElement", 5000); // Waits for the element to appear within 5 seconds
  */
 export async function WaitForElement(selector: string, timeout?: number): Promise<HTMLElement | null> {
 	const startTime = Date.now();
@@ -503,6 +559,8 @@ export async function WaitForElement(selector: string, timeout?: number): Promis
  * Downloads a file with the specified data and filename.
  * @param {BlobPart} data - The file data.
  * @param {string} filename - The filename.
+ * @example
+ * Download_File("Hello, world!", "hello.txt");
  */
 export function Download_File(data: BlobPart, filename: string): void {
 	var file = new Blob([data]);
@@ -521,6 +579,8 @@ export function Download_File(data: BlobPart, filename: string): void {
 /**
  * Handles file input change event.
  * @param {HTMLInputElement} Element - The input element.
+ * @example
+ * Input_File(document.querySelector("#fileInput"));
  */
 export function Input_File(Element: HTMLInputElement): void {
 	Element.addEventListener("change", async (event: Event) => {
@@ -538,6 +598,8 @@ export function Input_File(Element: HTMLInputElement): void {
 /**
  * Gets the current URL parameters.
  * @returns {{ [key: string]: string }}
+ * @example
+ * Get_Current_URL_Parameters(); // Returns an object with the current URL parameters
  */
 export function Get_Current_URL_Parameters(): { [key: string]: string } {
 	const searchParams = new URL(window.location.href).searchParams;
@@ -556,6 +618,8 @@ export function Get_Current_URL_Parameters(): { [key: string]: string } {
  * @param {string} Function_Name - The function name.
  * @param {...any[]} args - The function arguments.
  * @returns {Promise<void>}
+ * @example
+ * await Fire_Function_Event("Custom", "MyFunction", 1, 2, 3);
  */
 export async function Fire_Function_Event(
 	Prefix: string = "Function",
@@ -575,6 +639,8 @@ export async function Fire_Function_Event(
  * @param {string} Function_Name - The function name.
  * @param {...any[]} args - The function arguments.
  * @returns {Promise<any>}
+ * @example
+ * const result = await Fire_Function_Event_With_Return("Custom", "MyFunction", 1, 2, 3);
  */
 export async function Fire_Function_Event_With_Return(
 	Prefix: string = "Function",
@@ -611,6 +677,9 @@ export async function Fire_Function_Event_With_Return(
  * @param {string} Function_Name - The function name.
  * @param {Function} callback - The callback function.
  * @returns {Promise<{ Cancel: Function }>}
+ * @example
+ * const listener = await On_Function_Event("Custom", "MyFunction", (data) => console.log(data));
+ * listener.Cancel(); // Cancels the event listener
  */
 export async function On_Function_Event(
 	Prefix: string = "Function",
@@ -658,6 +727,8 @@ export async function On_Function_Event(
 /**
  * Waits for one animation frame.
  * @returns {Promise<boolean>}
+ * @example
+ * await Wait_One_Frame(); // Waits for one animation frame
  */
 export function Wait_One_Frame(): Promise<boolean> {
 	return new Promise((resolve) => {
@@ -671,6 +742,8 @@ export function Wait_One_Frame(): Promise<boolean> {
  * Inserts a new node after an existing node.
  * @param {Node} newNode - The new node.
  * @param {Node} existingNode - The existing node.
+ * @example
+ * insertAfter(document.createElement("div"), document.querySelector("#existingNode"));
  */
 export function insertAfter(newNode: Node, existingNode: Node): void {
 	existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);

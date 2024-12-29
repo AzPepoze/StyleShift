@@ -14,6 +14,13 @@ For Normal user !!!
 -------------------------------------------------------
 */
 
+/**
+ * Copies text to the clipboard.
+ * @param {string} text - The text to copy.
+ * @returns {boolean}
+ * @example
+ * Copy_to_clipboard("Hello, world!"); // Copies "Hello, world!" to the clipboard
+ */
 export const Copy_to_clipboard = function (text) {
 	navigator.clipboard.writeText(text).then(
 		() => {
@@ -26,6 +33,17 @@ export const Copy_to_clipboard = function (text) {
 	);
 };
 
+/**
+ * Creates a notification.
+ * @param {Object} options - The notification options.
+ * @param {string} [options.Icon=null] - The icon.
+ * @param {string} [options.Title="StyleShift"] - The title.
+ * @param {string} [options.Content=""] - The content.
+ * @param {number} [options.Timeout=3000] - The timeout in milliseconds.
+ * @returns {Promise<Object>}
+ * @example
+ * await Create_Notification({ Title: "Hello", Content: "This is a notification" });
+ */
 export async function Create_Notification({ Icon = null, Title = "StyleShift", Content = "", Timeout = 3000 }) {
 	console.log(Title, Content);
 
@@ -122,6 +140,13 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
 	};
 }
 
+/**
+ * Creates an error notification.
+ * @param {string} Content - The error content.
+ * @returns {Promise<Object>}
+ * @example
+ * await Create_Error("An error occurred");
+ */
 export async function Create_Error(Content) {
 	return await Create_Notification({
 		Icon: "❌",
@@ -137,6 +162,13 @@ For advanced user !!!
 -------------------------------------------------------
 */
 
+/**
+ * Prompts the user to select a file.
+ * @param {string} type - The file type.
+ * @returns {Promise<File>}
+ * @example
+ * const file = await Get_File(".txt");
+ */
 export const Get_File = async function (type) {
 	return new Promise((resolve, reject) => {
 		var input = document.createElement("input");
@@ -160,6 +192,12 @@ export const Get_File = async function (type) {
 	});
 };
 
+/**
+ * Exports custom items.
+ * @returns {Object[]}
+ * @example
+ * const items = Export_Custom_Items();
+ */
 export const Export_Custom_Items = function () {
 	let Export_Custom_Items = deepClone(Get_Custom_Items());
 
@@ -175,10 +213,24 @@ export const Export_Custom_Items = function () {
 	return Export_Custom_Items;
 };
 
+/**
+ * Exports custom items as a JSON string.
+ * @returns {string}
+ * @example
+ * const json = Export_Custom_Items_Text();
+ */
 export const Export_Custom_Items_Text = function () {
 	return JSON.stringify(Export_Custom_Items(), null, 2);
 };
 
+/**
+ * Exports StyleShift data as a ZIP file.
+ * @param {Object} jsonData - The JSON data.
+ * @param {string} zipFileName - The ZIP file name.
+ * @returns {Promise<void>}
+ * @example
+ * await Export_StyleShift_Zip(data, "styleshift.zip");
+ */
 export const Export_StyleShift_Zip = async (jsonData, zipFileName) => {
 	console.log("Data", jsonData);
 
@@ -222,6 +274,13 @@ export const Export_StyleShift_Zip = async (jsonData, zipFileName) => {
 	}
 };
 
+/**
+ * Imports StyleShift data from a ZIP file.
+ * @param {File} zipFile - The ZIP file.
+ * @returns {Promise<Category[]>}
+ * @example
+ * const data = await Import_StyleShift_Zip(file);
+ */
 export const Import_StyleShift_Zip = async (zipFile) => {
 	const zip = new JSzip();
 
@@ -302,6 +361,13 @@ export const Import_StyleShift_Zip = async (zipFile) => {
 	return StyleShift_Data;
 };
 
+/**
+ * Gets the value of a StyleShift setting.
+ * @param {string} id - The setting ID.
+ * @returns {any}
+ * @example
+ * const value = Get_StyleShift_Value("setting_id");
+ */
 export const Get_StyleShift_Value = function (id) {
 	return Settings_Current_State[id];
 };
@@ -311,10 +377,21 @@ export const Get_StyleShift_Value = function (id) {
 Danger functions !!!
 -------------------------------------------------------
 */
+
+/**
+ * Enables the extension.
+ * @example
+ * Enable_Extension_Function();
+ */
 export const Enable_Extension_Function = function () {
 	Show_StyleSheet();
 };
 
+/**
+ * Disables the extension.
+ * @example
+ * Disable_Extension_Function();
+ */
 export const Disable_Extension_Function = function () {
 	Hide_StyleSheet();
 };
