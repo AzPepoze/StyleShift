@@ -10,6 +10,7 @@ import {
 	Color_OBJ_to_HEX,
 	HEX_to_Color_OBJ,
 	In_Setting_Page,
+	Is_Safe_Code,
 	isFirefox,
 	Loaded_Developer_Modules,
 	Monaco,
@@ -64,7 +65,9 @@ let Main_Setting_UI = {
 					break;
 			}
 
-			Text.innerHTML = This_Setting.html;
+			if (Is_Safe_Code(This_Setting.html, This_Setting.id)) {
+				Text.innerHTML = This_Setting.html;
+			}
 		}
 		Update_UI();
 

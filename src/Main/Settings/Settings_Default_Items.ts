@@ -110,6 +110,11 @@ export const UI_Preset: Setting[] = [
 		show_alpha_slider: true,
 		value: "#FF0000FF",
 	},
+	{
+		type: "Custom",
+		id: "Test_Custom",
+		ui_function: "",
+	},
 ];
 
 export const Type_Convert_Table = {

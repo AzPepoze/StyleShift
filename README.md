@@ -51,5 +51,3 @@ Follow these steps to install and set up `StyleShift`:
 6. **Load the extension into your browser**:
      - For **Chrome**: Open `chrome://extensions/` and enable "Developer mode," then load the unpacked extension from the `out > dist > chrome` folder.
      - For **Firefox**: Open `about:debugging`, click "This Firefox," and load the extension from the `out > dist > firefox` folder.
-
----

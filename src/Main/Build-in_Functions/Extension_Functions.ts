@@ -1,9 +1,9 @@
-import { JSzip } from "../Core/Core_Function";
+import { JSzip, Save_And_Update_ALL } from "../Core/Core_Function";
 import { Convert_To_Export_Setting } from "../Core/Export_Converter";
+import { Saved_Data, Set_Null_Save, StyleShift_Allowed_Keys } from "../Core/Save";
 import { StyleShift_Category_List } from "../Settings/Settings_Default_Items";
 import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
-import { Get_Custom_Items } from "../Settings/StyleShift_Items";
 import { Category, Setting } from "../types/Store_Data";
 import { Notification_Container, Run_Animation } from "../UI/Extension_UI";
 import { Settings_UI } from "../UI/Settings/Settings_UI_Components";
@@ -14,6 +14,17 @@ import { deepClone, Download_File, sleep } from "./Normal_Functions";
 For Normal user !!!
 -------------------------------------------------------
 */
+
+/**
+ * Gets the value of a StyleShift setting.
+ * @param {string} id - The setting ID.
+ * @returns {any}
+ * @example
+ * const value = Get_StyleShift_Value("setting_id");
+ */
+export async function Get_StyleShift_Value(id) {
+	return Settings_Current_State[id];
+}
 
 /**
  * Copies text to the clipboard.
@@ -150,6 +161,7 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
  * await Create_Error("An error occurred");
  */
 export async function Create_Error(Content) {
+	console.error("StyleShift - " + Content);
 	return await Create_Notification({
 		Icon: "❌",
 		Title: "StyleShift - Error",
@@ -163,6 +175,18 @@ export async function Create_Error(Content) {
 For advanced user !!!
 -------------------------------------------------------
 */
+
+/**
+ * Creates a StyleShift setting.
+ * @param {string} id - The setting ID.
+ * @param {...any} args - The arguments.
+ * @returns {Promise<Object>}
+ * @example
+ * const setting = await Create_StyleShift_Setting("Checkbox", { id: "my_checkbox", name: "My Checkbox" });
+ */
+export async function Create_StyleShift_Setting(id, ...args) {
+	return Settings_UI[id](...args);
+}
 
 /**
  * Prompts the user to select a file.
@@ -195,15 +219,35 @@ export async function Get_File(type) {
 }
 
 /**
+ * Imports StyleShift data and updates the saved data.
+ * @param {Object} StyleShift_Data - The JSON data to import.
+ * @returns {Promise<void>}
+ * @example
+ * await Import_StyleShift_Data(data);
+ */
+export async function Import_StyleShift_Data(StyleShift_Data: Object) {
+	for (const This_Key of StyleShift_Allowed_Keys) {
+		Saved_Data[This_Key] = StyleShift_Data[This_Key];
+	}
+
+	await Set_Null_Save();
+	Save_And_Update_ALL();
+}
+
+/**
  * Exports custom items.
  * @returns {Object[]}
  * @example
- * const items = Export_Custom_Items();
+ * const items = Export_StyleShift_Data();
  */
-export function Export_Custom_Items() {
-	let Export_Custom_Items = deepClone(Get_Custom_Items());
+export function Export_StyleShift_Data() {
+	let Export_StyleShift_Data = {};
 
-	for (const This_Category of Export_Custom_Items) {
+	for (const This_Key of StyleShift_Allowed_Keys) {
+		Export_StyleShift_Data[This_Key] = deepClone(Saved_Data[This_Key]);
+	}
+
+	for (const This_Category of Export_StyleShift_Data["Custom_StyleShift_Items"]) {
 		delete This_Category.Highlight_Color;
 		delete This_Category.Editable;
 
@@ -212,17 +256,29 @@ export function Export_Custom_Items() {
 		}
 	}
 
-	return Export_Custom_Items;
+	return Export_StyleShift_Data;
+}
+
+/**
+ * Imports StyleShift data from a JSON string.
+ * @param {string} Text - The JSON string to import.
+ * @returns {Promise<void>}
+ * @example
+ * const json = '{"Custom_StyleShift_Items":[{"Category":"Test","Settings":[{"type":"Text","id":"test_text","html":"<p>Test</p>"}]}]}';
+ * await Import_StyleShift_JSON_Text(json);
+ */
+export async function Import_StyleShift_JSON_Text(Text) {
+	await Import_StyleShift_Data(JSON.parse(Text));
 }
 
 /**
  * Exports custom items as a JSON string.
  * @returns {string}
  * @example
- * const json = Export_Custom_Items_Text();
+ * const json = Export_StyleShift_JSON_Text();
  */
-export function Export_Custom_Items_Text() {
-	return JSON.stringify(Export_Custom_Items(), null, 2);
+export function Export_StyleShift_JSON_Text() {
+	return JSON.stringify(Export_StyleShift_Data(), null, 2);
 }
 
 /**
@@ -364,17 +420,6 @@ export async function Import_StyleShift_Zip(zipFile) {
 	console.log(StyleShift_Data);
 
 	return StyleShift_Data;
-}
-
-/**
- * Gets the value of a StyleShift setting.
- * @param {string} id - The setting ID.
- * @returns {any}
- * @example
- * const value = Get_StyleShift_Value("setting_id");
- */
-export async function Get_StyleShift_Value(id) {
-	return Settings_Current_State[id];
 }
 
 /*
