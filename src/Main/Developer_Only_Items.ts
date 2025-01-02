@@ -30,7 +30,7 @@ let Setting_Page_Items: Category[] = [
 
 					try {
 						StyleShift_Functions["Export_StyleShift_Zip"](
-							JSON.parse(await StyleShift_Functions["Export_Custom_Items_Text"]()),
+							JSON.parse(await StyleShift_Functions["Export_StyleShift_JSON_Text"]()),
 							"Test.StyleShift.zip"
 						);
 

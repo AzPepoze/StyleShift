@@ -1,6 +1,7 @@
+import { Create_Error } from "./Build-in_Functions/Extension_Functions";
 import { ReArrange_Selector } from "./Build-in_Functions/Normal_Functions";
-import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Modules/Main_Function";
-import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All, Set_Null_Save } from "./Modules/Save";
+import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Core/Core_Function";
+import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All, Set_Null_Save } from "./Core/Save";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 import {
@@ -155,7 +156,7 @@ let Test_Editable_Items: Category[] = [
 				color: "#1932ffff",
 				font_size: 15,
 				click_function:
-					'await Copy_to_clipboard(await Export_Custom_Items_Text());\n\nCreate_Notification({\nIcon : "✅",\nTitle : "StyleShift",\nContent : "Copied to clipboard!"\n})',
+					'await Copy_to_clipboard(await Export_StyleShift_JSON_Text());\n\nCreate_Notification({\nIcon : "✅",\nTitle : "StyleShift",\nContent : "Copied to clipboard!"\n})',
 				text_align: "center",
 				description: "",
 				id: "",
@@ -327,27 +328,35 @@ async function Main_Run() {
 	}
 }
 
-Main_Run();
+try {
+	Main_Run();
+} catch (error) {
+	Create_Error(error).then((Notification) => {
+		Notification.Set_Title("StyleShift - Main run error");
+	});
+}
 
 chrome.runtime.onMessage.addListener(async function (message) {
-	console.log(message);
+	try {
+		if (message == "Developer") {
+			await Save("Developer_Mode", !(await Load("Developer_Mode")));
+			Update_All_UI();
+		}
 
-	if (message == "Developer") {
-		await Save("Developer_Mode", !(await Load("Developer_Mode")));
-		Update_All_UI();
-	}
+		//----------------------------------------------
 
-	//----------------------------------------------
+		if (In_Setting_Page) return;
 
-	if (In_Setting_Page) return;
+		//----------------------------------------------
 
-	//----------------------------------------------
+		if (message == "Customize") {
+			Toggle_Customize();
+		}
 
-	if (message == "Customize") {
-		Toggle_Customize();
-	}
-
-	if (message == "Setting") {
-		Extension_Settings_UI.Toggle();
+		if (message == "Setting") {
+			Extension_Settings_UI.Toggle();
+		}
+	} catch (error) {
+		Create_Error(error);
 	}
 });

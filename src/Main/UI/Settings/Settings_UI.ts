@@ -1,8 +1,8 @@
 import { Create_Error } from "../../Build-in_Functions/Extension_Functions";
 import { insertAfter, Scroll_On_Click, sleep } from "../../Build-in_Functions/Normal_Functions";
+import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Core/Core_Function";
+import { Load, Save_All } from "../../Core/Save";
 import { Get_Setting_Page_Only_Items } from "../../Developer_Only_Items";
-import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Modules/Main_Function";
-import { Load, Save_All } from "../../Modules/Save";
 import { Update_All } from "../../Run";
 import {
 	Add_Category,
@@ -20,20 +20,6 @@ export function Setup_Left_Title_Animation(Title) {
 	Title.style.transform = "translateY(40px)";
 	Title.style.opacity = "0";
 }
-
-// import * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
-
-// (async () => {
-// 	if (process.env.mode === "dev") {
-// 		Monaco = await import("monaco-editor");
-
-// 		import("monaco-editor/esm/vs/basic-languages/javascript/javascript.js");
-// 		import("monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js");
-
-// 		import("monaco-editor/esm/vs/basic-languages/css/css.js");
-// 		import("monaco-editor/esm/vs/basic-languages/css/css.contribution.js");
-// 	}
-// })();
 
 export async function Create_Main_Settings_UI({
 	Show_Category_List = true,
@@ -349,8 +335,8 @@ let Draging_Setting;
 
 export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent: HTMLDivElement, This_Data) {
 	const Data_Type = Get_StyleShift_Data_Type(This_Data);
-
-	const Main_Element = await Settings_UI[Data_Type == "Category" ? "Title" : This_Data.type](This_Data as any);
+	const UI_Type = Data_Type == "Category" ? "Title" : This_Data.type;
+	const Main_Element = await Settings_UI[UI_Type](This_Data);
 
 	if ((await Load("Developer_Mode")) && This_Data.Editable) {
 		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
@@ -576,6 +562,12 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent:
 
 export async function Create_Inner_UI(Parent, This_Category) {
 	for (const This_Setting of This_Category.Settings) {
-		await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Setting);
+		try {
+			await Create_Setting_UI_Element_With_Able_Developer_Mode(Parent, This_Setting);
+		} catch (error) {
+			Create_Error(`${This_Setting.type}\n${error}`).then((Notification) => {
+				Notification.Set_Title("StyleShift - Create UI error");
+			});
+		}
 	}
 }

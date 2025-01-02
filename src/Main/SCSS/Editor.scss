@@ -68,9 +68,7 @@
 		}
 	}
 
-	.STYLESHIFT-Scrollable:not([Draging])
-		.STYLESHIFT-Category-Frame:hover
-		.STYLESHIFT-Add-Setting-Button,
+	.STYLESHIFT-Scrollable:not([Draging]) .STYLESHIFT-Category-Frame:hover .STYLESHIFT-Add-Setting-Button,
 	.STYLESHIFT-Add-Setting-Button[selecting] {
 		margin-top: 0;
 		transform: scaleY(1);
@@ -138,12 +136,8 @@
 		}
 
 		.STYLESHIFT-Category-Frame > .STYLESHIFT-Setting-Frame,
-		.STYLESHIFT-Main-Setting-Frame {
-			background: radial-gradient(
-				at center top,
-				rgba(255, 255, 255, 0.23),
-				rgba(255, 255, 255, 0.1)
-			);
+		.STYLESHIFT-Main-Setting-Frame:has(.STYLESHIFT-Setting-Frame) {
+			background: radial-gradient(at center top, rgba(255, 255, 255, 0.23), rgba(255, 255, 255, 0.1));
 		}
 	}
 
@@ -192,6 +186,12 @@
 		.STYLESHIFT-Drag-Hint:hover {
 			background: rgba(255, 255, 255, 0.5);
 		}
+	}
+
+	.STYLESHIFT-Setting-Sub-Title {
+		padding: 10px;
+		padding-top: 30px;
+		width: -webkit-fill-available;
 	}
 }
 
@@ -329,6 +329,7 @@ textarea.STYLESHIFT-Selector-Text-Editor {
 	.STYLESHIFT-Notification-Content {
 		color: white;
 		white-space: pre;
+		text-wrap: auto;
 	}
 
 	.STYLESHIFT-Notification-Close {

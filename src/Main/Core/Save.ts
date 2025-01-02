@@ -1,10 +1,10 @@
-import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
-import { In_Setting_Page } from "./Main_Function";
-import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "../Build-in_Functions/Normal_Functions";
 import { Create_Error } from "../Build-in_Functions/Extension_Functions";
+import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "../Build-in_Functions/Normal_Functions";
+import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
+import { In_Setting_Page } from "./Core_Function";
 
 //Save
-let Saved_Data = {};
+export let Saved_Data = {};
 let Loaded = false;
 let Save_Name;
 
@@ -21,12 +21,15 @@ if (In_Setting_Page) {
 
 export let Save_External = [
 	"Current_Settings",
+	"Default_StyleShift_Items",
 	"Custom_StyleShift_Items",
 	"Themes",
 	"Enable_Extension",
 	"Realtime_Extension",
 	"Developer_Mode",
 ];
+
+export const StyleShift_Allowed_Keys = ["Current_Settings", "Custom_StyleShift_Items"];
 
 export async function Load_ThisWeb_Save() {
 	return new Promise((resolve, reject) => {
@@ -292,7 +295,7 @@ export async function Set_Null_Save() {
 
 	let Current_Settings = await Load("Current_Settings");
 
-	for (const [id, args] of Object.entries(await Get_Settings_List()) as [string, any]) {
+	for (const [id, args] of Object.entries(await Get_Settings_List(true)) as [string, any]) {
 		if (Save_External.includes(id)) continue;
 		console.log("Check", id, Current_Settings[id]);
 		if (Current_Settings[id] == null) {

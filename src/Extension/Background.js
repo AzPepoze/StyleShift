@@ -56,8 +56,15 @@ chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
 				await sleep(10);
 			}
 
-			// const Excute_Data = `${Build_in_Functions_Data}(async () => {${Recived_Message.Script}})()`;
-			const Excute_Data = `(async () => {${Recived_Message.Script}})()`;
+			let args = "";
+
+			if (Recived_Message.Args) {
+				for (const [key, value] of Object.entries(Recived_Message.Args)) {
+					args += `let ${key} = ${value};\n`;
+				}
+			}
+
+			const Excute_Data = `(async () => {${args}\n\n${Recived_Message.Script}})()`;
 
 			const Result = await chrome.scripting.executeScript({
 				target: { tabId: Sender.tab.id },

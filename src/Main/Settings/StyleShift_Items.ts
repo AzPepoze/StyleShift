@@ -1,71 +1,11 @@
 import { Random } from "../Build-in_Functions/Normal_Functions";
+import { Save_And_Update_ALL } from "../Core/Core_Function";
+import { Load, Save_Any } from "../Core/Save";
 import { Get_Default_Items } from "../Default_Items";
-import { Save_And_Update_ALL } from "../Modules/Main_Function";
-import { Load, Save_Any } from "../Modules/Save";
 import { Category, Setting } from "../types/Store_Data";
 import { SetUp_Setting_Function } from "./Settings_Function";
 
 let Highlight_Colors = [`255, 109, 109`, `167, 242, 255`, `255, 167, 248`, `188, 167, 255`, `255, 241, 167`];
-
-export const StyleShift_Property_List: { [key: string]: string[] } = {
-	Text: ["type", "id", "html", "text_align", "color", "font_size", "Editable"],
-	Setting_Sub_Title: ["type", "id", "text", "text_align", "color", "font_size", "Editable"],
-	Button: [
-		"type",
-		"id",
-		"name",
-		"description",
-		"icon",
-		"text_align",
-		"color",
-		"font_size",
-		"click_function",
-		"Editable",
-	],
-	Checkbox: [
-		"type",
-		"id",
-		"name",
-		"description",
-		"value",
-		"setup_css",
-		"setup_function",
-		"enable_css",
-		"enable_function",
-		"disable_css",
-		"disable_function",
-		"Editable",
-	],
-	Number_Slide: [
-		"type",
-		"id",
-		"name",
-		"description",
-		"min",
-		"max",
-		"step",
-		"value",
-		"var_css",
-		"setup_function",
-		"update_css",
-		"update_function",
-		"Editable",
-	],
-	Dropdown: ["type", "id", "name", "description", "value", "setup_css", "setup_function", "options", "Editable"],
-	Color: [
-		"type",
-		"id",
-		"name",
-		"description",
-		"show_alpha_slider",
-		"value",
-		"var_css",
-		"setup_function",
-		"update_css",
-		"update_function",
-		"Editable",
-	],
-};
 
 let StyleShift_Items: { Default: Category[]; Custom: Category[] } = {
 	Default: [],

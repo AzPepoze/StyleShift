@@ -1,5 +1,6 @@
 import {
 	Apply_Drag,
+	Create_UniqueID,
 	HEX_to_RBG,
 	HSV_to_RGB,
 	ReArrange_Selector,
@@ -12,9 +13,11 @@ import {
 	isFirefox,
 	Loaded_Developer_Modules,
 	Monaco,
+	Run_Text_Script,
 	Run_Text_Script_From_Setting,
-} from "../../Modules/Main_Function";
-import { Load, Load_Any, Save_All, Save_Any } from "../../Modules/Save";
+} from "../../Core/Core_Function";
+import { Load, Load_Any, Save_All, Save_Any } from "../../Core/Save";
+import { UI_Preset } from "../../Settings/Settings_Default_Items";
 import { Update_Setting_Function } from "../../Settings/Settings_Function";
 import { Add_Setting } from "../../Settings/StyleShift_Items";
 import { Category, Setting } from "../../types/Store_Data";
@@ -85,6 +88,7 @@ let Main_Setting_UI = {
 	},
 	["Setting_Sub_Title"]: async function (This_Setting: Partial<Extract<Setting, { type: "Setting_Sub_Title" }>>) {
 		let Frame = Settings_UI["Setting_Frame"](true, true);
+		Frame.className = "STYLESHIFT-Setting-Sub-Title";
 
 		//-------------------------------------
 
@@ -386,6 +390,10 @@ let Main_Setting_UI = {
 			Frame.id = This_Setting.id || "";
 
 			Number_Slide.Update_Number_Slide(This_Setting.min, This_Setting.max, This_Setting.step);
+
+			if (Setting_Name) {
+				Setting_Name.textContent = This_Setting.name;
+			}
 
 			let value = This_Setting.id ? await Load_Any(This_Setting.id) : This_Setting.value;
 			console.log(value);
@@ -695,7 +703,7 @@ let Main_Setting_UI = {
 				This_Setting,
 				{
 					Id: "id",
-					Name: ["name", Setting_Name],
+					Name: "name",
 					Description: "description",
 				},
 				Update_UI
@@ -792,6 +800,16 @@ let Main_Setting_UI = {
 
 	// 	return Frame;
 	// },
+
+	["Custom"]: async function (This_Setting: Partial<Extract<Setting, { type: "Custom" }>>) {
+		let Frame = Settings_UI["Setting_Frame"](true, true);
+		Frame.id = This_Setting.id || Create_UniqueID(10);
+		Run_Text_Script({
+			Text: This_Setting["ui_function"],
+			Code_Name: `${This_Setting.id} : ui_function`,
+			args: { Frame_ID: Frame.id },
+		});
+	},
 };
 
 const Advance_Setting_UI = {
@@ -887,13 +905,6 @@ const Advance_Setting_UI = {
 	},
 
 	["Code_Editor"]: async function (Parent: HTMLDivElement, OBJ, key, language, height = 400) {
-		const Frame = document.createElement("div");
-		Frame.style.width = "-webkit-fill-available";
-		Frame.style.height = height + "px";
-		Frame.style.position = "relative";
-		Frame.className += " STYLESHIFT-Code-Editor";
-		Parent.append(Frame);
-
 		let Code_Editor;
 		let Additinal_OnChange: Function = null;
 		let ReArrange_Value: Function = null;
@@ -907,32 +918,47 @@ const Advance_Setting_UI = {
 			}
 		};
 
-		const OnBlur = async function (Value) {
-			if (ReArrange_Value) {
-				console.log("Before", Value);
-				Value = await ReArrange_Value(Value);
-				console.log("After", Value);
-				Code_Editor.setValue(Value);
-			}
-			OnChange(Value);
-		};
-
 		const Ediot_OBJ: { [string: string]: any } = {
 			value: OBJ[key] || "",
 			automaticLayout: true,
 			language: language || "plaintext",
 		};
 
-		Code_Editor = Monaco.editor.create(Frame, Ediot_OBJ);
+		if (!isFirefox || In_Setting_Page) {
+			const Frame = document.createElement("div");
+			Frame.style.width = "-webkit-fill-available";
+			Frame.style.height = height + "px";
+			Frame.style.position = "relative";
+			Frame.className += " STYLESHIFT-Code-Editor";
+			Parent.append(Frame);
 
-		Code_Editor.onKeyDown(function () {
-			OnChange(Code_Editor.getValue());
-		});
+			Code_Editor = Monaco.editor.create(Frame, Ediot_OBJ);
 
-		Code_Editor.onDidBlurEditorWidget(function () {
-			OnBlur(Code_Editor.getValue());
-		});
-		// }
+			Code_Editor.onKeyDown(function () {
+				OnChange(Code_Editor.getValue());
+			});
+
+			Code_Editor.onDidBlurEditorWidget(async function () {
+				let Value = Code_Editor.getValue();
+				if (ReArrange_Value) {
+					console.log("Before", Value);
+					Value = await ReArrange_Value(Value);
+					console.log("After", Value);
+					Code_Editor.setValue(Value);
+				}
+				OnChange(Value);
+			});
+		} else {
+			let Text_Editor_OBJ = Settings_UI["Text_Editor"](OBJ, key);
+
+			Parent.append(Code_Editor);
+
+			Text_Editor_OBJ.OnChange(async function (Value) {
+				OnChange(Value);
+			});
+
+			Code_Editor = Text_Editor_OBJ;
+		}
 
 		return {
 			OnChange: function (callback) {
@@ -944,7 +970,6 @@ const Advance_Setting_UI = {
 			ReArrange_Value: function (callback) {
 				ReArrange_Value = callback;
 			},
-			Frame,
 		};
 	},
 
@@ -1150,10 +1175,10 @@ const Advance_Setting_UI = {
 
 				let Index = 0;
 
-				for (const option of options) {
+				for (const option of options as string[]) {
 					const listItem = document.createElement("div");
 					listItem.className = "STYLESHIFT-DropDown-Items STYLESHIFT-Glow-Hover";
-					listItem.textContent = option;
+					listItem.textContent = option.replaceAll("_", " ");
 					listItem.addEventListener("click", () => {
 						resolve(option); // Return the selected option
 						Remove_DropDown();
@@ -1330,12 +1355,7 @@ let Developer_Setting_UI = {
 
 			This_Frame.append(Settings_UI["Sub_Title"](This_Type_Name));
 
-			if (
-				(!isFirefox || In_Setting_Page) &&
-				Loaded_Developer_Modules &&
-				(This_Type_Name == "JS" || This_Type_Name == "CSS")
-			) {
-				// Chrome
+			if (Loaded_Developer_Modules && (This_Type_Name == "JS" || This_Type_Name == "CSS")) {
 				if (This_Type_Name == "JS") {
 					This_Type_Name = "javascript";
 				}
@@ -1352,7 +1372,6 @@ let Developer_Setting_UI = {
 					RunType == "var" ? 100 : 400
 				);
 			} else {
-				// Firefox
 				let Editor = Settings_UI["Default_Config_Editor"](This_Frame, This_Setting, RunType, ext);
 
 				Editor.Additinal_OnChange(function () {
@@ -1582,78 +1601,6 @@ let Developer_Setting_UI = {
 		return Add_Button;
 	},
 };
-
-const UI_Preset: Setting[] = [
-	{
-		type: "Text",
-		id: "Test_Text",
-
-		html: "Test Text",
-
-		text_align: "left",
-		font_size: 14,
-	},
-	{
-		type: "Setting_Sub_Title",
-
-		text: "Test Setting Sub Title",
-
-		text_align: "left",
-		color: "#ffffff",
-		font_size: 14,
-
-		Editable: true,
-	},
-	{
-		type: "Button",
-		id: "Test_Button",
-		name: "Button",
-		description: "Description of this Button",
-
-		color: "#00FF99",
-		font_size: 15,
-
-		click_function: "",
-	},
-	{
-		type: "Checkbox",
-		id: "Test_Checkbox",
-		name: "Some Checkbox",
-		description: "Description of this Checkbox",
-
-		value: false,
-	},
-	{
-		type: "Number_Slide",
-		id: "Test_Checkbox",
-		name: "Just Number Slide",
-		description: "Description of this Number Slider",
-
-		min: 0,
-		max: 100,
-		step: 1,
-		value: 50,
-	},
-	{
-		type: "Dropdown",
-		id: "Test_Dropdown",
-		name: "Just Dropdown",
-		description: "Description of this Dropdown",
-
-		value: "Item_1",
-
-		options: { Item_1: {}, Item_2: {}, Item_3: {} },
-	},
-	{
-		type: "Color",
-		id: "Test_Color",
-		name: "Just Color Selector",
-		description: "Description of this Dropdown",
-		show_alpha_slider: true,
-
-		value: "#FF0000FF",
-	},
-];
 
 export let Settings_UI = {
 	...Main_Setting_UI,

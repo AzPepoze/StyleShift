@@ -141,7 +141,7 @@
 		width: calc(100% - 50px);
 		font-size: 16px;
 		padding-inline: 20px;
-		padding-block: 5px;
+		padding-block: 7px;
 		font-weight: 400;
 		border-radius: 100px;
 		margin-bottom: -10px;
@@ -217,8 +217,7 @@
 	}
 
 	.STYLESHIFT-Button:hover {
-		filter: brightness(1.5) drop-shadow(2px 2px 3px black)
-			drop-shadow(-2px -2px 3px rgba(255, 255, 255, 0.37));
+		filter: brightness(1.5) drop-shadow(2px 2px 3px black) drop-shadow(-2px -2px 3px rgba(255, 255, 255, 0.37));
 		// background: white !important;
 
 		.STYLESHIFT-Button-Text {

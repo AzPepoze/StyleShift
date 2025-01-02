@@ -1,8 +1,9 @@
-import { JSzip } from "../Modules/Main_Function";
+import { JSzip } from "../Core/Core_Function";
+import { Convert_To_Export_Setting } from "../Core/Export_Converter";
+import { StyleShift_Category_List } from "../Settings/Settings_Default_Items";
 import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { Get_Custom_Items } from "../Settings/StyleShift_Items";
-import { Type_Convert_Table } from "../Transfer_Functions/Extension_Functions_Loader";
 import { Category, Setting } from "../types/Store_Data";
 import { Notification_Container, Run_Animation } from "../UI/Extension_UI";
 import { Settings_UI } from "../UI/Settings/Settings_UI_Components";
@@ -21,7 +22,7 @@ For Normal user !!!
  * @example
  * Copy_to_clipboard("Hello, world!"); // Copies "Hello, world!" to the clipboard
  */
-export const Copy_to_clipboard = function (text) {
+export function Copy_to_clipboard(text: string) {
 	navigator.clipboard.writeText(text).then(
 		() => {
 			return true;
@@ -31,7 +32,7 @@ export const Copy_to_clipboard = function (text) {
 			return false;
 		}
 	);
-};
+}
 
 /**
  * Creates a notification.
@@ -51,6 +52,7 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
 		x: false,
 		y: true,
 	});
+
 	Notification_Frame.className = "STYLESHIFT-Notification";
 	Notification_Container.append(Notification_Frame);
 
@@ -169,7 +171,7 @@ For advanced user !!!
  * @example
  * const file = await Get_File(".txt");
  */
-export const Get_File = async function (type) {
+export async function Get_File(type) {
 	return new Promise((resolve, reject) => {
 		var input = document.createElement("input");
 		input.type = "file";
@@ -190,7 +192,7 @@ export const Get_File = async function (type) {
 			reject(new Error("Canceled by the user"));
 		});
 	});
-};
+}
 
 /**
  * Exports custom items.
@@ -198,7 +200,7 @@ export const Get_File = async function (type) {
  * @example
  * const items = Export_Custom_Items();
  */
-export const Export_Custom_Items = function () {
+export function Export_Custom_Items() {
 	let Export_Custom_Items = deepClone(Get_Custom_Items());
 
 	for (const This_Category of Export_Custom_Items) {
@@ -211,7 +213,7 @@ export const Export_Custom_Items = function () {
 	}
 
 	return Export_Custom_Items;
-};
+}
 
 /**
  * Exports custom items as a JSON string.
@@ -219,48 +221,55 @@ export const Export_Custom_Items = function () {
  * @example
  * const json = Export_Custom_Items_Text();
  */
-export const Export_Custom_Items_Text = function () {
+export function Export_Custom_Items_Text() {
 	return JSON.stringify(Export_Custom_Items(), null, 2);
-};
+}
 
 /**
  * Exports StyleShift data as a ZIP file.
- * @param {Object} jsonData - The JSON data.
+ * @param {Object} StyleShift_Data - The JSON data.
  * @param {string} zipFileName - The ZIP file name.
  * @returns {Promise<void>}
  * @example
  * await Export_StyleShift_Zip(data, "styleshift.zip");
  */
-export const Export_StyleShift_Zip = async (jsonData, zipFileName) => {
-	console.log("Data", jsonData);
+export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
+	console.log("Data", StyleShift_Data);
 
 	try {
 		const zip = new JSzip();
 
-		for (const [Category_index, This_Category] of jsonData.entries()) {
+		for (const [Category_index, This_Category] of StyleShift_Data.entries()) {
 			const Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
 			const Category_Folder = zip.folder(`${Category_index} - ${Renamed_Category}`);
 
-			if (This_Category.Category !== Renamed_Category) {
-				Category_Folder.file(
-					"Category_Config.json",
-					JSON.stringify({ Actual_Name: This_Category.Category }, null, 2)
-				);
+			const Category_Config = {};
+
+			for (const [key, value] of Object.entries(StyleShift_Category_List)) {
+				if (key !== "Settings") {
+					if (This_Category[key]) {
+						Category_Config[key] = This_Category[key];
+					} else {
+						Category_Config[key] = value;
+					}
+				}
 			}
 
-			if (This_Category.Settings) {
-				for (const [Setting_index, This_Setting] of This_Category.Settings.entries()) {
-					const Renamed_Setting = (This_Setting.name || This_Setting.id).replace(/\/|\n/g, "_");
-					const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting}`);
+			Category_Folder.file("Config.json", JSON.stringify(Category_Config, null, 2));
 
-					for (const This_Key of Object.keys(This_Setting)) {
-						for (const [StyleShift_Type, Converted_Type] of Object.entries(Type_Convert_Table)) {
-							if (This_Key.endsWith(StyleShift_Type)) {
-								Settings_Folder.file(`${This_Key}.${Converted_Type}`, This_Setting[This_Key]);
-								delete This_Setting[This_Key];
-							}
-						}
-					}
+			if (This_Category.Settings) {
+				for (const [Setting_index, Original_Setting] of This_Category.Settings.entries()) {
+					const Renamed_Setting_Name = (Original_Setting.name || Original_Setting.id).replace(
+						/\/|\n/g,
+						"_"
+					);
+
+					const This_Setting = deepClone(Original_Setting);
+					const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting_Name}`);
+
+					await Convert_To_Export_Setting(This_Setting, async (File_Name, File_Data) => {
+						Settings_Folder.file(File_Name, File_Data);
+					});
 
 					Settings_Folder.file("Config.json", JSON.stringify(This_Setting, null, 2));
 				}
@@ -272,7 +281,7 @@ export const Export_StyleShift_Zip = async (jsonData, zipFileName) => {
 	} catch (error) {
 		console.error("Error creating structured ZIP file:", error);
 	}
-};
+}
 
 /**
  * Imports StyleShift data from a ZIP file.
@@ -281,7 +290,7 @@ export const Export_StyleShift_Zip = async (jsonData, zipFileName) => {
  * @example
  * const data = await Import_StyleShift_Zip(file);
  */
-export const Import_StyleShift_Zip = async (zipFile) => {
+export async function Import_StyleShift_Zip(zipFile) {
 	const zip = new JSzip();
 
 	const loaded_zip = await zip.loadAsync(zipFile, {
@@ -303,13 +312,10 @@ export const Import_StyleShift_Zip = async (zipFile) => {
 		const Category_Index = Number(Category_Array[0]);
 		let Category_Name = Category_Array[1];
 
-		let Category_Config = loaded_zip.file(`${Category_Path_Name}/Category_Config.json`);
+		let Category_Config = loaded_zip.file(`${Category_Path_Name}/Config.json`);
 
-		if (Category_Config) {
-			const ConfigContent = await Category_Config.async("string");
-			const ConfigJson = JSON.parse(ConfigContent);
-			Category_Name = ConfigJson.Actual_Name;
-		}
+		const ConfigContent = await Category_Config.async("string");
+		const Category_Data = JSON.parse(ConfigContent);
 
 		let Settings: Setting[] = [];
 
@@ -350,16 +356,15 @@ export const Import_StyleShift_Zip = async (zipFile) => {
 			}
 		}
 
-		StyleShift_Data[Category_Index] = {
-			Category: Category_Name,
-			Settings: Settings,
-		};
+		Category_Data["Settings"] = Settings;
+
+		StyleShift_Data[Category_Index] = Category_Data;
 	}
 
 	console.log(StyleShift_Data);
 
 	return StyleShift_Data;
-};
+}
 
 /**
  * Gets the value of a StyleShift setting.
@@ -368,9 +373,9 @@ export const Import_StyleShift_Zip = async (zipFile) => {
  * @example
  * const value = Get_StyleShift_Value("setting_id");
  */
-export const Get_StyleShift_Value = function (id) {
+export async function Get_StyleShift_Value(id) {
 	return Settings_Current_State[id];
-};
+}
 
 /*
 -------------------------------------------------------
@@ -383,15 +388,15 @@ Danger functions !!!
  * @example
  * Enable_Extension_Function();
  */
-export const Enable_Extension_Function = function () {
+export async function Enable_Extension_Function() {
 	Show_StyleSheet();
-};
+}
 
 /**
  * Disables the extension.
  * @example
  * Disable_Extension_Function();
  */
-export const Disable_Extension_Function = function () {
+export async function Disable_Extension_Function() {
 	Hide_StyleSheet();
-};
+}

@@ -1,6 +1,6 @@
 import { Is_Same_OBJ, sleep } from "../Build-in_Functions/Normal_Functions";
-import { HEX_to_Color_OBJ, Run_Text_Script_From_Setting } from "../Modules/Main_Function";
-import { Load_Any } from "../Modules/Save";
+import { HEX_to_Color_OBJ, Run_Text_Script_From_Setting } from "../Core/Core_Function";
+import { Load_Any } from "../Core/Save";
 import { Setting } from "../types/Store_Data";
 import { Create_StyleSheet } from "./Settings_StyleSheet";
 

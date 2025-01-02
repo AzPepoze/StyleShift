@@ -112,8 +112,10 @@ function Is_Safe_Code(code: string, Code_Name: string) {
 		/document/,
 		/eval/,
 		/Function/,
-		/import/,
+		/import /,
+		/require/,
 		/fetch/,
+		/XMLHttpRequest/,
 		/<\/?script>/i,
 		/document\.createElement\s*\(\s*['"]script['"]\s*\)/i,
 		/document\.(body|head)\.append\s*\(/i,
@@ -144,7 +146,12 @@ function Is_Safe_Code(code: string, Code_Name: string) {
 	return true;
 }
 
-export async function Run_Text_Script({ Text = null as string | Function, Replace = true, Code_Name = "StyleShift" }) {
+export async function Run_Text_Script({
+	Text = null as string | Function,
+	Replace = true,
+	Code_Name = "StyleShift",
+	args = {},
+}) {
 	console.log("Trying to run script");
 	console.log(Text);
 
@@ -180,6 +187,7 @@ export async function Run_Text_Script({ Text = null as string | Function, Replac
 				chrome.runtime.sendMessage({
 					Command: "RunScript",
 					Script: Text,
+					args: args,
 				});
 			}
 			// } else {

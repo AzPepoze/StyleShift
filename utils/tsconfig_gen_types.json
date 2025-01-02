@@ -5,7 +5,7 @@
 		"declaration": true,
 		"emitDeclarationOnly": true,
 		"allowJs": true,
-		"outDir": "../types"
+		"outDir": "../for_developers/types"
 	},
 	"include": ["../src/Main/Build-in_Functions/Extension_Functions.ts"],
 	"exclude": ["../node_modules"]

@@ -1,5 +1,5 @@
 import { GetDocumentHead, sleep } from "../Build-in_Functions/Normal_Functions";
-import { Load } from "../Modules/Save";
+import { Load } from "../Core/Save";
 
 let StyleSheet_Holder: HTMLElement;
 let StyleSheet_Holder_Constant: HTMLElement;

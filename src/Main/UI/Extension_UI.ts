@@ -1,6 +1,6 @@
-import { Load_Developer_Modules, Loaded_Developer_Modules } from "../Modules/Main_Function";
 import { GetDocumentBody, sleep } from "../Build-in_Functions/Normal_Functions";
-import { Load } from "../Modules/Save";
+import { Load_Developer_Modules, Loaded_Developer_Modules } from "../Core/Core_Function";
+import { Load } from "../Core/Save";
 import { Recreate_Config_UI, Remove_Config_UI } from "./Config_UI";
 import { Editor_UI } from "./Editor_UI";
 import { Extension_Settings_UI } from "./Extension_Setting_UI";

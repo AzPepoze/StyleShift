@@ -119,10 +119,9 @@ async function build() {
 
 		const Functions_List = [
 			...new Set(
-				[
-					...Functions_List_Content.matchAll(/\b(\w+)\s*:\s*(async\s*function|function|async)?\s*\(/g),
-					...Functions_List_Content.matchAll(/(\w+)\s*:\s*([a-zA-Z_]\w*)/g),
-				].map((x) => x[1])
+				[...Functions_List_Content.matchAll(/\bexport (async\s*function|function)?\s*(\w+)\(/g)].map(
+					(x) => x[2]
+				)
 			),
 		];
 
