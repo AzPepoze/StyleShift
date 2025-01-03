@@ -1,30 +1,19 @@
 import { JSzip, Save_And_Update_ALL } from "../Core/Core_Function";
 import { Convert_To_Export_Setting } from "../Core/Export_Converter";
-import { Saved_Data, Set_Null_Save, StyleShift_Allowed_Keys } from "../Core/Save";
+import { Load, Save, Saved_Data, Set_Null_Save, StyleShift_Allowed_Keys } from "../Core/Save";
+import { StyleShift_Station } from "../Run";
 import { StyleShift_Category_List } from "../Settings/Settings_Default_Items";
-import { Settings_Current_State } from "../Settings/Settings_Function";
 import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { Category, Setting } from "../types/Store_Data";
-import { Notification_Container, Run_Animation } from "../UI/Extension_UI";
+import { Create_StyleShift_Window, Notification_Container, Run_Animation } from "../UI/Extension_UI";
 import { Settings_UI } from "../UI/Settings/Settings_UI_Components";
-import { deepClone, Download_File, sleep } from "./Normal_Functions";
+import { Create_UniqueID, deepClone, Download_File, sleep } from "./Normal_Functions";
 
 /*
 -------------------------------------------------------
 For Normal user !!!
 -------------------------------------------------------
 */
-
-/**
- * Gets the value of a StyleShift setting.
- * @param {string} id - The setting ID.
- * @returns {any}
- * @example
- * const value = Get_StyleShift_Value("setting_id");
- */
-export async function Get_StyleShift_Value(id) {
-	return Settings_Current_State[id];
-}
 
 /**
  * Copies text to the clipboard.
@@ -177,15 +166,75 @@ For advanced user !!!
 */
 
 /**
- * Creates a StyleShift setting.
- * @param {string} id - The setting ID.
- * @param {...any} args - The arguments.
- * @returns {Promise<Object>}
+ * Shows a text input prompt window.
+ * @param {{ Title : string, Placeholder : string, Content : string }} Options
+ * @returns {Promise<string>}
  * @example
- * const setting = await Create_StyleShift_Setting("Checkbox", { id: "my_checkbox", name: "My Checkbox" });
+ * await Enter_Text_Prompt({ Title : "Enter your name", Placeholder : "John Doe", Content : "Please enter your name." });
  */
-export async function Create_StyleShift_Setting(id, ...args) {
-	return Settings_UI[id](...args);
+export async function Enter_Text_Prompt({ Title = "Enter text", Placeholder = "", Content = "" }) {
+	const StyleShift_Window = await Create_StyleShift_Window({
+		Width: "40%",
+		Height: "70%",
+	});
+
+	StyleShift_Window.BG_Frame.style.background = "";
+	StyleShift_Window.BG_Frame.style.pointerEvents = "";
+	StyleShift_Window.BG_Frame.style.zIndex = "10001";
+
+	const Content_Window = StyleShift_Window.Window;
+
+	//---------------------------------
+
+	const Header = await Settings_UI["Text"]({
+		type: "Text",
+		html: Title,
+		font_size: 20,
+		text_align: "center",
+	});
+	Dynamic_Append(Content_Window, Header);
+
+	//---------------------------------
+
+	const Text_Input = await Settings_UI["Text_Editor"]();
+	Text_Input.OnChange(() => {});
+	Text_Input.Text_Editor.style.height = "inherit";
+	Content_Window.append(Text_Input.Text_Editor);
+
+	//---------------------------------
+
+	const Button_Frame = await Settings_UI["Setting_Frame"](true, false);
+	Button_Frame.style.gap = "10px";
+	Dynamic_Append(Content_Window, Button_Frame);
+
+	//---------------------------------
+
+	const OK_Button = await Settings_UI["Button"]({
+		name: "OK",
+		color: "#00ff00",
+		text_align: "center",
+	});
+	Dynamic_Append(Button_Frame, OK_Button);
+
+	//---------------------------------
+
+	const Cancel_Button = await Settings_UI["Button"]({
+		name: "Cancel",
+		color: "#ff0000",
+		text_align: "center",
+	});
+	Dynamic_Append(Button_Frame, Cancel_Button);
+
+	return new Promise((resolve, reject) => {
+		OK_Button.Button.addEventListener("click", () => {
+			StyleShift_Window.Run_Close();
+			resolve(Text_Input.Text_Editor.value);
+		});
+		Cancel_Button.Button.addEventListener("click", () => {
+			StyleShift_Window.Run_Close();
+			reject();
+		});
+	});
 }
 
 /**
@@ -226,12 +275,35 @@ export async function Get_File(type) {
  * await Import_StyleShift_Data(data);
  */
 export async function Import_StyleShift_Data(StyleShift_Data: Object) {
-	for (const This_Key of StyleShift_Allowed_Keys) {
-		Saved_Data[This_Key] = StyleShift_Data[This_Key];
-	}
+	const Notification = await Create_Notification({
+		Icon: "🔄️",
+		Title: "StyleShift - Importing data",
+		Content: "Please wait...",
+		Timeout: -1,
+	});
 
-	await Set_Null_Save();
-	Save_And_Update_ALL();
+	try {
+		for (const This_Key of StyleShift_Allowed_Keys) {
+			Saved_Data[This_Key] = StyleShift_Data[This_Key];
+		}
+
+		await Set_Null_Save();
+		Save_And_Update_ALL();
+
+		Notification.Set_Icon("✅");
+		Notification.Set_Title("StyleShift - Imported data");
+		Notification.Set_Content("Imported successfully!");
+
+		await sleep(3000);
+
+		Notification.Close();
+	} catch (error) {
+		Notification.Close();
+
+		Create_Error(error).then((Notification) => {
+			Notification.Set_Title("StyleShift - Import Failed");
+		});
+	}
 }
 
 /**
@@ -366,7 +438,6 @@ export async function Import_StyleShift_Zip(zipFile) {
 		const Category_Path_Name = Category_Path.slice(0, -1);
 		const Category_Array = Category_Path_Name.split(" - ");
 		const Category_Index = Number(Category_Array[0]);
-		let Category_Name = Category_Array[1];
 
 		let Category_Config = loaded_zip.file(`${Category_Path_Name}/Config.json`);
 
@@ -422,9 +493,48 @@ export async function Import_StyleShift_Zip(zipFile) {
 	return StyleShift_Data;
 }
 
+/**
+ * Appends a child element to a parent HTMLDivElement.
+ *
+ * This function dynamically appends a child element to the specified parent
+ * based on the properties of the child. If the child has a `Frame` property,
+ * it appends the frame. If the child has a `Button` property, it appends the
+ * button. Otherwise, it appends the child element itself.
+ *
+ * @param {HTMLDivElement} Parent - The parent element to which the child will be appended.
+ * @param {Object} Child - The child element or object with specific properties (`Frame` or `Button`).
+ */
+export function Dynamic_Append(Parent: HTMLDivElement, Child: Object | any) {
+	return Parent.append(Dynamic_Get_Element(Child));
+}
+
+/**
+ * Retrieves a specific element from a given object.
+ *
+ * This function checks the provided object for specific properties
+ * (`Frame` or `Button`) and returns the corresponding element if found.
+ * If neither property is present, it returns the object itself.
+ *
+ * @param {Object} Child - The object containing potential elements.
+ * @returns {HTMLElement | Object} The element associated with the `Frame` or `Button`
+ * property, or the object itself if neither property is found.
+ */
+
+export function Dynamic_Get_Element(Child: Object | any) {
+	if (Child.Frame) {
+		return Child.Frame;
+	}
+
+	if (Child.Button) {
+		return Child.Button;
+	}
+
+	return Child;
+}
+
 /*
 -------------------------------------------------------
-Danger functions !!!
+Danger !!!
 -------------------------------------------------------
 */
 
@@ -444,4 +554,30 @@ export async function Enable_Extension_Function() {
  */
 export async function Disable_Extension_Function() {
 	Hide_StyleSheet();
+}
+
+export async function _Get_StyleShift_Value(id) {
+	return JSON.stringify(await Load(id));
+}
+
+export async function _Save_StyleShift_Value(id, value: string) {
+	return await Save(id, JSON.parse(value));
+}
+
+export async function _Create_StyleShift_Setting(type, This_Setting: Setting | any, ...args) {
+	const UI = await Settings_UI[type](This_Setting, ...args);
+
+	let UI_ELement;
+	if (typeof UI === "object") {
+		UI_ELement = Dynamic_Get_Element(UI);
+	} else {
+		UI_ELement = UI;
+	}
+
+	const id = Create_UniqueID(10);
+	UI_ELement.setAttribute("styleshift-ui-id", id);
+
+	StyleShift_Station.append(UI_ELement);
+
+	return id;
 }

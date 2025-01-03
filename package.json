@@ -17,7 +17,7 @@
 		"dev_css": "sass --watch src/Main/SCSS/Setting.scss out/build/Style.css --style=compressed --no-source-map",
 		"build": "sass src/Main/SCSS/Setting.scss out/build/Style.css --style=compressed --no-source-map && node utils/build_setting.js && node utils/build.js --production --once",
 		"build_release": "node utils/build_release.js",
-		"gen_types": "tsc -p utils/tsconfig_build_types.json && node utils/gen_types.js",
+		"gen_types": "tsc -p utils/tsconfig_gen_types.json && node utils/gen_types.js",
 		"gen_raw_types": "tsc -p utils/tsconfig_gen_types.json",
 		"gen_templates": "ts-node utils/gen_template.ts -p ./tsconfig_gen_templates.json"
 	},

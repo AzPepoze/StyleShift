@@ -47,6 +47,7 @@ export const StyleShift_Property_List: { [key: string]: string[] } = {
 		"update_function",
 		"Editable",
 	],
+	Custom: ["type", "id", "setup_function", "setup_css", "ui_function"],
 };
 
 export const StyleShift_Category_List: Category = { Category: "Category", Selector: "", Rainbow: false, Settings: [] };
@@ -113,6 +114,8 @@ export const UI_Preset: Setting[] = [
 	{
 		type: "Custom",
 		id: "Test_Custom",
+		setup_function: "",
+		setup_css: "",
 		ui_function: "",
 	},
 ];

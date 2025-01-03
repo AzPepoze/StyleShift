@@ -1,4 +1,4 @@
-import { Create_Error } from "../../Build-in_Functions/Extension_Functions";
+import { Create_Error, Dynamic_Append } from "../../Build-in_Functions/Extension_Functions";
 import { insertAfter, Scroll_On_Click, sleep } from "../../Build-in_Functions/Normal_Functions";
 import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Core/Core_Function";
 import { Load, Save_All } from "../../Core/Save";
@@ -14,7 +14,7 @@ import {
 import { Category } from "../../types/Store_Data";
 import { Show_Config_UI } from "../Config_UI";
 import { Animation_Time, Create_StyleShift_Window } from "../Extension_UI";
-import { Dynamic_Append, Settings_UI } from "./Settings_UI_Components";
+import { Settings_UI } from "./Settings_UI_Components";
 
 export function Setup_Left_Title_Animation(Title) {
 	Title.style.transform = "translateY(40px)";
@@ -40,6 +40,8 @@ export async function Create_Main_Settings_UI({
 			Settings_Window = await Create_StyleShift_Window({
 				Skip_Animation,
 			});
+
+			console.log("Created_StyleShift_Window");
 			const Window = Settings_Window.Window;
 
 			Window.style.width = "47%";

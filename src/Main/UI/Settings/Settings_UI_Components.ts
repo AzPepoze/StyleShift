@@ -810,8 +810,23 @@ let Main_Setting_UI = {
 		Run_Text_Script({
 			Text: This_Setting["ui_function"],
 			Code_Name: `${This_Setting.id} : ui_function`,
-			args: { Frame_ID: Frame.id },
+			args: JSON.stringify({ Frame_ID: Frame.id }),
 		});
+
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Section_1"](Parent, This_Setting, {
+				Id: "id",
+			});
+
+			//-----------------------------------------------
+
+			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+				setup: 0,
+				ui: ["function"],
+			});
+		});
+
+		return { Frame, Config_UI_Function };
 	},
 };
 
@@ -861,7 +876,7 @@ const Advance_Setting_UI = {
 		return Frame;
 	},
 
-	["Text_Editor"]: function (OBJ, key) {
+	["Text_Editor"]: function (OBJ = {}, key: any = "") {
 		let Text_Editor = document.createElement("textarea");
 		Text_Editor.className = "STYLESHIFT-Text-Editor";
 		Text_Editor.value = OBJ[key] || "";
@@ -952,15 +967,13 @@ const Advance_Setting_UI = {
 				OnChange(Value);
 			});
 		} else {
-			let Text_Editor_OBJ = Settings_UI["Text_Editor"](OBJ, key);
+			Code_Editor = Settings_UI["Text_Editor"](OBJ, key);
+			Code_Editor.Text_Editor.style.height = height + "px";
+			Parent.append(Code_Editor.Text_Editor);
 
-			Parent.append(Code_Editor);
-
-			Text_Editor_OBJ.OnChange(async function (Value) {
+			Code_Editor.OnChange(async function (Value) {
 				OnChange(Value);
 			});
-
-			Code_Editor = Text_Editor_OBJ;
 		}
 
 		return {
@@ -1399,7 +1412,7 @@ let Developer_Setting_UI = {
 		return Editor;
 	},
 
-	["Config_Section_1"]: async function (Parent, This_Setting, Props, Update_UI) {
+	["Config_Section_1"]: async function (Parent, This_Setting, Props, Update_UI = function () {}) {
 		console.log(Props);
 		for (let [Title, Property] of Object.entries(Props) as [string, any]) {
 			let Update;
@@ -1512,6 +1525,9 @@ let Developer_Setting_UI = {
 			}
 
 			switch (Property) {
+				case 0:
+					Property = ["css", "function"];
+					break;
 				case 1:
 					Property = ["var"];
 					break;
@@ -1520,10 +1536,6 @@ let Developer_Setting_UI = {
 					break;
 				case 3:
 					Property = ["function"];
-					break;
-
-				default:
-					Property = ["css", "function"];
 					break;
 			}
 
@@ -1610,17 +1622,3 @@ export let Settings_UI = {
 	...Advance_Setting_UI,
 	...Developer_Setting_UI,
 };
-
-export function Dynamic_Append(Parent: HTMLDivElement, Child) {
-	if (Child.Frame) {
-		Parent.appendChild(Child.Frame);
-		return;
-	}
-
-	if (Child.Button) {
-		Parent.appendChild(Child.Button);
-		return;
-	}
-
-	Parent.appendChild(Child);
-}

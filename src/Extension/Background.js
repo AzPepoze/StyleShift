@@ -58,9 +58,17 @@ chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
 
 			let args = "";
 
-			if (Recived_Message.Args) {
-				for (const [key, value] of Object.entries(Recived_Message.Args)) {
-					args += `let ${key} = ${value};\n`;
+			if (Recived_Message.args != "") {
+				const Recived_args = JSON.parse(Recived_Message.args);
+
+				if (Recived_args) {
+					const Frame_ID = Recived_args["Frame_ID"];
+					if (Frame_ID) {
+						args += `let This_Setting_Frame = document.querySelector(".STYLESHIFT-Window #${Frame_ID}");\n`;
+					}
+					for (const [key, value] of Object.entries(Recived_args)) {
+						args += `let ${key} = "${value}";\n`;
+					}
 				}
 			}
 

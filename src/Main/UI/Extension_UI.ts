@@ -11,6 +11,8 @@ export async function Create_StyleShift_Window({ Width = "30%", Height = "80%", 
 		await Load_Developer_Modules();
 	}
 
+	console.log("Setting up");
+
 	const BG_Frame = await Settings_UI["Fill_Screen"](false);
 
 	(await GetDocumentBody()).appendChild(BG_Frame);

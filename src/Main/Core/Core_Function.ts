@@ -111,7 +111,7 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 		/window(?!\.open)/i,
 		/document/i,
 		/eval/i,
-		/function/i,
+		/new function/i,
 		/import /i,
 		/require/i,
 		/fetch/i,
@@ -142,7 +142,6 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 		/new\s+sharedworker\s*\(/i,
 		/new\s+blob\s*\(/i,
 		/url\.createobjecturl\s*\(/i,
-		/on\w+\s*=/i,
 		/\.__proto__\s*=/i,
 		/\.constructor\s*=/i,
 		/javascript:/i,
@@ -175,6 +174,8 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 					Content: `<b>"${match[0]}"</b> is not allowed.\nFound at line : <b>${lineNumber}</b> character : <b>${charPosition}</b>\nFrom : <b>${Code_Name}</b>`,
 					Timeout: 0,
 				});
+
+				console.warn(match, pattern);
 			}
 			return false;
 		}
@@ -187,7 +188,7 @@ export async function Run_Text_Script({
 	Text = null as string | Function,
 	Replace = true,
 	Code_Name = "StyleShift",
-	args = {},
+	args = "",
 }) {
 	console.log("Trying to run script");
 	console.log(Text);
@@ -213,9 +214,9 @@ export async function Run_Text_Script({
 						);
 					}
 				}
-			}
 
-			console.log("After :", Text, JSON.stringify(StyleShift_Functions_List));
+				console.log("After :", Text, JSON.stringify(StyleShift_Functions_List));
+			}
 
 			//--------------------------------
 
@@ -334,6 +335,7 @@ export async function Load_Developer_Modules() {
 	}
 
 	if (isFirefox && !In_Setting_Page) {
+		console.log("It's firefox");
 	}
 }
 

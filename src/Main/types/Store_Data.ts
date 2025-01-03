@@ -149,6 +149,9 @@ export type Setting =
 
 			//--------------
 
+			setup_css?: string;
+			setup_function?: string | Function;
+
 			ui_function?: string;
 
 			//--------------
