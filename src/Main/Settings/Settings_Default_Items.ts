@@ -10,7 +10,7 @@ export const StyleShift_Property_List: { [key: string]: string[] } = {
 		"name",
 		"description",
 		"value",
-		"setup_css",
+		"constant_css",
 		"setup_function",
 		"enable_css",
 		"enable_function",
@@ -29,11 +29,11 @@ export const StyleShift_Property_List: { [key: string]: string[] } = {
 		"value",
 		"var_css",
 		"setup_function",
-		"update_css",
+		"constant_css",
 		"update_function",
 		"Editable",
 	],
-	Dropdown: ["type", "id", "name", "description", "value", "setup_css", "setup_function", "options", "Editable"],
+	Dropdown: ["type", "id", "name", "description", "value", "constant_css", "setup_function", "options", "Editable"],
 	Color: [
 		"type",
 		"id",
@@ -43,11 +43,13 @@ export const StyleShift_Property_List: { [key: string]: string[] } = {
 		"value",
 		"var_css",
 		"setup_function",
-		"update_css",
+		"constant_css",
 		"update_function",
 		"Editable",
 	],
-	Custom: ["type", "id", "setup_function", "setup_css", "ui_function"],
+	Image_Input: ["type", "id", "name", "description", "value", "MaxFileSize", "Editable"],
+	Preview_Image: ["type", "id", "Editable"],
+	Custom: ["type", "id", "setup_function", "constant_css", "ui_function"],
 };
 
 export const StyleShift_Category_List: Category = { Category: "Category", Selector: "", Rainbow: false, Settings: [] };
@@ -112,10 +114,22 @@ export const UI_Preset: Setting[] = [
 		value: "#FF0000FF",
 	},
 	{
+		type: "Image_Input",
+		id: "Test_Image_Input",
+		name: "Just Image Input",
+		description: "",
+		value: "",
+		MaxFileSize: 1000000,
+	},
+	{
+		type: "Preview_Image",
+		id: "",
+	},
+	{
 		type: "Custom",
 		id: "Test_Custom",
 		setup_function: "",
-		setup_css: "",
+		constant_css: "",
 		ui_function: "",
 	},
 ];

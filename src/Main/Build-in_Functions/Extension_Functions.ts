@@ -46,7 +46,7 @@ export function Copy_to_clipboard(text: string) {
  * await Create_Notification({ Title: "Hello", Content: "This is a notification" });
  */
 export async function Create_Notification({ Icon = null, Title = "StyleShift", Content = "", Timeout = 3000 }) {
-	console.log(Title, Content);
+	// console.log(Title, Content);
 
 	const Notification_Frame = await Settings_UI["Setting_Frame"](true, false, {
 		x: false,
@@ -54,7 +54,9 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
 	});
 
 	Notification_Frame.className = "STYLESHIFT-Notification";
-	Notification_Container.append(Notification_Frame);
+	setTimeout(() => {
+		Notification_Container.append(Notification_Frame);
+	}, 1);
 
 	let Icon_UI;
 
@@ -149,13 +151,13 @@ export async function Create_Notification({ Icon = null, Title = "StyleShift", C
  * @example
  * await Create_Error("An error occurred");
  */
-export async function Create_Error(Content) {
+export async function Create_Error(Content, Timeout = 0) {
 	console.error("StyleShift - " + Content);
 	return await Create_Notification({
 		Icon: "❌",
 		Title: "StyleShift - Error",
 		Content: Content,
-		Timeout: 0,
+		Timeout: Timeout,
 	});
 }
 
@@ -505,7 +507,10 @@ export async function Import_StyleShift_Zip(zipFile) {
  * @param {Object} Child - The child element or object with specific properties (`Frame` or `Button`).
  */
 export function Dynamic_Append(Parent: HTMLDivElement, Child: Object | any) {
-	return Parent.append(Dynamic_Get_Element(Child));
+	const element = Dynamic_Get_Element(Child);
+	if (element) {
+		Parent.appendChild(element);
+	}
 }
 
 /**
@@ -556,15 +561,15 @@ export async function Disable_Extension_Function() {
 	Hide_StyleSheet();
 }
 
-export async function _Get_StyleShift_Value(id) {
+export async function Load_StyleShift_Value(id) {
 	return JSON.stringify(await Load(id));
 }
 
-export async function _Save_StyleShift_Value(id, value: string) {
+export async function Save_StyleShift_Value(id, value: string) {
 	return await Save(id, JSON.parse(value));
 }
 
-export async function _Create_StyleShift_Setting(type, This_Setting: Setting | any, ...args) {
+export async function _Create_StyleShift_Setting_UI(type, This_Setting: Setting | any, ...args) {
 	const UI = await Settings_UI[type](This_Setting, ...args);
 
 	let UI_ELement;

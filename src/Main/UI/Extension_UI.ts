@@ -14,8 +14,9 @@ export async function Create_StyleShift_Window({ Width = "30%", Height = "80%", 
 	console.log("Setting up");
 
 	const BG_Frame = await Settings_UI["Fill_Screen"](false);
-
-	(await GetDocumentBody()).appendChild(BG_Frame);
+	setTimeout(async () => {
+		(await GetDocumentBody()).appendChild(BG_Frame);
+	}, 1);
 
 	const Window = document.createElement("div");
 	Window.className = "STYLESHIFT-Main STYLESHIFT-Window";

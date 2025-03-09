@@ -6,11 +6,12 @@ const Build_in_Functions = {
 	For normal user !!!
 	-------------------------------------------------------
 	*/
-	["Set_Value"]: function (id: string, value: any) {
+
+	Set_Value: function (id: string, value: any) {
 		window["StyleShift"]["Build-in"]["_Variables"][id] = value;
 	},
 
-	["Get_Value"]: function (id: string) {
+	Get_Value: function (id: string) {
 		return window["StyleShift"]["Build-in"]["_Variables"][id];
 	},
 
@@ -20,8 +21,8 @@ const Build_in_Functions = {
 	-------------------------------------------------------
 	*/
 
-	Get_StyleShift_Value: async function (id) {
-		return JSON.parse(await StyleShift["Build-in"]["_Call_Function"]("_Get_StyleShift_Value", id));
+	Load_StyleShift_Value: async function (id) {
+		return JSON.parse(await StyleShift["Build-in"]["_Call_Function"]("_Load_StyleShift_Value", id));
 	},
 
 	Save_StyleShift_Value: async function (id, value) {
@@ -30,9 +31,9 @@ const Build_in_Functions = {
 		);
 	},
 
-	Create_StyleShift_Setting: async function (type, This_Setting, ...args) {
+	Create_StyleShift_Setting_UI: async function (type, This_Setting, ...args) {
 		const UI_ID = await StyleShift["Build-in"]["_Call_Function"](
-			"_Create_StyleShift_Setting",
+			"_Create_StyleShift_Setting_UI",
 			type,
 			This_Setting,
 			...args

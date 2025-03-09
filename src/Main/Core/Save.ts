@@ -24,7 +24,7 @@ export let Save_External = [
 	"Default_StyleShift_Items",
 	"Custom_StyleShift_Items",
 	"Themes",
-	"Enable_Extension",
+	"Enabled_Extension",
 	"Realtime_Extension",
 	"Developer_Mode",
 ];

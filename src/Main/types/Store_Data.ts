@@ -67,7 +67,8 @@ export type Setting =
 
 			value: boolean;
 
-			setup_css?: string;
+			constant_css?: string;
+
 			setup_function?: string | Function;
 
 			enable_css?: string;
@@ -93,9 +94,10 @@ export type Setting =
 
 			var_css?: string;
 
+			constant_css?: string | Function;
+
 			setup_function?: string | Function;
 
-			update_css?: string | Function;
 			update_function?: string | Function;
 
 			//--------------
@@ -112,7 +114,8 @@ export type Setting =
 
 			//--------------
 
-			setup_css?: string;
+			constant_css?: string;
+
 			setup_function?: string | Function;
 
 			options: { [key: string]: option };
@@ -134,13 +137,46 @@ export type Setting =
 
 			var_css?: string;
 
+			constant_css?: string | Function;
+
 			setup_function?: string | Function;
 
-			update_css?: string | Function;
 			update_function?: string | Function;
 
 			//--------------
 
+			Editable?: boolean;
+	  }
+	| {
+			type: "Text_Input";
+			id: string;
+			name: string;
+			description?: string;
+
+			value: string;
+
+			update_function?: string | ((value: string) => void);
+
+			//--------------
+			Editable?: boolean;
+	  }
+	| {
+			type: "Image_Input";
+			id: string;
+			name: string;
+			description?: string;
+
+			value: string;
+			MaxFileSize: number;
+
+			//--------------
+			Editable?: boolean;
+	  }
+	| {
+			type: "Preview_Image";
+			id: string;
+
+			//--------------
 			Editable?: boolean;
 	  }
 	| {
@@ -149,8 +185,11 @@ export type Setting =
 
 			//--------------
 
-			setup_css?: string;
+			constant_css?: string;
+
 			setup_function?: string | Function;
+
+			setup_?: string | Function;
 
 			ui_function?: string;
 

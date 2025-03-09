@@ -748,3 +748,15 @@ export function Wait_One_Frame(): Promise<boolean> {
 export function insertAfter(newNode: Node, existingNode: Node): void {
 	existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
+
+/**
+ * Formats a number with commas as thousands separators.
+ * @param {number} x - The number to format.
+ * @returns {string} The formatted number with commas.
+ * @example
+ * numberWithCommas(1000); // "1,000"
+ */
+
+export function numberWithCommas(x) {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

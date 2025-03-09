@@ -34,13 +34,13 @@ chrome.commands.onCommand.addListener(async (command) => {
 	chrome.tabs.sendMessage(tab.id, command);
 });
 
-let Build_in_Functions_Data;
+// let Build_in_Functions_Data;
 
-fetch(chrome.runtime.getURL("Build_in_Functions.js"))
-	.then((response) => response.text())
-	.then((data) => {
-		Build_in_Functions_Data = data;
-	});
+// fetch(chrome.runtime.getURL("Build_in_Functions.js"))
+// 	.then((response) => response.text())
+// 	.then((data) => {
+// 		Build_in_Functions_Data = data;
+// 	});
 
 async function Excute_Function(Excute_Text) {
 	setTimeout(Excute_Text, 0);
@@ -51,28 +51,34 @@ chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
 
 	switch (Recived_Message.Command) {
 		case "RunScript":
-			while (!Build_in_Functions_Data) {
-				console.log(Build_in_Functions_Data);
-				await sleep(10);
-			}
+			// while (!Build_in_Functions_Data) {
+			// 	console.log(Build_in_Functions_Data);
+			// 	await sleep(10);
+			// }
 
-			let args = "";
+			let pre_code = "";
 
 			if (Recived_Message.args != "") {
 				const Recived_args = JSON.parse(Recived_Message.args);
 
 				if (Recived_args) {
-					const Frame_ID = Recived_args["Frame_ID"];
-					if (Frame_ID) {
-						args += `let This_Setting_Frame = document.querySelector(".STYLESHIFT-Window #${Frame_ID}");\n`;
+					const Setting_ID = Recived_args["Setting_ID"];
+					if (Setting_ID) {
+						pre_code += `let This_Setting_Frame = document.querySelector(".STYLESHIFT-Window #${Setting_ID}");\n`;
+						pre_code += `async function Save_Setting_Value(value){
+                                   return await StyleShift["Build-in"]["_Call_Function"]["Save_StyleShift_Value"]("${Setting_ID}",value)
+                              }\n`;
+						pre_code += `async function Load_Setting_Value(){
+                                   return await StyleShift["Build-in"]["_Call_Function"]["Load_StyleShift_Value"]("${Setting_ID}")
+                              }\n`;
 					}
 					for (const [key, value] of Object.entries(Recived_args)) {
-						args += `let ${key} = "${value}";\n`;
+						pre_code += `let ${key} = "${value}";\n`;
 					}
 				}
 			}
 
-			const Excute_Data = `(async () => {${args}\n\n${Recived_Message.Script}})()`;
+			const Excute_Data = `(async () => {${pre_code}\n\n${Recived_Message.Script}})()`;
 
 			const Result = await chrome.scripting.executeScript({
 				target: { tabId: Sender.tab.id },

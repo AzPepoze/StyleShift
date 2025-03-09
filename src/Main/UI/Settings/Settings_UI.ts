@@ -343,7 +343,6 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent:
 	if ((await Load("Developer_Mode")) && This_Data.Editable) {
 		const Frame = Settings_UI["Setting_Frame"](false, false, { x: true, y: true }, true);
 		Frame.className += " STYLESHIFT-Config-Frame";
-		Parent.append(Frame);
 
 		//---------------------------
 
@@ -555,6 +554,8 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent:
 		Frame.append(Delete_Button);
 
 		//---------------------------
+
+		Parent.append(Frame);
 	} else {
 		Dynamic_Append(Parent, Main_Element);
 	}

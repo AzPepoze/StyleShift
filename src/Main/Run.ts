@@ -1,13 +1,12 @@
 import { Create_Error } from "./Build-in_Functions/Extension_Functions";
 import { GetDocumentBody, ReArrange_Selector } from "./Build-in_Functions/Normal_Functions";
 import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Core/Core_Function";
-import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All, Set_Null_Save } from "./Core/Save";
+import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./Core/Save";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
 import {
 	Get_ALL_StyleShift_Items,
 	Get_ALL_StyleShift_Settings,
-	Get_Settings_List,
 	Update_StyleShift_Items,
 } from "./Settings/StyleShift_Items";
 import * as Global from "./Transfer_Functions/Extension_Functions_Loader";
@@ -17,9 +16,6 @@ import { Update_All_UI } from "./UI/Extension_UI";
 import { Toggle_Customize } from "./UI/Highlight_UI";
 
 console.log(Global);
-console.log(window.location.href);
-
-console.log(chrome);
 
 let Test_Editable_Items: Category[] = [
 	{
@@ -81,18 +77,18 @@ async function Main_Run() {
 	//------------------------------------------
 
 	// await ClearSave();
-	console.log("Loading");
+	// console.log("Loading");
 	await Load_ThisWeb_Save();
-	console.log("Listing Functions");
+	// console.log("Listing Functions");
 	await Update_StyleShift_Functions_List();
 
-	console.log("Set Defult Items");
-	await Save("Custom_StyleShift_Items", Test_Editable_Items);
+	// console.log("Set Defult Items");
+	// await Save("Custom_StyleShift_Items", Test_Editable_Items);
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
-	await Set_Null_Save();
-	console.log("Settings_List", await Get_Settings_List());
-	console.log("Settings_List_Text", JSON.stringify(await Get_Settings_List(), null, 2));
+	// await Set_Null_Save();
+	// console.log("Settings_List", await Get_Settings_List());
+	// console.log("Settings_List_Text", JSON.stringify(await Get_Settings_List(), null, 2));
 
 	//------------------------------------------
 
@@ -107,16 +103,16 @@ async function Main_Run() {
 	for (const This_Category of Get_ALL_StyleShift_Items()) {
 		if (This_Category.Selector == null) continue;
 		This_Category.Selector = ReArrange_Selector(This_Category.Selector);
-		console.log("ReArranged", This_Category.Selector);
+		// console.log("ReArranged", This_Category.Selector);
 	}
 	await Save_All();
 
-	console.log("Last Saved Data", await Load(null));
+	// console.log("Last Saved Data", await Load(null));
 
-	setTimeout(() => {
-		console.log("Window Variable", window);
-	}, 1);
-	Run_Text_Script({ Text: `console.log("Window Variable 2", window);`, Replace: false });
+	// setTimeout(() => {
+	// 	console.log("Window Variable", window);
+	// }, 1);
+	// Run_Text_Script({ Text: `console.log("Window Variable 2", window);`, Replace: false });
 
 	if (In_Setting_Page) {
 		Extension_Settings_UI.Create_UI();

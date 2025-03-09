@@ -67,7 +67,7 @@ export async function Update_StyleShift_Functions_List() {
 			function Run_StyleShift_Functions_List(){
 
 				if(window["StyleShift"] == null) {
-					setTimeout(Run_StyleShift_Functions_List, 0);
+					setTimeout(Run_StyleShift_Functions_List, 1);
 					return;
 				}
 
@@ -77,7 +77,7 @@ export async function Update_StyleShift_Functions_List() {
 					Get_Functions_List[key] = Object.keys(value);
 				}
 
-				console.log("Sent", Get_Functions_List);
+				console.log("Avaliable StyleShift functions", Get_Functions_List);
 
 				window.dispatchEvent(
 					new CustomEvent("Sent_StyleShift_Functions_List", {
@@ -105,39 +105,36 @@ export async function Get_Global_Data(Mode: "Build-in" | "Custom", Function_Name
 }
 
 export function Is_Safe_Code(code: string, Code_Name: string) {
+	if (!code) return false;
 	const LoweredCase_Code = code.toLowerCase();
 
 	const dangerousPatterns = [
-		/window(?!\.open)/i,
-		/document/i,
 		/eval/i,
 		/new function/i,
-		/import /i,
+		/(?<!@)\bimport\b/i,
 		/require/i,
 		/fetch/i,
 		/xmlhttprequest/i,
 		/xhr/i,
 		/<\/?script>/i,
 		/document\.createelement\s*\(\s*['"]script['"]\s*\)/i,
-		/document\.createelement\s*\(\s*['"]iframe['"]\s*\)/i,
-		/document\.(body|head)\.append\s*\(/i,
 		/\.write\s*\(/i,
 		/\.execcommand\s*\(/i,
 		/\.cookie\s*=/i,
-		/\.localstorage\s*=/i,
-		/\.sessionstorage\s*=/i,
-		/\.indexeddb\s*=/i,
-		/\.opendatabase\s*\(/i,
-		/\.postmessage\s*\(/i,
-		/\.sendbeacon\s*\(/i,
-		/\.importscripts\s*\(/i,
-		/\.createobjecturl\s*\(/i,
-		/\.revokeobjecturl\s*\(/i,
-		/\.webkitrequestfilesystem\s*\(/i,
-		/\.webkitresolvelocalfilesystemurl\s*\(/i,
-		/\.showopenfilepicker\s*\(/i,
-		/\.showsavefilepicker\s*\(/i,
-		/\.showdirectorypicker\s*\(/i,
+		/localstorage/i,
+		/sessionstorage/i,
+		/indexeddb/i,
+		/opendatabase/i,
+		/postmessage/i,
+		/sendbeacon/i,
+		/importscripts/i,
+		/createobjecturl/i,
+		/revokeobjecturl/i,
+		/webkitrequestfilesystem/i,
+		/webkitresolvelocalfilesystemurl/i,
+		/showopenfilepicker/i,
+		/showsavefilepicker/i,
+		/showdirectorypicker/i,
 		/new\s+worker\s*\(/i,
 		/new\s+sharedworker\s*\(/i,
 		/new\s+blob\s*\(/i,
@@ -168,10 +165,31 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 				const lineNumber = beforeMatch.split("\n").length;
 				const charPosition = matchIndex - beforeMatch.lastIndexOf("\n");
 
+				// Extract the line of code where the match occurred
+				const codeLines = LoweredCase_Code.split("\n");
+				const errorLine = codeLines[lineNumber - 1];
+
+				// ตรวจสอบว่าคำว่า import อยู่ในคอมเมนต์หรือไม่
+				const isComment = errorLine.replaceAll(" ", "").replaceAll("\t", "").startsWith("//");
+				if (isComment) {
+					continue;
+				}
+
+				// Get surrounding context (10 characters before and after the match)
+				const startContext = Math.max(0, charPosition - 15);
+				const endContext = Math.min(errorLine.length, charPosition + match[0].length + 15);
+				const contextSnippet = errorLine.slice(startContext, endContext);
+
+				// Highlight the matched part in red with underline
+				const highlightedError = contextSnippet.replace(
+					match[0],
+					`<span style="color: red; text-decoration: underline;">${match[0]}</span>`
+				);
+
 				Create_Notification({
 					Icon: "🚫",
 					Title: "StyleShift - Error",
-					Content: `<b>"${match[0]}"</b> is not allowed.\nFound at line : <b>${lineNumber}</b> character : <b>${charPosition}</b>\nFrom : <b>${Code_Name}</b>`,
+					Content: `<b>"${match[0]}"</b> is not allowed.<br>Found at line: <b>${lineNumber}</b>, character: <b>${charPosition}</b><br>From: <b>${Code_Name}</b><br><br><pre>${highlightedError}</pre>`,
 					Timeout: 0,
 				});
 
@@ -190,8 +208,8 @@ export async function Run_Text_Script({
 	Code_Name = "StyleShift",
 	args = "",
 }) {
-	console.log("Trying to run script");
-	console.log(Text);
+	// console.log("Trying to run script");
+	// console.log(Text);
 
 	if (typeof Text == "function") {
 		Text();
@@ -201,21 +219,22 @@ export async function Run_Text_Script({
 
 			// console.log("Before :", Text);
 
-			if (Replace && Is_Safe_Code(Text, Code_Name) == true) {
-				// console.log(StyleShift_Functions_List);
-				for (const [Function_Mode, Functions_List] of Object.entries(StyleShift_Functions_List) as [
-					string,
-					Array<string>
-				][]) {
-					for (const Function_Name of Functions_List) {
-						Text = Text.replace(
-							new RegExp(`\\b${Function_Name}\\b`, "g"),
-							`window["StyleShift"]["${Function_Mode}"]["${Function_Name}"]`
-						);
+			if (Replace) {
+				if (Is_Safe_Code(Text, Code_Name)) {
+					for (const [Function_Mode, Functions_List] of Object.entries(StyleShift_Functions_List) as [
+						string,
+						Array<string>
+					][]) {
+						for (const Function_Name of Functions_List) {
+							Text = Text.replace(
+								new RegExp(`\\b${Function_Name}\\b`, "g"),
+								`window["StyleShift"]["${Function_Mode}"]["${Function_Name}"]`
+							);
+						}
 					}
+				} else {
+					return;
 				}
-
-				console.log("After :", Text, JSON.stringify(StyleShift_Functions_List));
 			}
 
 			//--------------------------------
@@ -239,6 +258,7 @@ export function Run_Text_Script_From_Setting(This_Setting, Function_Name: string
 	Run_Text_Script({
 		Text: This_Setting[Function_Name],
 		Code_Name: `${This_Setting.id} : ${Function_Name}`,
+		args: JSON.stringify({ Setting_ID: This_Setting.id }),
 	});
 }
 
@@ -313,7 +333,7 @@ export async function Load_Developer_Modules() {
 
 		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
 			if (Theme_Name == "themelist") continue;
-			console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
+			// console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
 			Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
 		}
 
