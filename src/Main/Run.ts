@@ -63,7 +63,7 @@ export function Update_All() {
 async function Main_Run() {
 	setTimeout(async () => {
 		(await GetDocumentBody()).append(StyleShift_Station);
-	}, 0);
+	}, 1);
 
 	if (!In_Setting_Page) {
 		let Build_in_Functions = await (await fetch(chrome.runtime.getURL("Build_in_Functions.js"))).text();

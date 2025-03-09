@@ -16,7 +16,9 @@ export async function Create_StyleSheet_Holder() {
 
 	StyleSheet_Holder_Constant = document.createElement("fieldset");
 	StyleSheet_Holder_Constant.id = "STYLESHIFT_StyleSheet_Holder_Constant";
-	(await GetDocumentHead()).append(StyleSheet_Holder_Constant);
+	setTimeout(async () => {
+		(await GetDocumentHead()).append(StyleSheet_Holder_Constant);
+	}, 1);
 }
 
 export function Create_StyleSheet(id: string, constant: boolean = false) {
@@ -33,7 +35,9 @@ export function Create_StyleSheet(id: string, constant: boolean = false) {
 }
 
 export async function Show_StyleSheet() {
-	(await GetDocumentHead()).append(StyleSheet_Holder);
+	setTimeout(async () => {
+		(await GetDocumentHead()).append(StyleSheet_Holder);
+	}, 1);
 }
 
 export async function Hide_StyleSheet() {

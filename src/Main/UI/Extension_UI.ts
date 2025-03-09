@@ -62,7 +62,9 @@ export let Notification_Container;
 
 (async () => {
 	const Notification_BG = await Settings_UI["Fill_Screen"](false);
-	(await GetDocumentBody()).append(Notification_BG);
+	setTimeout(async () => {
+		(await GetDocumentBody()).append(Notification_BG);
+	}, 1);
 
 	Notification_Container = document.createElement("div");
 	Notification_Container.className = "STYLESHIFT-Notification-Container";
