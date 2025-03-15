@@ -745,8 +745,8 @@ export function Wait_One_Frame(): Promise<boolean> {
  * @example
  * insertAfter(document.createElement("div"), document.querySelector("#existingNode"));
  */
-export function insertAfter(newNode: Node, existingNode: Node): void {
-	existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+export function insertAfter(newNode: Node, existingNode: Node, parentNode?: Node): void {
+	(existingNode.parentNode || parentNode).insertBefore(newNode, existingNode.nextSibling);
 }
 
 /**

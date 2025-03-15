@@ -444,7 +444,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent:
 		Space.Element.className = "STYLESHIFT-Drag-Hint";
 		Space.Hide();
 
-		insertAfter(Space.Element, Frame);
+		insertAfter(Space.Element, Frame, Parent);
 
 		let Current_Hover = 0;
 		function Space_Update_Hover(Hover) {
