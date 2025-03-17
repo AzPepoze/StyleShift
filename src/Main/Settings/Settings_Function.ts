@@ -1,5 +1,5 @@
 import { sleep } from "../Build-in_Functions/Normal_Functions";
-import { Run_Text_Script_From_Setting } from "../Core/Core_Function";
+import { Run_Text_Script_From_Setting } from "../Core/Core_Functions";
 import { Load_Any } from "../Core/Save";
 import { Setting } from "../types/Store_Data";
 import { Create_StyleSheet } from "./Settings_StyleSheet";

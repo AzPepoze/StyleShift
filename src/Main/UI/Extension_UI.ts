@@ -1,5 +1,5 @@
 import { GetDocumentBody, sleep } from "../Build-in_Functions/Normal_Functions";
-import { Load_Developer_Modules, Loaded_Developer_Modules } from "../Core/Core_Function";
+import { Load_Developer_Modules, Loaded_Developer_Modules } from "../Core/Core_Functions";
 import { Load } from "../Core/Save";
 import { Recreate_Config_UI, Remove_Config_UI } from "./Config_UI";
 import { Editor_UI } from "./Editor_UI";

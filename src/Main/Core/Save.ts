@@ -1,7 +1,7 @@
 import { Create_Error } from "../Build-in_Functions/Extension_Functions";
 import { Get_Current_Domain, Get_Current_URL_Parameters, sleep } from "../Build-in_Functions/Normal_Functions";
 import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
-import { In_Setting_Page } from "./Core_Function";
+import { In_Setting_Page } from "./Core_Functions";
 
 //Save
 export let Saved_Data = {};

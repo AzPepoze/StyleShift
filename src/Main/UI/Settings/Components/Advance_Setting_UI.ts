@@ -1,5 +1,5 @@
 import { Apply_Drag } from "../../../Build-in_Functions/Normal_Functions";
-import { In_Setting_Page, Is_Safe_Code, isFirefox, Monaco } from "../../../Core/Core_Function";
+import { In_Setting_Page, Is_Safe_Code, isFirefox, Monaco } from "../../../Core/Core_Functions";
 import { Save_All } from "../../../Core/Save";
 import { Category } from "../../../types/Store_Data";
 import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "../../Extension_UI";

@@ -1,6 +1,6 @@
 import { Create_Error } from "./Build-in_Functions/Extension_Functions";
 import { GetDocumentBody, ReArrange_Selector } from "./Build-in_Functions/Normal_Functions";
-import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Core/Core_Function";
+import { In_Setting_Page, Run_Text_Script, Update_StyleShift_Functions_List } from "./Core/Core_Functions";
 import { Clear_Unnessary_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./Core/Save";
 import { SetUp_Setting_Function } from "./Settings/Settings_Function";
 import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";

@@ -13,7 +13,7 @@ import {
 	Is_Safe_Code,
 	Run_Text_Script,
 	Run_Text_Script_From_Setting,
-} from "../../../Core/Core_Function";
+} from "../../../Core/Core_Functions";
 import { Load, Load_Any, Load_Setting } from "../../../Core/Save";
 import {
 	On_Setting_Update,

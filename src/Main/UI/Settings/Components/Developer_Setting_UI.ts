@@ -1,5 +1,5 @@
 import { HEX_to_RBG, HSV_to_RGB, ReArrange_Selector, RGB_to_HSV } from "../../../Build-in_Functions/Normal_Functions";
-import { Loaded_Developer_Modules } from "../../../Core/Core_Function";
+import { Loaded_Developer_Modules } from "../../../Core/Core_Functions";
 import { Save_All } from "../../../Core/Save";
 import { UI_Preset } from "../../../Settings/Settings_Default_Items";
 import { Add_Setting } from "../../../Settings/StyleShift_Items";

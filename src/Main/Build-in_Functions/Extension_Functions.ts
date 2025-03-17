@@ -1,4 +1,4 @@
-import { JSzip, Save_And_Update_ALL } from "../Core/Core_Function";
+import { JSzip, Save_And_Update_ALL } from "../Core/Core_Functions";
 import { Convert_To_Export_Setting } from "../Core/Export_Converter";
 import { Load, Save, Saved_Data, Set_Null_Save, StyleShift_Allowed_Keys } from "../Core/Save";
 import { StyleShift_Station } from "../Run";
@@ -561,14 +561,46 @@ export async function Disable_Extension_Function() {
 	Hide_StyleSheet();
 }
 
+/**
+ * Retrieves the StyleShift value associated with a given ID.
+ *
+ * This function takes an ID, uses the Load function to retrieve the associated
+ * data, and returns the data as a JSON string.
+ *
+ * @param {string} id - The unique identifier for the data to be retrieved.
+ * @returns {Promise<string>} The JSON string representation of the retrieved data.
+ */
 export async function Load_StyleShift_Value(id) {
 	return JSON.stringify(await Load(id));
 }
+
+/**
+ * Saves the StyleShift value associated with a given ID.
+ *
+ * This function takes an ID and a JSON string value, parses the JSON string,
+ * and saves the resulting data under the specified ID using the Save function.
+ *
+ * @param {string} id - The unique identifier for the data to be saved.
+ * @param {string} value - The JSON string representing the data to be saved.
+ * @returns {Promise<any>} The result of the save operation.
+ */
 
 export async function Save_StyleShift_Value(id, value: string) {
 	return await Save(id, JSON.parse(value));
 }
 
+/**
+ * Creates a setting UI element from the given type and setting.
+ *
+ * This function will create a UI element using the provided type and setting.
+ * The UI element will be appended to the `StyleShift_Station` element and
+ * assigned a unique "styleshift-ui-id" attribute.
+ *
+ * @param {string} type - The type of the setting UI element.
+ * @param {Setting | any} This_Setting - The setting associated with the UI element.
+ * @param {...any} args - Additional arguments to pass to the UI element function.
+ * @returns {Promise<string>} The value of the "styleshift-ui-id" attribute assigned to the UI element.
+ */
 export async function _Create_StyleShift_Setting_UI(type, This_Setting: Setting | any, ...args) {
 	const UI = await Settings_UI[type](This_Setting, ...args);
 

@@ -1,6 +1,6 @@
 import { Create_Error, Dynamic_Append } from "../../Build-in_Functions/Extension_Functions";
 import { insertAfter, Scroll_On_Click, sleep } from "../../Build-in_Functions/Normal_Functions";
-import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Core/Core_Function";
+import { In_Setting_Page, isFirefox, Loaded_Developer_Modules } from "../../Core/Core_Functions";
 import { Load, Save_All } from "../../Core/Save";
 import { Get_Setting_Page_Only_Items } from "../../Developer_Only_Items";
 import { Update_All } from "../../Run";

@@ -1,5 +1,5 @@
 import { Random } from "../Build-in_Functions/Normal_Functions";
-import { Save_And_Update_ALL } from "../Core/Core_Function";
+import { Save_And_Update_ALL } from "../Core/Core_Functions";
 import { Load, Save_Any } from "../Core/Save";
 import { Get_Default_Items } from "../Default_Items";
 import { Category, Setting } from "../types/Store_Data";
