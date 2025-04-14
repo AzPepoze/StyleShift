@@ -1,5 +1,5 @@
 import { Create_Error, Dynamic_Append } from "../../Build-in_Functions/Extension_Functions";
-import { insertAfter, Scroll_On_Click, sleep, Wait_One_Frame } from "../../Build-in_Functions/Normal_Functions";
+import { insertAfter, Scroll_On_Click, sleep } from "../../Build-in_Functions/Normal_Functions";
 import { Loaded_Developer_Modules } from "../../Core/Core_Functions";
 import { Load, Save_All } from "../../Core/Save";
 import { Get_Dev_Only_Items } from "../../Developer_Only_Items";
@@ -319,8 +319,6 @@ function Create_Setting_Space(Size = 20, Gap = 0) {
 	const Space = document.createElement("div");
 	Space.style.height = Size + "px";
 	Space.style.transition = `all ${Animation_Time}s`;
-	Space.style.marginTop = -Gap + "px";
-	Space.style.marginBottom = -Gap + "px";
 
 	async function Show() {
 		Space.style.height = Size + Gap + "px";
@@ -336,10 +334,18 @@ function Create_Setting_Space(Size = 20, Gap = 0) {
 		Space.style.height = Value + "px";
 	}
 
+	function Set_Gap(Value) {
+		Gap = Value;
+		Space.style.marginTop = -Gap + "px";
+		Space.style.marginBottom = -Gap + "px";
+	}
+	Set_Gap(Gap);
+
 	return {
 		Show,
 		Hide,
 		Set_Size,
+		Set_Gap,
 		Element: Space,
 	};
 }
@@ -444,10 +450,13 @@ async function Add_Drag(Frame, Parent, This_Data) {
 }
 
 async function Add_Drop_Target(Frame, Parent, This_Data, Data_Type) {
-	await Wait_One_Frame();
-	const Space = Create_Setting_Space(0, Number(getComputedStyle(Parent).gap.replace("px", "")));
+	// await Wait_One_Frame();
+	const Space = Create_Setting_Space(0, 5);
+	requestAnimationFrame(() => {
+		Space.Set_Gap(Number(getComputedStyle(Parent).gap.replace("px", "")));
+		Space.Hide();
+	});
 	Space.Element.className = "STYLESHIFT-Drag-Hint";
-	Space.Hide();
 
 	insertAfter(Space.Element, Frame, Parent);
 
