@@ -1,6 +1,7 @@
 import { Apply_Drag } from "../../../Build-in_Functions/Normal_Functions";
-import { In_Setting_Page, Is_Safe_Code, isFirefox, Monaco } from "../../../Core/Core_Functions";
+import { Is_Safe_Code, Monaco } from "../../../Core/Core_Functions";
 import { Save_All } from "../../../Core/Save";
+import { In_Setting_Page, isFirefox } from "../../../Run";
 import { Category } from "../../../types/Store_Data";
 import { Animation_Time, Hide_Window_Animation, Show_Window_Animation } from "../../Extension_UI";
 import { Create_Config_UI_Function, Setup_Left_Title_Animation } from "../Settings_UI";
@@ -129,11 +130,7 @@ export const Advance_Setting_UI = {
 			}
 		};
 
-		const Ediot_OBJ: { [string: string]: any } = {
-			value: OBJ[key] || "",
-			automaticLayout: true,
-			language: language || "plaintext",
-		};
+		const Editor_Model = Monaco.editor.createModel(OBJ[key], language);
 
 		if (!isFirefox || In_Setting_Page) {
 			const Frame = document.createElement("div");
@@ -143,7 +140,10 @@ export const Advance_Setting_UI = {
 			Frame.className += " STYLESHIFT-Code-Editor";
 			Parent.append(Frame);
 
-			Code_Editor = Monaco.editor.create(Frame, Ediot_OBJ);
+			Code_Editor = Monaco.editor.create(Frame, {
+				model: Editor_Model,
+				automaticLayout: true,
+			});
 
 			Code_Editor.onKeyDown(function () {
 				OnChange(Code_Editor.getValue());
@@ -225,24 +225,23 @@ export const Advance_Setting_UI = {
 
 	["Title"]: async function (This_Category: Category) {
 		let Frame = document.createElement("div");
-		Frame.className = "STYLESHIFT-Category-Title";
-
-		if (This_Category.Rainbow) {
-			Frame.className += " STYLESHIFT-Category-Title-Rainbow";
-		}
+		let Base_Class = "STYLESHIFT-Category-Title";
+		Frame.className = Base_Class;
 
 		function Update_UI() {
+			Frame.className = This_Category.Rainbow ? Base_Class + " STYLESHIFT-Category-Title-Rainbow" : Base_Class;
 			Frame.innerHTML = This_Category.Category;
 		}
 		Update_UI();
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Category.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Category,
 				{
 					Name: ["Category", Frame],
 					Selector: "Selector",
+					Rainbow: "Rainbow",
 				},
 				Update_UI
 			);

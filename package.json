@@ -13,9 +13,9 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "npm-run-all -p dev_css dev_js",
-		"dev_js": "node utils/build.js",
+		"dev_js": "node utils/builder.js",
 		"dev_css": "sass --watch src/Main/SCSS/Setting.scss out/build/Style.css --style=compressed --no-source-map",
-		"build": "sass src/Main/SCSS/Setting.scss out/build/Style.css --style=compressed --no-source-map && node utils/build_setting.js && node utils/build.js --production --once",
+		"full_build": "sass src/Main/SCSS/Setting.scss out/build/Style.css --style=compressed --no-source-map && node utils/builder.js --production --once && node utils/build_setting.js",
 		"build_release": "node utils/build_release.js",
 		"gen_types": "tsc -p utils/tsconfig_gen_types.json && node utils/gen_types.js",
 		"gen_raw_types": "tsc -p utils/tsconfig_gen_types.json",
@@ -23,21 +23,21 @@
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.268",
-		"@types/node": "^22.10.2",
+		"@types/node": "^22.14.1",
 		"archiver": "^7.0.1",
 		"azpepoze.node_tools": "^1.0.4",
 		"chokidar": "^4.0.3",
 		"dts-gen": "^0.10.4",
 		"esbuild": "^0.24.2",
-		"fs-extra": "^11.2.0",
+		"fs-extra": "^11.3.0",
 		"jszip": "^3.10.1",
 		"monaco-editor": "^0.52.2",
 		"monaco-themes": "^0.4.4",
 		"npm-run-all": "^4.1.5",
-		"sass": "^1.83.0",
-		"ts-loader": "^9.5.1",
+		"sass": "^1.86.3",
+		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.7.2",
-		"undici-types": "^7.2.0"
+		"typescript": "^5.8.3",
+		"undici-types": "^7.8.0"
 	}
 }

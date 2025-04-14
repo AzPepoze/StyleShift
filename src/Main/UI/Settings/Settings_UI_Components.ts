@@ -1,5 +1,5 @@
 import { Save_Any } from "../../Core/Save";
-import { Advance_Setting_UI } from "./Components/Advance_Setting_UI";
+import { Advance_Setting_UI } from "./Components/Advanced_Setting_UI";
 import { Developer_Setting_UI } from "./Components/Developer_Setting_UI";
 import { Main_Setting_UI } from "./Components/Main_Setting_UI";
 

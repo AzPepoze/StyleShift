@@ -67,7 +67,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -123,7 +123,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -249,7 +249,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -267,7 +267,7 @@ export const Main_Setting_UI = {
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				click: 3,
 			});
 		});
@@ -275,13 +275,16 @@ export const Main_Setting_UI = {
 		return { Button, Config_UI_Function };
 	},
 
-	["Checkbox"]: async function (This_Setting: Partial<Extract<Setting, { type: "Checkbox" }>>) {
+	["Checkbox"]: async function (
+		This_Setting: Partial<Extract<Setting, { type: "Checkbox" }>>,
+		update_function?: Function
+	) {
 		let Frame = Settings_UI["Setting_Frame"](true, true);
 
 		//-------------------------------------
 
 		let Sub_Frame = Settings_UI["Setting_Frame"](false, false);
-		Sub_Frame.setAttribute("settingtype", This_Setting.type);
+		Sub_Frame.setAttribute("settingtype", "Checkbox");
 		Frame.append(Sub_Frame);
 
 		//-------------------------------------
@@ -309,6 +312,8 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		async function Update_Value(value) {
+			if (update_function) update_function(value);
+
 			if (This_Setting.id) {
 				await Set_And_Save(This_Setting, value);
 				Update_Setting_Function(This_Setting.id);
@@ -325,7 +330,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -338,7 +343,7 @@ export const Main_Setting_UI = {
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				constant: 2,
 				setup: 3,
 				enable: 0,
@@ -448,7 +453,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -465,7 +470,7 @@ export const Main_Setting_UI = {
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				var: 2,
 				constant_css: 2,
 				setup: 3,
@@ -561,7 +566,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -574,7 +579,7 @@ export const Main_Setting_UI = {
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				constant: 2,
 				setup: 3,
 				enable: 0,
@@ -596,7 +601,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Sub_Frame = Settings_UI["Setting_Frame"](false, false, { x: false, y: true });
-		Sub_Frame.setAttribute("settingtype", This_Setting.type);
+		Sub_Frame.setAttribute("settingtype", "Color");
 		Frame.append(Sub_Frame);
 
 		//-------------------------------------
@@ -683,7 +688,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -696,7 +701,7 @@ export const Main_Setting_UI = {
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				var: 2,
 				constant_css: 2,
 				setup: 3,
@@ -750,7 +755,7 @@ export const Main_Setting_UI = {
 		//-------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -854,7 +859,7 @@ Are you want to continue?`)
 		//-----------------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](Parent, This_Setting, {
+			await Settings_UI["Config_Main_Section"](Parent, This_Setting, {
 				["Soruce setting Id"]: "id",
 			});
 		});
@@ -897,7 +902,7 @@ Are you want to continue?`)
 		//-----------------------------------------------
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](
+			await Settings_UI["Config_Main_Section"](
 				Parent,
 				This_Setting,
 				{
@@ -920,16 +925,45 @@ Are you want to continue?`)
 		});
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
-			await Settings_UI["Config_Section_1"](Parent, This_Setting, {
+			await Settings_UI["Config_Main_Section"](Parent, This_Setting, {
 				Id: "id",
 			});
 
 			//-----------------------------------------------
 
-			await Settings_UI["Config_Section_2"](Parent, This_Setting, {
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
 				constant: 2,
 				setup: 3,
 				ui: ["function"],
+			});
+		});
+
+		return { Frame, Config_UI_Function };
+	},
+
+	["Combine_Settings"]: async function (This_Setting: Partial<Extract<Setting, { type: "Combine_Settings" }>>) {
+		let Frame = Settings_UI["Setting_Frame"](true, true);
+		Frame.setAttribute("settingtype", "Combine_Settings");
+
+		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
+			await Settings_UI["Config_Main_Section"](
+				Parent,
+				This_Setting,
+				{
+					Id: "id",
+					Name: "name",
+					Description: "description",
+					["Sync IDs"]: ["sync_id"],
+				},
+				async function () {
+					if (This_Setting.id) {
+						Update_Setting_Function(This_Setting.id);
+					}
+				}
+			);
+
+			await Settings_UI["Config_Sub_Section"](Parent, This_Setting, {
+				update: 3,
 			});
 		});
 

@@ -4,7 +4,6 @@ const fs = require("fs");
 const { File_Content_Replace } = require("azpepoze.node_tools");
 
 const workerEntryPoints = [
-	"vs/editor/editor.main.js",
 	"vs/editor/editor.worker.js",
 	"vs/language/css/css.worker.js",
 	"vs/language/typescript/ts.worker.js",
@@ -29,7 +28,7 @@ const workerEntryPoints = [
 		bundle: true,
 		format: "iife",
 		outfile: path.join(__dirname, "../out/build/External_Modules/Monaco.js"),
-		minify: true,
+		minify: false,
 		loader: {
 			".ttf": "file",
 		},

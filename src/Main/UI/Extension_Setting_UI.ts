@@ -8,15 +8,3 @@ export let Extension_Settings_UI: Awaited<ReturnType<typeof Create_Main_Settings
 		Get_Category: Get_ALL_StyleShift_Items,
 	});
 })();
-
-// export async function Create_Extension_Setting(Skip_Animation = false) {
-// 	Current_Settings_Window =
-// }
-
-// export async function Toggle_Extension_Setting() {
-// 	Current_Settings_Window.Toggle();
-// }
-
-// export async function Recreate_Extension_Setting() {
-// 	Current_Settings_Window.Recreate_UI();
-// }

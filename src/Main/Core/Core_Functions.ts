@@ -1,35 +1,9 @@
-import { Create_Notification } from "../Build-in_Functions/Extension_Functions";
+import { Create_Error, Create_Notification } from "../Build-in_Functions/Extension_Functions";
 import { sleep } from "../Build-in_Functions/Normal_Functions";
-import { Update_All } from "../Run";
+import { In_Setting_Page, isFirefox, Update_All } from "../Run";
 import { Create_StyleSheet } from "../Settings/Settings_StyleSheet";
 import { color_obj } from "../types/Store_Data";
 import { Save_All } from "./Save";
-
-export let Ver = chrome.runtime.getManifest().version;
-
-export let isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
-console.log("isFirefox", navigator.userAgent.toLowerCase(), isFirefox);
-
-let inIframe;
-try {
-	inIframe = window.self !== window.top;
-} catch (e) {
-	inIframe = true;
-}
-
-let DefaultYouTubeLogo = `https://www.youtube.com/s/desktop/6588612c/img/favicon.ico`;
-let DefaultNewTubeLogo = `https://i.ibb.co/tD2VTyg/1705431438657.png`;
-
-export let Extension_Location = chrome.runtime.getURL("").slice(0, -1);
-export let Extension_ID = Extension_Location.slice(19, 0);
-
-export let In_Setting_Page;
-
-if (window.location.origin == Extension_Location) {
-	In_Setting_Page = true;
-} else {
-	In_Setting_Page = false;
-}
 
 export async function Save_And_Update_ALL() {
 	await Save_All();
@@ -94,8 +68,10 @@ export async function Update_StyleShift_Functions_List() {
 }
 
 export async function Get_Global_Data(Mode: "Build-in" | "Custom", Function_Name) {
-	console.log(window, window["StyleShift"]);
-	if (window["StyleShift"][Mode] == null || window["StyleShift"][Mode][Function_Name] == null) {
+	if (
+		(window["StyleShift"] && window["StyleShift"][Mode] == null) ||
+		window["StyleShift"][Mode][Function_Name] == null
+	) {
 		await sleep(0);
 		return await Get_Global_Data(Mode, Function_Name);
 	} else {
@@ -288,74 +264,84 @@ export async function Load_Developer_Modules() {
 
 	Loaded_Developer_Modules = true;
 
-	if (!isFirefox || In_Setting_Page) {
-		const Loading_UI = await Create_Notification({
-			Icon: "🔃",
-			Title: "StyleShift - Loading Developer Modules",
-			Content: "Loading : Monaco editor (Code editor)",
-			Timeout: -1,
-		});
+	const Loading_UI = await Create_Notification({
+		Icon: "🔃",
+		Title: "StyleShift - Loading Developer Modules",
+		Content: "Loading...",
+		Timeout: -1,
+	});
 
-		//---------------------------------------------------------------------
+	if (!isFirefox) {
+		try {
+			Loading_UI.Set_Content("Loading : Monaco editor (Code editor)");
 
-		let Monaco_Data = await (await fetch(chrome.runtime.getURL("External_Modules/Monaco.js"))).text();
+			let Monaco_Data = await (await fetch(chrome.runtime.getURL("External_Modules/Monaco.js"))).text();
 
-		// if (isFirefox) {
-		// 	console.log("StyleShift_Extension_ID", Extension_Location);
-		// 	Modules_Data = Modules_Data.replace("StyleShift_Extension_ID", Extension_Location);
-		// }
+			// if (isFirefox) {
+			// 	console.log("StyleShift_Extension_ID", Extension_Location);
+			// 	Modules_Data = Modules_Data.replace("StyleShift_Extension_ID", Extension_Location);
+			// }
 
-		Run_Text_Script({
-			Text: Monaco_Data,
-			Replace: false,
-		});
+			Run_Text_Script({
+				Text: Monaco_Data,
+				Replace: false,
+			});
 
-		Loading_UI.Set_Content("Loading : JSzip (Export theme as zip)");
+			// Inject_Text_Script(Monaco_Data);
 
-		let JSzip_Data = await (await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))).text();
-		Run_Text_Script({
-			Text: JSzip_Data,
-			Replace: false,
-		});
+			Loading_UI.Set_Content("Loading : JSzip (Export theme as zip)");
 
-		//---------------------------------------------------------------------
+			let JSzip_Data = await (await fetch(chrome.runtime.getURL("External_Modules/JSzip.js"))).text();
+			Run_Text_Script({
+				Text: JSzip_Data,
+				Replace: false,
+			});
 
-		Create_StyleSheet("Monaco", true).textContent = await (
-			await fetch(chrome.runtime.getURL("External_Modules/Monaco.css"))
-		).text();
+			//---------------------------------------------------------------------
 
-		//---------------------------------------------------------------------
+			Create_StyleSheet("Monaco", true).textContent = await (
+				await fetch(chrome.runtime.getURL("External_Modules/Monaco.css"))
+			).text();
 
-		Loading_UI.Set_Content("Getting : Monaco editor (Code editor)");
+			//---------------------------------------------------------------------
 
-		Monaco = await Get_Global_Data("Build-in", "Monaco");
-		Monaco_Themes = await Get_Global_Data("Build-in", "Monaco_Themes");
-
-		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
-			if (Theme_Name == "themelist") continue;
-			// console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
-			Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
-		}
-
-		Monaco.editor.setTheme("Dracula");
-
-		//----------------------------------------------
-
-		Loading_UI.Set_Content("Getting : Jzip (Export theme as zip)");
-
-		JSzip = (await Get_Global_Data("Build-in", "JSzip")).default;
-
-		Loading_UI.Set_Icon("✅");
-		Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
-		Loading_UI.Set_Content("");
-
-		setTimeout(() => {
+			Loading_UI.Set_Content("Getting : Monaco editor (Code editor)");
+		} catch (error) {
 			Loading_UI.Close();
-		}, 4000);
+			(await Create_Error(error)).Set_Title("StyleShift - Error loading developer modules");
+		}
 	}
 
-	if (isFirefox && !In_Setting_Page) {
-		console.log("It's firefox");
+	if (!isFirefox || In_Setting_Page) {
+		try {
+			Monaco = await Get_Global_Data("Build-in", "Monaco");
+			Monaco_Themes = await Get_Global_Data("Build-in", "Monaco_Themes");
+
+			for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
+				if (Theme_Name == "themelist") continue;
+				// console.log("Themes Name", Theme_Name.replace(/[^a-zA-Z0-9_-]/g, ""));
+				Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
+			}
+
+			Monaco.editor.setTheme("Dracula");
+
+			//----------------------------------------------
+
+			Loading_UI.Set_Content("Getting : Jzip (Export theme as zip)");
+
+			JSzip = (await Get_Global_Data("Build-in", "JSzip")).default;
+
+			Loading_UI.Set_Icon("✅");
+			Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
+			Loading_UI.Set_Content("");
+
+			setTimeout(() => {
+				Loading_UI.Close();
+			}, 4000);
+		} catch (error) {
+			Loading_UI.Close();
+			(await Create_Error(error)).Set_Title("StyleShift - Error loading developer modules");
+		}
 	}
 }
 
