@@ -50,7 +50,6 @@ export const StyleShift_Property_List: { [key: string]: string[] } = {
 	Image_Input: ["type", "id", "name", "description", "value", "MaxFileSize", "Editable"],
 	Preview_Image: ["type", "id", "Editable"],
 	Custom: ["type", "id", "setup_function", "constant_css", "ui_function"],
-	Combine_Settings: ["type", "id", "name", "description", "sync_id", "update_function", "Editable"],
 };
 
 export const StyleShift_Category_List: Category = { Category: "Category", Selector: "", Rainbow: false, Settings: [] };

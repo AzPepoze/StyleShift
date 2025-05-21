@@ -196,13 +196,4 @@ export type Setting =
 			//--------------
 
 			Editable?: boolean;
-	  }
-	| {
-			type: "Combine_Settings";
-			id?: string;
-			name?: string;
-			description?: string;
-			sync_id: string[];
-			update_function?: string;
-			Editable?: boolean;
 	  };

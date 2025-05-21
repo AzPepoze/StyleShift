@@ -14,6 +14,9 @@ export async function Create_StyleShift_Window({ Width = "30%", Height = "80%", 
 	console.log("Setting up");
 
 	const BG_Frame = await Settings_UI["Fill_Screen"](false);
+	setTimeout(async () => {
+		(await GetDocumentBody()).appendChild(BG_Frame);
+	}, 1);
 
 	const Window = document.createElement("div");
 	Window.className = "STYLESHIFT-Main STYLESHIFT-Window";
@@ -44,10 +47,6 @@ export async function Create_StyleShift_Window({ Width = "30%", Height = "80%", 
 	};
 
 	Close.addEventListener("click", Run_Close, { once: true });
-
-	requestAnimationFrame(async () => {
-		(await GetDocumentBody()).appendChild(BG_Frame);
-	});
 
 	return {
 		BG_Frame,

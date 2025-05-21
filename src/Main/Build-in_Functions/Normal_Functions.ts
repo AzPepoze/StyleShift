@@ -275,9 +275,9 @@ export function Once_Element_Remove(targetElement: HTMLElement, callback: Functi
  * @param {HTMLElement} element - The element to check.
  * @returns {{ x: number; y: number }}
  * @example
- * Get_Element_Center_Position(document.querySelector("#myElement")); // { x: number, y: number }
+ * getElementCenterPosition(document.querySelector("#myElement")); // { x: number, y: number }
  */
-export function Get_Element_Center_Position(element: HTMLElement): { x: number; y: number } {
+export function getElementCenterPosition(element: HTMLElement): { x: number; y: number } {
 	const rect = element.getBoundingClientRect();
 	const centerX = rect.left + rect.width / 2;
 	const centerY = rect.top + rect.height / 2;
@@ -292,9 +292,9 @@ export function Get_Element_Center_Position(element: HTMLElement): { x: number; 
  * Waits for the document to be fully loaded.
  * @returns {Promise<number>}
  * @example
- * await Wait_Document_Loaded(); // Waits until the document is fully loaded
+ * await WaitDocumentLoaded(); // Waits until the document is fully loaded
  */
-export async function Wait_Document_Loaded(): Promise<number> {
+export async function WaitDocumentLoaded(): Promise<number> {
 	while (document.readyState !== "complete") {
 		await sleep(10);
 	}
@@ -318,6 +318,82 @@ export function Create_UniqueID(length: number): string {
 	}
 
 	return uniqueID;
+}
+
+/**
+ * Deep merges two objects.
+ * @param {any} obj1 - The first object.
+ * @param {any} obj2 - The second object.
+ * @returns {any}
+ * @example
+ * deepMerge({ a: 1 }, { b: 2 }); // { a: 1, b: 2 }
+ */
+export function deepMerge(obj1: any, obj2: any): any {
+	if (Array.isArray(obj1) && Array.isArray(obj2)) {
+		const mergedArray = [...obj1];
+		for (const item2 of obj2) {
+			const matchingIndex = mergedArray.findIndex((item1) => item1.id && item2.id && item1.id === item2.id);
+			if (matchingIndex !== -1) {
+				mergedArray[matchingIndex] = deepMerge(mergedArray[matchingIndex], item2);
+			} else {
+				mergedArray.push(item2);
+			}
+		}
+		return mergedArray;
+	} else if (typeof obj1 === "object" && typeof obj2 === "object") {
+		const result = { ...obj1 };
+		for (const key in obj2) {
+			if (obj2.hasOwnProperty(key)) {
+				if (obj1[key] && typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+					result[key] = deepMerge(obj1[key], obj2[key]);
+				} else {
+					result[key] = obj2[key];
+				}
+			}
+		}
+		return result;
+	} else {
+		return obj2;
+	}
+}
+
+/**
+ * Deep merges two objects in place.
+ * @param {any} target - The target object.
+ * @param {any} source - The source object.
+ * @example
+ * const target = { a: 1 };
+ * const source = { b: 2 };
+ * deepMergeInPlace(target, source); // target is now { a: 1, b: 2 }
+ */
+export function deepMergeInPlace(target: any, source: any): void {
+	if (Array.isArray(target) && Array.isArray(source)) {
+		for (const [index, item] of source.entries()) {
+			if (index < target.length) {
+				if (typeof target[index] === "object" && typeof item === "object") {
+					deepMergeInPlace(target[index], item);
+				} else {
+					target[index] = item;
+				}
+			} else {
+				target.push(item);
+			}
+		}
+	} else if (typeof target === "object" && typeof source === "object") {
+		for (const key in source) {
+			if (source.hasOwnProperty(key)) {
+				if (Array.isArray(target[key]) && Array.isArray(source[key])) {
+					target[key] = [...new Set([...target[key], ...source[key]])];
+				} else if (typeof target[key] === "object" && typeof source[key] === "object") {
+					deepMergeInPlace(target[key], source[key]);
+				} else {
+					target[key] = source[key];
+				}
+			}
+		}
+	} else {
+		target = source;
+	}
 }
 
 /**

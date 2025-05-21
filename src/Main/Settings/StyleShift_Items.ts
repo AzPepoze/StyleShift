@@ -2,7 +2,6 @@ import { Random } from "../Build-in_Functions/Normal_Functions";
 import { Save_And_Update_ALL } from "../Core/Core_Functions";
 import { Load, Save_Any } from "../Core/Save";
 import { Get_Default_Items } from "../Default_Items";
-import { Update_All } from "../Run";
 import { Category, Setting } from "../types/Store_Data";
 import { SetUp_Setting_Function } from "./Settings_Function";
 
@@ -70,30 +69,17 @@ function Auto_Add_HightLight(Array) {
 	}
 }
 
-function Save_Custom_Items_And_Update_All(Custom_Items) {
-	Save_Any("Custom_StyleShift_Items", Custom_Items);
-	Update_All();
-}
-
 export async function Update_StyleShift_Items() {
 	StyleShift_Items.Default = Get_Default_Items();
 	StyleShift_Items.Custom = (await Load("Custom_StyleShift_Items")) || [];
 
 	Auto_Add_HightLight(Get_ALL_StyleShift_Items());
 
-	// Default
-
-	for (const This_Category of StyleShift_Items.Default) {
-		This_Category.Editable = false;
-	}
-
 	for (const This_Setting of StyleShift_Items.Default.flatMap(function (This_Setting) {
 		return This_Setting.Settings;
 	})) {
 		This_Setting.Editable = false;
 	}
-
-	// Custom
 
 	for (const This_Category of StyleShift_Items.Custom) {
 		This_Category.Editable = true;
@@ -200,10 +186,11 @@ export async function Add_Category(Category_Name: string) {
 	}
 
 	const Custom_Items = Get_Custom_Items();
+
 	Custom_Items.push(This_Category);
 	console.log("Added Category", Custom_Items);
 
-	Save_Custom_Items_And_Update_All(Custom_Items);
+	Save_And_Update_ALL();
 }
 
 export async function Remove_Category(This_Category) {
@@ -215,7 +202,7 @@ export async function Remove_Category(This_Category) {
 		Custom_Items.splice(index, 1);
 	}
 
-	Save_Custom_Items_And_Update_All(Custom_Items);
+	Save_And_Update_ALL();
 }
 
 //-------------------------------------------------

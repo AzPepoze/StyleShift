@@ -169,7 +169,7 @@ export const Developer_Setting_UI = {
 		return Editor;
 	},
 
-	["Config_Main_Section"]: async function (Parent, This_Setting, Props, Update_UI = function () {}) {
+	["Config_Section_1"]: async function (Parent, This_Setting, Props, Update_UI = function () {}) {
 		for (let [Title, Property] of Object.entries(Props) as [string, any]) {
 			let Update;
 
@@ -209,29 +209,6 @@ export const Developer_Setting_UI = {
 
 			//-----------------------------------
 
-			if (Property == "Rainbow") {
-				let Checkbox_UI = (
-					await Settings_UI["Checkbox"](
-						{
-							name: Title,
-							value: This_Setting.Rainbow,
-						},
-						function (value) {
-							This_Setting.Rainbow = value;
-							Update_UI();
-							Save_All();
-						}
-					)
-				).Frame;
-
-				Checkbox_UI.className += " STYLESHIFT-Config-Sub-Frame";
-
-				Parent.append(Checkbox_UI);
-				continue;
-			}
-
-			//-----------------------------------
-
 			if (Property == "color") {
 				let Color_UI = (
 					await Settings_UI["Color"]({
@@ -241,7 +218,6 @@ export const Developer_Setting_UI = {
 						update_function: function (value) {
 							This_Setting.color = value;
 							Update_UI();
-							Save_All();
 						},
 					})
 				).Frame;
@@ -262,7 +238,6 @@ export const Developer_Setting_UI = {
 						update_function: function (value) {
 							This_Setting.font_size = value;
 							Update_UI();
-							Save_All();
 						},
 					})
 				).Frame;
@@ -288,7 +263,6 @@ export const Developer_Setting_UI = {
 				Update_function = function (value) {
 					This_Setting[Property] = value;
 					Update_UI();
-					Save_All();
 				};
 			} else {
 				return;
@@ -298,7 +272,7 @@ export const Developer_Setting_UI = {
 		}
 	},
 
-	["Config_Sub_Section"]: async function (Parent, This_Setting, Props) {
+	["Config_Section_2"]: async function (Parent, This_Setting, Props) {
 		for (let [Title, Property] of Object.entries(Props)) {
 			if (Title == "Update_Config") {
 				continue;
