@@ -1,0 +1,7 @@
+{
+  "type": "Checkbox",
+  "id": "Test_Checkbox",
+  "name": "Some Checkbox",
+  "description": "",
+  "value": false
+}

@@ -1,0 +1,8 @@
+{
+  "type": "Color",
+  "id": "Test_Color",
+  "name": "Just Color Selector",
+  "description": "",
+  "show_alpha_slider": true,
+  "value": "#FF0000FF"
+}

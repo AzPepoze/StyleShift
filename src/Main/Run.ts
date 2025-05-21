@@ -1,23 +1,19 @@
-import { Create_Error, Create_Notification } from "./Build-in_Functions/Extension_Functions";
+import { Create_Error, Create_Notification } from "./buid-in-functions/extension";
 import {
 	Get_Current_Domain,
 	Get_Current_URL_Parameters,
 	GetDocumentBody,
 	ReArrange_Selector,
-} from "./Build-in_Functions/Normal_Functions";
-import { Run_Text_Script, Update_StyleShift_Functions_List } from "./Core/Core_Functions";
-import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./Core/Save";
-import { SetUp_Setting_Function } from "./Settings/Settings_Function";
-import { Create_StyleSheet_Holder } from "./Settings/Settings_StyleSheet";
-import {
-	Get_ALL_StyleShift_Items,
-	Get_ALL_StyleShift_Settings,
-	Update_StyleShift_Items,
-} from "./Settings/StyleShift_Items";
-import * as Global from "./Transfer_Functions/Extension_Functions_Loader";
-import { Extension_Settings_UI } from "./UI/Extension_Setting_UI";
-import { Update_All_UI } from "./UI/Extension_UI";
-import { Toggle_Customize } from "./UI/Highlight_UI";
+} from "./buid-in-functions/normal";
+import { Run_Text_Script, Update_StyleShift_Functions_List } from "./core/extension";
+import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./core/save";
+import { SetUp_Setting_Function } from "./settings/funtions";
+import { Create_StyleSheet_Holder } from "./settings/style-sheet";
+import { Get_ALL_StyleShift_Items, Get_ALL_StyleShift_Settings, Update_StyleShift_Items } from "./settings/items";
+import * as Global from "./communication/extension";
+import { Update_All_UI } from "./ui/extension";
+import { Extension_Settings_UI } from "./ui/extension-settings";
+import { Toggle_Customize } from "./ui/highlight";
 
 //-------------------------------------------------------
 // Global Variables & Constants

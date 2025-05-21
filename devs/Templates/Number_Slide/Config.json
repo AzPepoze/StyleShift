@@ -1,0 +1,10 @@
+{
+  "type": "Number_Slide",
+  "id": "Test_Number_Slide",
+  "name": "Just Number Slide",
+  "description": "",
+  "min": 0,
+  "max": 100,
+  "step": 1,
+  "value": 50
+}

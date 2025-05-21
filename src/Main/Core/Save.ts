@@ -1,8 +1,8 @@
-import { Create_Error } from "../Build-in_Functions/Extension_Functions";
-import { sleep } from "../Build-in_Functions/Normal_Functions";
-import { Save_Name } from "../Run";
-import { Get_Settings_List, Update_StyleShift_Items } from "../Settings/StyleShift_Items";
-import { Show_Confirm } from "../UI/Extension_UI";
+import { Create_Error } from "../buid-in-functions/extension";
+import { sleep } from "../buid-in-functions/normal";
+import { Save_Name } from "../run";
+import { Get_Settings_List, Update_StyleShift_Items } from "../settings/items";
+import { Show_Confirm } from "../ui/extension";
 
 //Save
 export let Saved_Data = {};

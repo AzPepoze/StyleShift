@@ -23,15 +23,15 @@
 		{
 			"matches": ["<all_urls>"],
 			"all_frames": true,
-			"js": ["StyleShift.js"],
-			"css": ["Style.css"],
+			"js": ["styleshift.js"],
+			"css": ["style.css"],
 			"run_at": "document_start"
 		}
 	],
 
 	"background": {
-		"service_worker": "Background.js",
-		"scripts": ["Background.js"]
+		"service_worker": "background.js",
+		"scripts": ["background.js"]
 	},
 	"commands": {
 		"Enable": {

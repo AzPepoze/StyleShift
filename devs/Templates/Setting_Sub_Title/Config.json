@@ -1,0 +1,8 @@
+{
+  "type": "Setting_Sub_Title",
+  "id": "Test_Sub_Title",
+  "text": "Test Setting Sub Title",
+  "text_align": "left",
+  "color": "#ffffff",
+  "font_size": 14
+}

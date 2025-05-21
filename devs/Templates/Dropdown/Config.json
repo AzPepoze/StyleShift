@@ -1,0 +1,12 @@
+{
+  "type": "Dropdown",
+  "id": "Test_Dropdown",
+  "name": "Just Dropdown",
+  "description": "",
+  "value": "Item_1",
+  "options": {
+    "Item_1": {},
+    "Item_2": {},
+    "Item_3": {}
+  }
+}
