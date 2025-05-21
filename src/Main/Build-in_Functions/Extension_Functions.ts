@@ -7,7 +7,7 @@ import { Hide_StyleSheet, Show_StyleSheet } from "../Settings/Settings_StyleShee
 import { Category, Setting } from "../types/Store_Data";
 import { Create_StyleShift_Window, Notification_Container, Run_Animation } from "../UI/Extension_UI";
 import { Settings_UI } from "../UI/Settings/Settings_UI_Components";
-import { Create_UniqueID, deepClone, Download_File, sleep } from "./Normal_Functions";
+import { Create_UniqueID, deepClone, Download_File, Get_Current_Domain, sleep } from "./Normal_Functions";
 
 /*
 -------------------------------------------------------
@@ -366,51 +366,46 @@ export function Export_StyleShift_JSON_Text() {
 export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
 	console.log("Data", StyleShift_Data);
 
-	try {
-		const zip = new JSzip();
+	const zip = new JSzip();
 
-		for (const [Category_index, This_Category] of StyleShift_Data.entries()) {
-			const Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
-			const Category_Folder = zip.folder(`${Category_index} - ${Renamed_Category}`);
+	for (const [Category_index, This_Category] of StyleShift_Data.entries()) {
+		const Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
+		const Category_Folder = zip.folder(`${Category_index} - ${Renamed_Category}`);
 
-			const Category_Config = {};
+		const Category_Config = {};
 
-			for (const [key, value] of Object.entries(StyleShift_Category_List)) {
-				if (key !== "Settings") {
-					if (This_Category[key]) {
-						Category_Config[key] = This_Category[key];
-					} else {
-						Category_Config[key] = value;
-					}
-				}
-			}
-
-			Category_Folder.file("Config.json", JSON.stringify(Category_Config, null, 2));
-
-			if (This_Category.Settings) {
-				for (const [Setting_index, Original_Setting] of This_Category.Settings.entries()) {
-					const Renamed_Setting_Name = (Original_Setting.name || Original_Setting.id).replace(
-						/\/|\n/g,
-						"_"
-					);
-
-					const This_Setting = deepClone(Original_Setting);
-					const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting_Name}`);
-
-					await Convert_To_Export_Setting(This_Setting, async (File_Name, File_Data) => {
-						Settings_Folder.file(File_Name, File_Data);
-					});
-
-					Settings_Folder.file("Config.json", JSON.stringify(This_Setting, null, 2));
+		for (const [key, value] of Object.entries(StyleShift_Category_List)) {
+			if (key !== "Settings") {
+				if (This_Category[key]) {
+					Category_Config[key] = This_Category[key];
+				} else {
+					Category_Config[key] = value;
 				}
 			}
 		}
 
-		const zipBlob = await zip.generateAsync({ type: "blob" });
-		Download_File(zipBlob, zipFileName);
-	} catch (error) {
-		console.error("Error creating structured ZIP file:", error);
+		Category_Folder.file("Config.json", JSON.stringify(Category_Config, null, 2));
+
+		if (This_Category.Settings) {
+			for (const [Setting_index, Original_Setting] of This_Category.Settings.entries()) {
+				console.log(Original_Setting);
+
+				const Renamed_Setting_Name = (Original_Setting.name || Original_Setting.id).replace(/\/|\n/g, "_");
+
+				const This_Setting = deepClone(Original_Setting);
+				const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting_Name}`);
+
+				await Convert_To_Export_Setting(This_Setting, async (File_Name, File_Data) => {
+					Settings_Folder.file(File_Name, File_Data);
+				});
+
+				Settings_Folder.file("Config.json", JSON.stringify(This_Setting, null, 2));
+			}
+		}
 	}
+
+	const zipBlob = await zip.generateAsync({ type: "blob" });
+	Download_File(zipBlob, zipFileName);
 }
 
 /**
@@ -535,6 +530,19 @@ export function Dynamic_Get_Element(Child: Object | any) {
 	}
 
 	return Child;
+}
+
+/**
+ * Opens the StyleShift settings page.
+ *
+ * This function opens the StyleShift settings page in a new tab by calling
+ * window.open with the URL of the settings page.
+ *
+ * @example
+ * Open_Setting_Page();
+ */
+export function Open_Setting_Page() {
+	window.open(chrome.runtime.getURL(`Setting_Page/StyleShift.html?Save_Domain=${Get_Current_Domain()}`), "_blank");
 }
 
 /*

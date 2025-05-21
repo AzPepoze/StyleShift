@@ -2,7 +2,7 @@ import * as StyleShift_Functions from "./Build-in_Functions/Extension_Functions"
 import { sleep } from "./Build-in_Functions/Normal_Functions";
 import { Category } from "./types/Store_Data";
 
-let Setting_Page_Items: Category[] = [
+let Dev_Only_Items: Category[] = [
 	{
 		Category: "↕️ Import / Export Theme",
 		Settings: [
@@ -29,8 +29,9 @@ let Setting_Page_Items: Category[] = [
 					});
 
 					try {
-						StyleShift_Functions["Export_StyleShift_Zip"](
-							JSON.parse(await StyleShift_Functions["Export_StyleShift_JSON_Text"]()),
+						await StyleShift_Functions["Export_StyleShift_Zip"](
+							JSON.parse(await StyleShift_Functions["Export_StyleShift_JSON_Text"]())
+								.Custom_StyleShift_Items,
 							"Test.StyleShift.zip"
 						);
 
@@ -66,7 +67,7 @@ let Setting_Page_Items: Category[] = [
 						Timeout: -1,
 					});
 					try {
-						StyleShift_Functions["Import_StyleShift_Zip"](
+						await StyleShift_Functions["Import_StyleShift_Zip"](
 							await StyleShift_Functions["Get_File"](".StyleShift.zip")
 						);
 
@@ -91,6 +92,6 @@ let Setting_Page_Items: Category[] = [
 	},
 ];
 
-export function Get_Setting_Page_Only_Items() {
-	return Setting_Page_Items;
+export function Get_Dev_Only_Items() {
+	return Dev_Only_Items;
 }

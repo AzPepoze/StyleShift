@@ -1,4 +1,3 @@
-
 import * as jszip from "jszip";
 
 function Run() {

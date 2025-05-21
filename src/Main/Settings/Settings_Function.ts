@@ -123,7 +123,7 @@ let Settings_Funcion = {
 			if (This_Setting.constant_css) {
 				StyleSheet.textContent += This_Setting.constant_css;
 			}
-			if (Current_Dropdown.enable_css) {
+			if (Current_Dropdown && Current_Dropdown.enable_css) {
 				StyleSheet.textContent += Current_Dropdown.enable_css;
 			}
 		}
@@ -198,6 +198,18 @@ let Settings_Funcion = {
 
 		Update_Function();
 
+		return Update_Function;
+	},
+	["Combine_Settings"]: async function (This_Setting: Partial<Extract<Setting, { type: "Combine_Settings" }>>) {
+		let StyleSheet = Create_StyleSheet(This_Setting.id);
+
+		async function Update_Function() {
+			if (StyleSheet && This_Setting.update_function) {
+				StyleSheet.textContent = This_Setting.update_function;
+			}
+		}
+
+		Update_Function();
 		return Update_Function;
 	},
 };
