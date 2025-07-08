@@ -1,6 +1,6 @@
 import { Create_Error, Create_Notification } from "../buid-in-functions/extension";
 import { sleep } from "../buid-in-functions/normal";
-import { Update_All, In_Setting_Page } from "../run";
+import { Update_All, In_Setting_Page, isFirefox } from "../run";
 import { color_obj } from "../types/store";
 import { Save_All } from "./save";
 
@@ -255,39 +255,43 @@ export async function Load_Developer_Modules() {
 
 	try {
 		Loading_UI.Set_Content("Preparing : Jzip (Export theme as zip)");
-		JSzip = (await import(chrome.runtime.getURL("modules/jszip.js"))).default;
+		JSzip = (await import(chrome.runtime.getURL("modules/jszip.js"))).default.default;
 
-		// if (!isFirefox || In_Setting_Page) {
-		Loading_UI.Set_Content("Preparing : Monaco editor (Code editor)");
+		console.log("JSzip:", JSzip);
 
-		const MonacoModule = await import(chrome.runtime.getURL("modules/monaco.js"));
+		if (!isFirefox || In_Setting_Page) {
+			Loading_UI.Set_Content("Preparing : Monaco editor (Code editor)");
 
-		console.log(MonacoModule);
+			const MonacoModule = await import(chrome.runtime.getURL("modules/monaco.js"));
 
-		Monaco = MonacoModule.Monaco;
-		Monaco_Themes = MonacoModule.Monaco_Themes;
+			console.log(MonacoModule);
 
-		for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
-			if (Theme_Name == "themelist") continue;
-			Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
+			Monaco = MonacoModule.Monaco;
+			Monaco_Themes = MonacoModule.Monaco_Themes;
+
+			for (const [Theme_Name, Theme_Content] of Object.entries(Monaco_Themes) as [string, any][]) {
+				if (Theme_Name == "themelist") continue;
+				Monaco.editor.defineTheme(Theme_Name.replace(/[^a-zA-Z0-9]|_|-/g, ""), Theme_Content);
+			}
+
+			Monaco.editor.setTheme("Dracula");
+
+			Loading_UI.Set_Icon("✅");
+			Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
+			Loading_UI.Set_Content("");
+		} else {
+			Loading_UI.Set_Icon("⚠️");
+			Loading_UI.Set_Title("StyleShift - Can't Monaco editor (Code editor)");
+			Loading_UI.Set_Content(
+				"If you want to use code editor, please consider enter setting page.\n(Firefox security issue!)"
+			);
 		}
-
-		Monaco.editor.setTheme("Dracula");
-
-		Loading_UI.Set_Icon("✅");
-		Loading_UI.Set_Title("StyleShift - Loaded Developer Modules");
-		Loading_UI.Set_Content("");
-		// } else {
-		// 	Loading_UI.Set_Icon("⚠️");
-		// 	Loading_UI.Set_Title("StyleShift - Can't Monaco editor (Code editor)");
-		// 	Loading_UI.Set_Content(
-		// 		"If you want to use code editor, please consider enter setting page.\n(Firefox security issue!)"
-		// 	);
-		// }
 
 		setTimeout(() => {
 			Loading_UI.Close();
 		}, 4000);
+
+		Loaded_Developer_Modules = true;
 	} catch (error) {
 		console.log(error);
 		Loading_UI.Close();
@@ -305,6 +309,10 @@ export function Color_OBJ_to_HEX({ HEX, Alpha }: color_obj): string {
 }
 
 export function HEX_to_Color_OBJ(hex: string): { HEX: string; Alpha: number } {
+	if (typeof hex !== "string") {
+		console.warn("HEX_to_Color_OBJ received non-string hex value:", hex);
+		return { HEX: "#000000", Alpha: 100 }; // Return a default value or handle error appropriately
+	}
 	const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
 	const rgbHex = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex;
 	const alphaHex = cleanHex.length === 8 ? cleanHex.slice(6) : "FF";
@@ -314,19 +322,3 @@ export function HEX_to_Color_OBJ(hex: string): { HEX: string; Alpha: number } {
 		Alpha: Math.round((parseInt(alphaHex, 16) / 255) * 100),
 	};
 }
-
-//-------------------------------------------------------
-// [Handle Toolbar Icon Click]
-//-------------------------------------------------------
-chrome.action.onClicked.addListener((tab) => {
-  const settingsUrl = chrome.runtime.getURL("setting/styleshift.html");
-  chrome.tabs.query({ url: settingsUrl }, (tabs) => {
-    if (tabs.length > 0) {
-      // If the tab is already open, focus it
-      chrome.tabs.update(tabs[0].id, { active: true });
-    } else {
-      // Otherwise, open a new tab
-      chrome.tabs.create({ url: settingsUrl });
-    }
-  });
-});

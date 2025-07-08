@@ -7,7 +7,7 @@ import {
 } from "./buid-in-functions/normal";
 import { Run_Text_Script, Update_StyleShift_Functions_List } from "./core/extension";
 import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./core/save";
-import { SetUp_Setting_Function } from "./settings/funtions";
+import { SetUp_Setting_Function } from "./settings/functions";
 import { Create_StyleSheet_Holder } from "./settings/style-sheet";
 import { Get_ALL_StyleShift_Items, Get_ALL_StyleShift_Settings, Update_StyleShift_Items } from "./settings/items";
 import * as Global from "./communication/extension";

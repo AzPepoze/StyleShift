@@ -15,7 +15,7 @@ import {
 	Run_Text_Script,
 } from "../../../core/extension";
 import { Load_Any, Load, Load_Setting } from "../../../core/save";
-import { Update_Setting_Function, Remove_On_Setting_Update, On_Setting_Update } from "../../../settings/funtions";
+import { Update_Setting_Function, Remove_On_Setting_Update, On_Setting_Update } from "../../../settings/functions";
 import { Setting } from "../../../types/store";
 import { Settings_UI, Set_And_Save } from "../setting-components";
 import { Create_Config_UI_Function } from "../settings";

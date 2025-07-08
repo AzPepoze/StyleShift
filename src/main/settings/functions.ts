@@ -131,9 +131,9 @@ let Settings_Funcion = {
 	["Color"]: async function (This_Setting: Partial<Extract<Setting, { type: "Color" }>>) {
 		let StyleSheet: HTMLElement;
 
-		if (This_Setting.constant_css) {
-			StyleSheet = Create_StyleSheet(This_Setting.id);
-		}
+		// if (This_Setting.constant_css) {
+		StyleSheet = Create_StyleSheet(This_Setting.id);
+		// }
 
 		if (This_Setting.setup_function) {
 			Run_Text_Script_From_Setting(This_Setting, "setup_function");

@@ -10,6 +10,4 @@ import * as jszip from "jszip";
 
 // Run();
 
-const test = { Test: "YOY" };
-
 export default jszip;

@@ -4,7 +4,7 @@ import { Load, Save_Any } from "../core/save";
 import { Get_Default_Items } from "../items-default";
 import { Update_All } from "../run";
 import { Category, Setting } from "../types/store";
-import { SetUp_Setting_Function } from "./funtions";
+import { SetUp_Setting_Function } from "./functions";
 
 let Highlight_Colors = [`255, 109, 109`, `167, 242, 255`, `255, 167, 248`, `188, 167, 255`, `255, 241, 167`];
 

@@ -13,9 +13,9 @@
 		"16": "icon/16.png"
 	},
 	"options_page": "setting/styleshift.html",
-    "action": {
-        "default_title": "StyleShift Settings"
-    },
+	"action": {
+		"default_title": "StyleShift Settings"
+	},
 	"web_accessible_resources": [
 		{
 			"resources": ["*"],
@@ -27,7 +27,7 @@
 			"matches": ["<all_urls>"],
 			"all_frames": true,
 			"js": ["styleshift.js"],
-			"css": ["styleshift.css"],
+			"css": ["style.css"],
 			"run_at": "document_start"
 		}
 	],

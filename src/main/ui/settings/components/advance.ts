@@ -1,7 +1,8 @@
 import { Apply_Drag } from "../../../buid-in-functions/normal";
 import { Monaco, Is_Safe_Code } from "../../../core/extension";
 import { Save_All } from "../../../core/save";
-import { Update_Setting_Function } from "../../../settings/funtions";
+import { isFirefox, In_Setting_Page } from "../../../run";
+import { Update_Setting_Function } from "../../../settings/functions";
 import { Category } from "../../../types/store";
 import { Show_Window_Animation, Hide_Window_Animation, Animation_Time } from "../../extension";
 import { Settings_UI } from "../setting-components";
@@ -136,42 +137,42 @@ export const Advance_Setting_UI = {
 			}
 		};
 
-		// if (!isFirefox || In_Setting_Page) {
-		const Editor_Model = Monaco.editor.createModel(OBJ[key], language);
+		if (!isFirefox || In_Setting_Page) {
+			const Editor_Model = Monaco.editor.createModel(OBJ[key], language);
 
-		const Frame = document.createElement("div");
-		Frame.style.width = "-webkit-fill-available";
-		Frame.style.height = height + "px";
-		Frame.style.position = "relative";
-		Frame.className += " STYLESHIFT-Code-Editor";
-		Parent.append(Frame);
+			const Frame = document.createElement("div");
+			Frame.style.width = "-webkit-fill-available";
+			Frame.style.height = height + "px";
+			Frame.style.position = "relative";
+			Frame.className += " STYLESHIFT-Code-Editor";
+			Parent.append(Frame);
 
-		Code_Editor = Monaco.editor.create(Frame, {
-			model: Editor_Model,
-			automaticLayout: true,
-		});
+			Code_Editor = Monaco.editor.create(Frame, {
+				model: Editor_Model,
+				automaticLayout: true,
+			});
 
-		Code_Editor.onKeyDown(function () {
-			OnChange(Code_Editor.getValue());
-		});
+			Code_Editor.onKeyDown(function () {
+				OnChange(Code_Editor.getValue());
+			});
 
-		Code_Editor.onDidBlurEditorWidget(async function () {
-			let Value = Code_Editor.getValue();
-			if (ReArrange_Value) {
-				Value = await ReArrange_Value(Value);
-				Code_Editor.setValue(Value);
-			}
-			OnChange(Value);
-		});
-		// } else {
-		// 	Code_Editor = Settings_UI["Text_Editor"](OBJ, key);
-		// 	Code_Editor.Text_Editor.style.height = height + "px";
-		// 	Parent.append(Code_Editor.Text_Editor);
+			Code_Editor.onDidBlurEditorWidget(async function () {
+				let Value = Code_Editor.getValue();
+				if (ReArrange_Value) {
+					Value = await ReArrange_Value(Value);
+					Code_Editor.setValue(Value);
+				}
+				OnChange(Value);
+			});
+		} else {
+			Code_Editor = Settings_UI["Text_Editor"](OBJ, key);
+			Code_Editor.Text_Editor.style.height = height + "px";
+			Parent.append(Code_Editor.Text_Editor);
 
-		// 	Code_Editor.OnChange(async function (Value) {
-		// 		OnChange(Value);
-		// 	});
-		// }
+			Code_Editor.OnChange(async function (Value) {
+				OnChange(Value);
+			});
+		}
 
 		return {
 			OnChange: function (callback) {

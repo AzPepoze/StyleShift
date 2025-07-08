@@ -11,6 +11,6 @@
 		"strictNullChecks": false,
 		"noImplicitAny": false
 	},
-	"include": ["src/**/*", "dist/Background.js"],
+	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules"]
 }

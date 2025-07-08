@@ -369,7 +369,7 @@ export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
 	const zip = new JSzip();
 
 	for (const [Category_index, This_Category] of StyleShift_Data.entries()) {
-		const Renamed_Category = This_Category.Category.replace(/\/|\n/g, "_");
+		const Renamed_Category = (This_Category.Category || "Untitled Category").replace(/\/|\n/g, "_");
 		const Category_Folder = zip.folder(`${Category_index} - ${Renamed_Category}`);
 
 		const Category_Config = {};
@@ -390,7 +390,7 @@ export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
 			for (const [Setting_index, Original_Setting] of This_Category.Settings.entries()) {
 				console.log(Original_Setting);
 
-				const Renamed_Setting_Name = (Original_Setting.name || Original_Setting.id).replace(/\/|\n/g, "_");
+				const Renamed_Setting_Name = ((Original_Setting.name || Original_Setting.id) || "Untitled Setting").replace(/\/|\n/g, "_");
 
 				const This_Setting = deepClone(Original_Setting);
 				const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting_Name}`);
