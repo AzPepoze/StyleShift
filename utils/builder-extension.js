@@ -115,10 +115,10 @@ async function build() {
 		const tempPath = path.join(__dirname, "../temp");
 
 		// Copy extension files
-		fs.copySync(path.join(__dirname, "../src/Extension"), buildPath, {
+		fs.copySync(path.join(__dirname, "../src/extension"), buildPath, {
 			filter: (src) => {
-				const relativePath = path.relative(path.join(__dirname, "../src/Extension"), src);
-				return !relativePath.startsWith("External_Modules");
+				const relativePath = path.relative(path.join(__dirname, "../src/extension"), src);
+				return !relativePath.startsWith("modules");
 			},
 		});
 
@@ -126,9 +126,12 @@ async function build() {
 		await esbuild.build({
 			entryPoints: [path.join(__dirname, "../src/main/run.ts")],
 			bundle: true,
-			outfile: path.join(buildPath, "StyleShift.js"),
+			outfile: path.join(buildPath, "styleshift.js"),
 			platform: "browser",
 			minify: isProduction,
+			loader: {
+				".ttf": "file",
+			},
 		});
 
 		// Process functions

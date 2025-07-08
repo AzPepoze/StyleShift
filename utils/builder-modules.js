@@ -26,7 +26,7 @@ const workerEntryPoints = [
 	await esbuild.build({
 		entryPoints: [path.join(__dirname, "../src/extension/modules/monaco.js")],
 		bundle: true,
-		format: "iife",
+		format: "esm",
 		outfile: path.join(__dirname, "../out/build/modules/monaco.js"),
 		minify: false,
 		loader: {
@@ -37,7 +37,7 @@ const workerEntryPoints = [
 	await esbuild.build({
 		entryPoints: [path.join(__dirname, "../src/extension/modules/jszip.js")],
 		bundle: true,
-		format: "iife",
+		format: "esm",
 		outfile: path.join(__dirname, "../out/build/modules/jszip.js"),
 		minify: true,
 	});

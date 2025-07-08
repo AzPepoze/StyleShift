@@ -1,0 +1,476 @@
+{
+	"Custom_StyleShift_Items": [
+		{
+			"Category": "⚙️ Extention's settings",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnableButton",
+					"name": "Enable Extension",
+					"value": true,
+					"description": "Master switch to enable or disable all Newtube styles."
+				},
+				{
+					"type": "Checkbox",
+					"id": "SettingBlur",
+					"name": "Setting Background transparent",
+					"value": true,
+					"enable_css": "#NEWTUBEBG {\n  background: linear-gradient(-45deg, rgba(10, 10, 10, 0.8), rgba(43, 43, 43, 0.8)) !important;\n}"
+				},
+				{
+					"type": "Text",
+					"html": "If your computer is slow. You should enable 'Use image upload api' button for saving your computer. (/≧▽≦)/<br><br>If not please disable it to save your internet. ( •̀ ω •́ )✧<br><br>Thanks you imgbb.com for free api image upload! ♪(´▽｀)"
+				},
+				{
+					"type": "Checkbox",
+					"id": "API",
+					"name": "Use image upload api (imgbb.com)",
+					"value": false
+				},
+				{
+					"type": "Checkbox",
+					"id": "CheckStatic",
+					"name": "Check Static video (for Background VDO & Remove black bars)",
+					"value": false
+				}
+			]
+		},
+		{
+			"Category": "🌈 Color/Theme",
+			"Settings": [
+				{
+					"type": "Color",
+					"id": "Theme",
+					"name": "Main Theme color",
+					"value": "#659aff",
+					"var_css": "--NewtubeTheme"
+				},
+				{
+					"type": "Color",
+					"id": "ThemeThr",
+					"name": "Transparent things theme color",
+					"value": "rgba(101, 154, 255, 0.2)",
+					"var_css": "--theme-third"
+				},
+				{
+					"type": "Color",
+					"id": "ThemeFort",
+					"name": "Other theme color",
+					"value": "rgba(101, 154, 255, 0.2)",
+					"var_css": "--theme-fort"
+				},
+				{
+					"type": "Color",
+					"id": "LeftBar",
+					"name": "Left sidebar color",
+					"value": "rgba(0, 0, 0, 0)",
+					"var_css": "--LeftBar"
+				},
+				{
+					"type": "Color",
+					"id": "Text",
+					"name": "Main text color",
+					"value": "#ffffff",
+					"var_css": "--text-color"
+				},
+				{
+					"type": "Color",
+					"id": "NdText",
+					"name": "Second text color",
+					"value": "#c4c4c4",
+					"var_css": "--nd-text-color"
+				},
+				{
+					"type": "Color",
+					"id": "LinkColor",
+					"name": "(Link) Text color",
+					"value": "#5797ff",
+					"var_css": "--LinkColor"
+				},
+				{
+					"type": "Color",
+					"id": "TIMETEXT",
+					"name": "Time text color",
+					"value": "#ffffff",
+					"var_css": "--TIMETEXT"
+				},
+				{
+					"type": "Color",
+					"id": "Chanel_Color",
+					"name": "Chanel name color",
+					"value": "#ffffff",
+					"var_css": "--Chanel_Color"
+				},
+				{
+					"type": "Checkbox",
+					"id": "Theme_by_video",
+					"name": "Theme colors base on video thumbnail",
+					"value": false,
+					"description": "Dynamically changes theme based on the video thumbnail. (This is a BETA feature and requires custom function execution in StyleShift)",
+					"enable_function": "var WhenChangeVideo_Update_Theme_by_video; async function Start_Theme_by_video() { if (!WhenChangeVideo_Update_Theme_by_video) { WhenChangeVideo_Update_Theme_by_video = WhenYoutubeChangePage(function () { update(); }); } } Start_Theme_by_video();",
+					"disable_function": "async function Stop_Theme_by_video() { if (WhenChangeVideo_Update_Theme_by_video) { WhenChangeVideo_Update_Theme_by_video.Stop(); WhenChangeVideo_Update_Theme_by_video = null; } } Stop_Theme_by_video();"
+				}
+			]
+		},
+		{
+			"Category": "📺 Video",
+			"Settings": [
+				{
+					"type": "Number_Slide",
+					"id": "PlayerEdge",
+					"name": "Round edges amount",
+					"value": 20,
+					"var_css": "--theme-radius-big",
+					"unit": "px"
+				},
+				{
+					"type": "Checkbox",
+					"id": "VdoAnim",
+					"name": "Enable Changing Video transition",
+					"value": true,
+					"enable_css": "div.html5-video-player:not(.ytp-fullscreen):not(.ytp-embed) .html5-video-container {\n  transition: all 1s, background 0.1s;\n  top: 0px !important;\n}\n\ndiv.ended-mode .html5-video-container,\ndiv.unstarted-mode:not(.ytp-small-mode) .html5-video-container {\n  transform: scale(0.5);\n  opacity: 0 !important;\n}"
+				},
+				{
+					"type": "Color",
+					"id": "EndBG",
+					"name": "End of video chanel hover background color",
+					"value": "rgba(0, 0, 0, 0.5)",
+					"var_css": "--things-end-on-video"
+				},
+				{
+					"type": "Checkbox",
+					"id": "CenterUD",
+					"name": "(Under Video) Move tittle to the center",
+					"value": true,
+					"enable_css": "#title.ytd-watch-metadata, #container.ytd-video-primary-info-renderer {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  margin-block: 30px;\n}\n\nytd-watch-metadata.ytd-watch-flexy {\n  display: flex;\n  flex-direction: column;\n}\n\nh1.ytd-watch-metadata {\n  text-align: center;\n}"
+				},
+				{
+					"type": "Checkbox",
+					"id": "AutoTheater",
+					"name": "Auto Enter Theater Mode",
+					"value": false,
+					"enable_function": "async function AutoTheaterMode() { if (Get_Value(\"AutoTheater\") == true) { let GetTheaterButton = await WaitForElement(`.ytp-size-button`); if (GetTheaterButton) { let IsPlayerInNormalMode = await WaitForElement(`#player .html5-video-player`); if (IsPlayerInNormalMode) { GetTheaterButton.click(); await sleep(1000); IsPlayerInNormalMode = await WaitForElement(`#player .html5-video-player`); if (IsPlayerInNormalMode) { AutoTheaterMode(); } } } } } AutoTheaterMode();"
+				},
+				{
+					"type": "Checkbox",
+					"id": "AutoPIP",
+					"name": "Auto Picture In Picture mode",
+					"value": true,
+					"description": "Please click anywhere In page after you back to page (Security problem)"
+				},
+				{
+					"type": "Checkbox",
+					"id": "AutoEXPIP",
+					"name": "Auto exit Picture In Picture mode",
+					"value": true
+				},
+				{
+					"type": "Number_Slide",
+					"id": "BelowSpace",
+					"name": "Space at Under of video",
+					"value": 0,
+					"var_css": "--BelowSpace",
+					"unit": "px"
+				},
+				{
+					"type": "Checkbox",
+					"id": "RemoveAmbient",
+					"name": "Auto Remove YouTube's Ambient Mode",
+					"value": true,
+					"enable_function": "var RunningRemoveDefaultAmbient = false; function StartRemoveDefaultAmbient() { if (RunningRemoveDefaultAmbient) return; RunningRemoveDefaultAmbient = true; async function RemoveDefaultAmbient() { if (document.getElementById(\"cinematics\")) { document.getElementById(\"cinematics\").remove(); RunningRemoveDefaultAmbient = false; } else { await sleep(100); RemoveDefaultAmbient(); } } RemoveDefaultAmbient(); } StartRemoveDefaultAmbient();",
+					"disable_function": ""
+				}
+			]
+		},
+		{
+			"Category": "🎚️ Video control panel",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "ControlUnderVDO",
+					"name": "Move to under of video",
+					"value": true
+				},
+				{
+					"type": "Number_Slide",
+					"id": "MediaSpace",
+					"name": "Under video distance",
+					"value": 70
+				},
+				{
+					"type": "Combine_Settings",
+					"id": "SetMediaSpace",
+					"sync_id": ["ControlUnderVDO", "MediaSpace"],
+					"update_function": "if (Get_Value('ControlUnderVDO')) { return `#player{ --Media-Space: ${Get_Value('MediaSpace')}px; }`; } else { return ''; }"
+				},
+				{
+					"type": "Checkbox",
+					"id": "AutohideBar",
+					"name": "Autohide (If you enabled Under VDO)",
+					"value": true,
+					"disable_css": "div.html5-video-player:not(.ytp-fullscreen):not(.ytp-embed).ytp-autohide .ytp-gradient-bottom,\ndiv.html5-video-player:not(.ytp-fullscreen):not(.ytp-embed).ytp-autohide .ytp-chrome-bottom {\n  margin-left: 0px !important;\n  opacity: 1 !important;\n}\n\ndiv.html5-video-player:not(.ytp-fullscreen):not(.ytp-embed):not(.unstarted-mode).ytp-autohide .ytp-gradient-bottom {\n  width: 100% !important;\n}"
+				},
+				{
+					"type": "Checkbox",
+					"id": "CenterMedia",
+					"name": "Move to center",
+					"value": true,
+					"enable_css": ".ytp-chrome-controls {\n  display: flex !important;\n  flex-direction: row !important;\n  justify-content: center !important;\n}\n\n.ytp-left-controls,\n.ytp-chapter-title.ytp-button,\n.ytp-chapter-container {\n  display: contents !important;\n}\n\n.ytp-big-mode .ytp-chrome-controls .ytp-fullerscreen-edu-button.ytp-button {\n  display: none !important;\n}"
+				},
+				{
+					"type": "Color",
+					"id": "MediaBG",
+					"name": "Background color",
+					"value": "rgba(0, 0, 0, 0.5)",
+					"var_css": "--in-player-bg-color"
+				},
+				{
+					"type": "Color",
+					"id": "VDOTEXT",
+					"name": "Text color",
+					"value": "#ffffff",
+					"var_css": "--VDOTEXT"
+				},
+				{
+					"type": "Color",
+					"id": "HBT",
+					"name": "Button hover color",
+					"value": "#ffffff",
+					"var_css": "--HBT"
+				},
+				{
+					"type": "Checkbox",
+					"id": "BottomG",
+					"name": "Remove default background gradient",
+					"value": false,
+					"enable_css": ".ytp-gradient-bottom {\n  background-image: none !important;\n}"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "MediaH",
+					"name": "Background height",
+					"value": 65,
+					"var_css": "--MediaH",
+					"unit": "px"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "MediaHFull",
+					"name": "(Full screen) Background height",
+					"value": 70,
+					"var_css": "--MediaHFull",
+					"unit": "px"
+				},
+				{
+					"type": "Checkbox",
+					"id": "MediaBlur",
+					"name": "Blur background",
+					"value": true,
+					"enable_css": ".ytp-gradient-bottom {\n  backdrop-filter: blur(var(--blur-amount)) !important;\n}"
+				}
+			]
+		},
+		{
+			"Category": "🔳 Borders _ Shadows",
+			"Settings": [
+				{
+					"type": "Dropdown",
+					"id": "OutOrSha",
+					"name": "Borders or Shadows",
+					"value": "Sha",
+					"options": {
+						"Borders": {
+							"enable_css": "a.thumbnail > .ytcd-basic-item-large-image, ytcp-thumbnail-with-title, ytd-playlist-thumbnail, ytd-thumbnail, #thumbnail, .thumbnail-container.ytd-notification-renderer, yt-img-shadow.ytd-channel-renderer, #author-thumbnail.ytd-commesimplebox-renderer, .style-scope.ytd-commerenderer.no-transition, div.html5-video-player:not(.ytp-fullscreen) .html5-video-container, .ytp-preview:not(.ytp-text-detail) span.ytp-tooltip-text-no-title, ytd-thumbnail-overlay-side-panel-renderer, ytd-thumbnail-overlay-bottom-panel-renderer, .ytp-popup.ytp-settings-menu, .iv-drawer, .ytp-cards-teaser-box, .miniplayer.ytd-miniplayer, .ytp-flyout-cta .ytp-flyout-cta-body, #ytp-ad-image, .ytp-ad-preview-container, .ytp-ad-message-container, #guide-content, .ytp-ad-skip-button.ytp-button, #banner > img, #icon > img, #action, .ytp-show-tiles .ytp-videowall-still, #tabs-container, yt-confirm-dialog-renderer[dialog][dialog][dialog], .ytp-ce-element.ytp-ce-elemeshow, #contentWrapper.tp-yt-iron-dropdown > *, .ytp-tooltip-bg, .skeleton-bg-color.ytd-ghost-grid-renderer {\n  border-collapse: separate;\n  outline: solid !important;\n  outline-color: var(--border-color) !important;\n  outline-width: var(--border-width) !important;\n}\n\n.ytp-popup.ytp-settings-menu, #NEWTUBEBG, .NEWTUBEMAIN {\n  border-collapse: separate;\n  outline: solid !important;\n  outline-color: var(--border-color) !important;\n  outline-width: var(--player-bg-border-width) !important;\n}"
+						},
+						"Shadows": {
+							"enable_css": "a.thumbnail > .ytcd-basic-item-large-image, ytcp-thumbnail-with-title, ytd-playlist-thumbnail, ytd-thumbnail, #thumbnail, .thumbnail-container.ytd-notification-renderer, yt-img-shadow.ytd-channel-renderer, #author-thumbnail.ytd-commesimplebox-renderer, .style-scope.ytd-commerenderer.no-transition, div.html5-video-player:not(.ytp-fullscreen) .html5-video-container, .ytp-preview:not(.ytp-text-detail) span.ytp-tooltip-text-no-title, ytd-thumbnail-overlay-side-panel-renderer, ytd-thumbnail-overlay-bottom-panel-renderer, .ytp-popup.ytp-settings-menu, .iv-drawer, .ytp-cards-teaser-box, .miniplayer.ytd-miniplayer, .ytp-flyout-cta .ytp-flyout-cta-body, #ytp-ad-image, .ytp-ad-preview-container, .ytp-ad-message-container, #guide-content, .ytp-ad-skip-button.ytp-button, #banner > img, #icon > img, #action, .ytp-show-tiles .ytp-videowall-still, #tabs-container, yt-confirm-dialog-renderer[dialog][dialog][dialog], .ytp-ce-element.ytp-ce-elemeshow, #contentWrapper.tp-yt-iron-dropdown > *, .ytp-tooltip-bg, .skeleton-bg-color.ytd-ghost-grid-renderer {\n  border-collapse: separate;\n  box-shadow: 0px 0px var(--border-width) var(--border-color) !important;\n}\n\n.ytp-popup.ytp-settings-menu, #NEWTUBEBG, .NEWTUBEMAIN {\n  border-collapse: separate;\n  box-shadow: var(--player-bg-border-width) var(--player-bg-border-width) 10px var(--border-color) !important;\n}"
+						},
+						"None": {
+							"enable_css": "a.thumbnail > .ytcd-basic-item-large-image, ytcp-thumbnail-with-title, ytd-playlist-thumbnail, ytd-thumbnail, #thumbnail, .thumbnail-container.ytd-notification-renderer, yt-img-shadow.ytd-channel-renderer, #author-thumbnail.ytd-commesimplebox-renderer, .style-scope.ytd-commerenderer.no-transition, div.html5-video-player:not(.ytp-fullscreen) .html5-video-container, .ytp-preview:not(.ytp-text-detail) span.ytp-tooltip-text-no-title, ytd-thumbnail-overlay-side-panel-renderer, ytd-thumbnail-overlay-bottom-panel-renderer, .ytp-popup.ytp-settings-menu, .iv-drawer, .ytp-cards-teaser-box, .miniplayer.ytd-miniplayer, .ytp-flyout-cta .ytp-flyout-cta-body, #ytp-ad-image, .ytp-ad-preview-container, .ytp-ad-message-container, #guide-content, .ytp-ad-skip-button.ytp-button, #banner > img, #icon > img, #action, .ytp-show-tiles .ytp-videowall-still, #tabs-container, yt-confirm-dialog-renderer[dialog][dialog][dialog], .ytp-ce-element.ytp-ce-elemeshow, #contentWrapper.tp-yt-iron-dropdown > *, .ytp-tooltip-bg, .skeleton-bg-color.ytd-ghost-grid-renderer, .ytp-popup.ytp-settings-menu, #NEWTUBEBG, .NEWTUBEMAIN {\n  outline-color: transparent !important;\n  box-shadow: none !important;\n}"
+						}
+					}
+				},
+				{
+					"type": "Number_Slide",
+					"id": "Border",
+					"name": "Borders width/Shadows size",
+					"value": 8,
+					"max": 50,
+					"var_css": "--border-width",
+					"unit": "px"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "PlayerBorder",
+					"name": "Player Borders/Shadows width",
+					"value": 1,
+					"var_css": "--player-bg-border-width",
+					"unit": "px"
+				},
+				{
+					"type": "Color",
+					"id": "OutSha",
+					"name": "Borders/Shadows Color",
+					"value": "rgba(9, 157, 255, 0.5)",
+					"var_css": "--border-color"
+				}
+			]
+		},
+		{
+			"Category": "🎴 Background",
+			"Settings": [
+				{
+					"type": "Color",
+					"id": "BG",
+					"name": "Background/tint color",
+					"value": "rgba(0, 0, 0, 0.7)",
+					"var_css": "--bg-color"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "BlurBGAM",
+					"name": "Blur amount",
+					"value": 10,
+					"max": 50,
+					"constant_css": "#NewtubeBackground {\n  filter: blur(${Get_Value('BlurBGAM')}px);\n}"
+				},
+				{
+					"type": "Image_Input",
+					"id": "BGIMG",
+					"name": "Background Image",
+					"value": "https://i.ibb.co/4NWBbGH/FOABv-CHXMAER9-H3.jpg"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "BackgroundX",
+					"name": "Image position X",
+					"value": 50,
+					"constant_css": "#NewtubeBackground {\n  background-position-x: ${Get_Value('BackgroundX')}%;\n}"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "BackgroundY",
+					"name": "Image position Y",
+					"value": 50,
+					"constant_css": "#NewtubeBackground {\n  background-position-y: ${Get_Value('BackgroundY')}%;\n}"
+				},
+				{
+					"type": "Number_Slide",
+					"id": "BackgroundS",
+					"name": "Image Size",
+					"value": 100,
+					"max": 300,
+					"constant_css": "#NewtubeBackground {\n  background-size: ${Get_Value('BackgroundS')}%;\n}"
+				},
+				{
+					"type": "Checkbox",
+					"id": "Flip",
+					"name": "Enable flip image",
+					"value": false,
+					"enable_css": "#NewtubeBackground {\n  transform: scaleX(-1);\n}"
+				},
+				{
+					"type": "Checkbox",
+					"id": "Repeat",
+					"name": "Enable repeat image",
+					"value": false,
+					"enable_css": "#NewtubeBackground {\n  background-repeat: repeat;\n}",
+					"disable_css": "#NewtubeBackground {\n  background-repeat: no-repeat;\n}"
+				}
+			]
+		},
+		{
+			"Category": "🔠 Fonts",
+			"Settings": [
+				{
+					"type": "Custom",
+					"id": "FontManager",
+					"setup_function": "alert('FontManager is a complex feature and needs to be re-implemented in StyleShift.');"
+				}
+			]
+		},
+		{
+			"Category": "✍️ Custom CSS",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnaCUSCSS",
+					"name": "Enable Custom CSS",
+					"value": false
+				},
+				{
+					"type": "Custom",
+					"id": "CUSTOM",
+					"ui_function": "Editor",
+					"description": "Your custom CSS code."
+				},
+				{
+					"type": "Checkbox",
+					"id": "EnaADDCSS",
+					"name": "Enable Additional CSS",
+					"value": false,
+					"enable_function": "var AddCSS_Style; async function CreateAddCSS_Style() { AddCSS_Style = document.createElement(\"style\"); AddCSS_Style.id = \"NewtubeAddCSS\"; var Head = await GetDocumentHead(); Head.append(AddCSS_Style); } async function UpdateAddCSS() { if (!AddCSS_Style) return; AddCSS_Style.textContent = await Get_Value(\"ADDCUSTOM\"); } async function StartAddCSS() { if (!AddCSS_Style) { CreateAddCSS_Style(); } UpdateAddCSS(); } StartAddCSS();",
+					"disable_function": "async function StopAddCSS() { if (AddCSS_Style) { AddCSS_Style.remove(); AddCSS_Style = null; } } StopAddCSS();"
+				},
+				{
+					"type": "Custom",
+					"id": "ADDCUSTOM",
+					"ui_function": "Editor",
+					"description": "Additional CSS code to be appended."
+				}
+			]
+		},
+		{
+			"Category": "🌐 Core: General UI & Variables",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnableNewtubeCoreStyles_General",
+					"name": "Enable General UI Styles",
+					"value": true,
+					"Editable": false,
+					"enable_css": "/* General UI Styles */\n.sbfl_b, .sbsb_a, #container.style-scope.ytd-masthead, ytd-mini-guide-renderer, ytd-mini-guide-entry-renderer, ytd-page-manager>*.ytd-page-manager, #channel-container, #channel-header, #tabs-inner-container, .playlist-items, #video-preview-container, ytd-simple-menu-header-renderer, .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal, #description, #player, ytd-thumbnail-overlay-resume-playback-renderer, .button-container.ytd-rich-shelf-renderer, ytd-video-preview, ytd-button-renderer.ytd-live-chat-frame, #player-container, .ytp-endscreen-content, ytd-thumbnail-overlay-time-status-renderer badge-shape, .ytSearchboxComponentInputBox {\n  background: transparent !important;\n}\n\n.ytSearchboxComponentInputBox {\n  border-color: transparent !important;\n}\n\nyt-interaction {\n  overflow: visible !important;\n}\n\n#guide-inner-content {\n  transform: translateZ(0px);\n}\n\nhtml:not(.style-scope)[system-icons]:not(.style-scope) {\n  background: black !important;\n}\n\nbody {\n  overflow: auto;\n}\n\n:root {\n  --blur-amount: ${Get_Value('BlurAm')}px;\n  --Bg-blur: ${Get_Value('BlurBGAM')}px;\n  --border-width: ${Get_Value('Border')}px;\n  --player-bg-border-width: ${Get_Value('PlayerBorder')}px;\n  --border-hover-color: ${Get_Value('ThumbHoverColor')};\n  --border-click-color: ${Get_Value('ThumbClick')};\n  --top-bar-and-search-background: ${Get_Value('ThemeSnd')};\n  --hover-time-background: ${Get_Value('TimeBG')};\n  --search-background-hover: ${Get_Value('Themehover')};\n  --theme-radius: ${Get_Value('Edge')}px;\n  --theme-time-radius: ${Get_Value('TimeEdge')}px;\n  --border-minus: calc(var(--border-width) * -1);\n  --bg-border-minus: calc(var(--player-bg-border-width) * -1);\n  --border-width-hover: ${Get_Value('HoverBorder')}px;\n  --border-minus-hover: calc(var(--border-width-hover) * -1);\n  --Zoom: ${Get_Value('Zoom')};\n  --sub-ShaWidth: ${Get_Value('subShaWidth')}px;\n  --sub-ShaBlur: ${Get_Value('subShaBlur')}px;\n  --sub-Width: ${Get_Value('subWidth')};\n  --sub-Space: ${Get_Value('subSpace')}px;\n  --sub-color: ${Get_Value('Subtitle')};\n  --sub-bg: ${Get_Value('CapBG')};\n  --sub-sha-color: ${Get_Value('subShaColor')};\n  --SubSc-BG: ${Get_Value('SPSubScribeBG')};\n  --SubSc-Tx: ${Get_Value('SPSubScribeColor')};\n}\n\nhtml {\n  --ytd-chip-cloud-background: rgba(0, 0, 0, .3) !important;\n  --yt-spec-brand-background-primary: var(--top-bar-and-search-background) !important;\n  --yt-spec-brand-background-solid: var(--bg-color) !important;\n  --yt-spec-general-background-a: var(--bg-color) !important;\n  --yt-spec-call-to-action: var(--NewtubeTheme) !important;\n  --yt-spec-suggested-action: var(--theme-fort) !important;\n  --yt-spec-badge-chip-background: var(--theme-fort) !important;\n  --yt-spec-text-primary: var(--text-color) !important;\n  --yt-spec-text-secondary: var(--nd-text-color) !important;\n  --yt-spec-brand-button-background: var(--NewtubeTheme) !important;\n  --yt-spec-static-brand-red: var(--NewtubeTheme) !important;\n  --yt-spec-brand-icon-inactive: var(--NewtubeTheme) !important;\n  --yt-spec-10-percelayer: var(--theme-third) !important;\n  --yt-spec-general-background-b: transparent !important;\n  --yt-spec-wordmark-text: var(--text-color) !important;\n  --yt-spec-button-chip-background-hover: var(--search-background-hover) !important;\n  --yt-spec-text-primary-inverse: var(--top-bar-and-search-background) !important;\n  --yt-spec-static-brand-white: var(--text-color) !important;\n  --yt-spec-base-background: var(--top-bar-and-search-background) !important;\n  --yt-spec-raised-background: var(--top-bar-and-search-background) !important;\n  --yt-spec-menu-background: var(--top-bar-and-search-background) !important;\n  --yt-spec-static-overlay-text-primary: var(--text-color) !important;\n  --ytd-author-comment-badge-background-color: var(--theme-third) !important;\n  --yt-spec-10-percent-layer: var(--theme-third) !important;\n  --yt-spec-static-brand-black: var(--text-color) !important;\n  --yt-spec-additive-background: var(--theme-third) !important;\n  --yt-spec-static-overlay-background-brand: var(--theme-fort) !important;\n  --yt-spec-text-primary-inverse: var(--text-color) !important;\n  --yt-spec-inverted-background: var(--top-bar-and-search-background) !important;\n  --yt-spec-themed-blue: var(--NewtubeTheme) !important;\n  --yt-live-chat-vem-background-color: var(--top-bar-and-search-background) !important;\n  --ytmusic-background: transparent !important;\n  --yt-spec-themed-green: var(--NewtubeTheme) !important;\n}\n\n@supports (scrollbar-width: auto) {\n  * {\n    scrollbar-width: ${Get_Value('ScWidthNew')};\n    scrollbar-color: var(--NewtubeTheme) transparent;\n  }\n\n  ytd-app {\n    scrollbar-width: none;\n  }\n\n  body::-webkit-scrollbar-track {\n    scrollbar-color: var(--NewtubeTheme) ${Get_Value('BGC')} !important;\n  }\n}\n\n@supports selector(::-webkit-scrollbar) {\n  *::-webkit-scrollbar {\n    width: ${Get_Value('ScWidth')}px !important;\n    height: ${Get_Value('ScWidth')}px !important;\n    background-color: transparent !important;\n    color: var(--NewtubeTheme) !important;\n  }\n\n  *::-webkit-scrollbar-thumb {\n    border-radius: 10px;\n    background-color: var(--NewtubeTheme) !important;\n  }\n\n  *:not(body)::-webkit-scrollbar-track {\n    background: transparent !important;\n  }\n\n  ytd-app::-webkit-scrollbar {\n    width: 0px !important;\n  }\n\n  body::-webkit-scrollbar-track {\n    background: ${Get_Value('BGC')} !important;\n  }\n}"
+				}
+			]
+		},
+		{
+			"Category": "📺 Core: Video Player & Controls",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnableNewtubeCoreStyles_Player",
+					"name": "Enable Video Player Styles",
+					"value": true,
+					"Editable": false,
+					"enable_css": "/* Video Player & Controls Styles */\n.ytp-contextmenu .ytp-menuitem {\n  display: flex !important;\n  align-items: center;\n  flex-direction: row;\n}\n\n.ytp-ad-module {\n  width: 0px !important;\n}\n\n.ytp-chapters-container {\n  flex-wrap: nowrap;\n  display: flex;\n}\n\n.ytp-gradietop {\n  border-radius: var(--theme-radius-big) var(--theme-radius-big) 0px 0px;\n}\n\ndiv.html5-video-player video {\n  position: unset !important;\n}\n\ndiv.html5-video-player,\ndiv.html5-video-player.ytp-fullscreen div.html5-video-container {\n  display: flex !important;\n  align-items: center !important;\n  justify-content: center !important;\n}\n\ndiv.html5-video-container {\n  position: revert !important;\n  display: flex;\n  align-items: center;\n}\n\ndiv.html5-video-player:not(.ytp-fullscreen) div.html5-video-container {\n  width: fit-content !important;\n  margin-top: unset !important;\n  height: fit-content;\n}\n\n.ytp-right-controls {\n  flex-wrap: nowrap;\n  display: flex;\n}\n\n.html5-video-container {\n  overflow: hidden;\n}\n\n.ytp-time-current,\n.ytp-time-separator,\n.ytp-time-duration {\n  color: var(--VDOTEXT) !important;\n}\n\ndiv.html5-video-player:not(.ytp-small-mode) {\n  overflow: visible;\n  position: absolute !important;\n}\n\n.ytp-svg-shadow {\n  stroke: #0000 !important;\n}\n\n.ytp-preview .ytp-tooltip-text-no-title,\n.ytd-thumbnail-overlay-bottom-panel-renderer,\nytd-thumbnail-overlay-time-status-renderer * {\n  color: var(--TIMETEXT) !important;\n}\n\ntp-yt-paper-slider {\n  --paper-progress-active-color: var(--NewtubeTheme) !important;\n}\n\n.ytp-swatch-background-color,\n.YtProgressBarLineProgressBarPlayed,\n.YtProgressBarPlayheadProgressBarPlayheadDot,\n.ytp-chrome-controls .ytp-button[aria-pressed]:after,\n.ytp-sb-subscribe, a.ytp-sb-subscribe,\nyt-icon-button.yt-live-chat-item-list-renderer,\n#progress.yt-page-navigation-progress {\n  background: var(--NewtubeTheme) !important;\n}\n\n.ytp-settings-button:after {\n  background-color: var(--NewtubeTheme) !important;\n}\n\n.ytp-progress-list,\n.YtProgressBarLineProgressBarBackground {\n  background: ${Get_Value('TimeLineBG')} !important;\n}\n\n.ytp-load-progress,\n.YtProgressBarLineProgressBarLoaded {\n  background: ${Get_Value('TimeLoaded')} !important;\n}\n\n.ytp-button:not([aria-disabled=true]):not([disabled]):not([aria-hidden=true]):hover > svg path {\n  fill: var(--HBT) !important;\n}\n\n.ytp-chrome-top,\n.ytp-chrome-bottom,\n.ytp-gradient-bottom,\n.ytp-button:not([aria-disabled=true]):not([disabled]):not([aria-hidden=true]) > svg > path,\nytd-playlist-panel-video-renderer,\nytd-menu-renderer,\nytd-menu-service-item-renderer tp-yt-paper-item,\nyt-live-chat-text-message-renderer {\n  transition: all .2s !important;\n}\n\n.ytp-autohide:not(.ytp-autohide-active) .ytp-gradietop,\n.ytp-autohide:not(.ytp-autohide-active) .ytp-gradient-bottom {\n  display: block !important;\n}\n\n.ytp-popup.ytp-settings-menu,\n.ytp-gradient-bottom,\n.iv-drawer,\n.ytp-cards-teaser-box,\n.ytp-popup {\n  background-color: var(--in-player-bg-color) !important;\n}\n\n.ytp-button,\n.ytp-cards-button-icon {\n  transition: all .2s !important;\n}\n\n.ytp-tooltip-text-wrapper {\n  transition: margin-block .5s;\n}\n\n.ytp-tooltip:not([aria-hidden=true]) {\n  transform: scale(1) translateY(var(--Media-Space)) !important;\n}\n\n.ytp-tooltip[aria-hidden=true] {\n  transform: scale(1.2) translateY(var(--Media-Space)) !important;\n}\n\n.ytp-tooltip[aria-hidden=true] > .ytp-tooltip-text-wrapper {\n  margin-block: -15px;\n}\n\n.ytp-tooltip:not([aria-hidden=true]) > .ytp-tooltip-text-wrapper {\n  margin-block: 0px;\n}\n\n.ytp-chrome-bottom .ytp-button:hover,\n.ytp-replay-button:hover,\n.ytp-cards-button-icon:hover {\n  transform: scale(1.5) !important;\n}\n\n.iv-branding {\n  z-index: 60 !important;\n}\n\n.iv-branding .ytp-button:hover {\n  transform: scale(1.1) !important;\n}\n\n.ytp-chapter-title-prefix {\n  display: none;\n}\n\n.ytp-chapter-title-content {\n  margin-left: 10px;\n}\n\n.ytp-gradient-bottom {\n  padding: 0px !important;\n  height: var(--MediaH)px !important;\n  border-radius: var(--theme-radius-big) !important;\n}\n\n.ytp-fullscreen .ytp-gradient-bottom {\n  height: var(--MediaHFull)px !important;\n}\n\ndiv.html5-video-player.ytp-fullscreen .ytp-gradient-bottom {\n  border-radius: var(--theme-radius-big) var(--theme-radius-big) 0px 0px !important;\n}\n\nytd-player:has(div.html5-video-player:not(.ytp-fullscreen)) {\n  transition: all 1s;\n  top: 0px !important\n}\n\ndiv.ended-mode video,\ndiv.unstarted-mode:not(.ytp-small-mode) video.html5-main-video {\n  background: black;\n}\n\ndiv.ytp-cued-thumbnail-overlay {\n  overflow: hidden !important;\n  border-radius: 10px !important;\n}\n\ndiv.html5-video-player:not(.ytp-fullscreen),\n#time-status {\n  background: transparent !important;\n}\n\n#time-status {\n  padding-left: 0px !important;\n}\n\ndiv.html5-video-player:not(.ytp-embed):not(.playing-mode.unstarted-mode) div.ytp-cued-thumbnail-overlay {\n  display: none;\n}\n\ndiv.unstarted-mode .ytp-cued-thumbnail-overlay .ytp-large-play-button .ytp-large-play-button-bg,\ndiv.unstarted-mode .ytp-cued-thumbnail-overlay .ytp-large-play-button:hover path[d='M 45,24 27,14 27,34'] {\n  fill: black !important;\n}\n\n.ytp-spinner-circle {\n  border-color: var(--NewtubeTheme) var(--NewtubeTheme) transparent !important;\n}\n\npath[stroke='rgb(255,255,255)'] {\n  stroke: var(--NewtubeTheme) !important;\n}\n\n.ytp-offline-slate > button {\n  display: none;\n}\n\n.html5-video-player .ytp-settings-menu:not(.ytpa-ambientlight-settings-menu) {\n  transition: opacity 0.5s, transform 0.25s !important;\n  margin-bottom: 20px !important;\n}\n\n.html5-video-player:not(.ytp-settings-shown) .ytp-settings-menu:not(.ytpa-ambientlight-settings-menu) {\n  transform: translateX(100px) !important;\n  opacity: 0 !important;\n  pointer-events: none !important;\n}\n\n.ytp-autonav-toggle-button,\n.ytp-autonav-toggle-button[aria-checked='true']::after {\n  background-image: none !important;\n}\n\n.ytp-autonav-toggle-button {\n  background-color: var(--theme-fort) !important;\n}\n\n.ytp-autonav-toggle-button[aria-checked='true']::after {\n  background-color: var(--NewtubeTheme) !important;\n  -webkit-mask-box-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNyAxNyIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNyA4LjVhOC41IDguNSAwIDExLTE3IDAgOC41IDguNSAwIDAxMTcgMHptLTUgMEw2LjUgNXY3TDEyIDguNXptLTEuODYgMEw3LjUgNi44MnYzLjM2bDIuNjQtMS42OHpNOC41IDE2YTcuNSA3LjUgMCAxMDAtMTUgNy41IDcuNSAwIDAwMCAxNXoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iLjE1IiAvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTYgOC41YTcuNSA3LjUgMCAxMS0xNSAwIDcuNSA3LjUgMCAwMTE1IDB6bS00IDBMNi41IDEyVjVMMTIgOC41eiIgZmlsbD0iI2ZmZiIgLz48L3N2Zz4=')\n}\n\n.ytp-autonav-toggle-button[aria-checked='false']::after {\n  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNyAxNyIgZmlsbD0ibm9uZSI+PGRlZnMgLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNSAxNmE3LjUgNy41IDAgMTAwLTE1IDcuNSA3LjUgMCAwMDAgMTV6IiBmaWxsPSIjNzE3MTcxIiAvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcgOC41YTguNSA4LjUgMCAxMS0xNyAwIDguNSA4LjUgMCAwMTE3IDB6bS0xIDBhNy41IDcuNSAwIDExLTE1IDAgNy41IDcuNSAwIDAxMTUgMHoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iLjE1IiAvPjxwYXRoIGQ9Ik01LjUgMTJoMlY1aC0ydjd6TTkuNSA1djdoMlY1aC0yeiIgZmlsbD0iI2ZmZiIgLz48L3N2Zz4=')\n}\n\n.ytp-autonav-endscreen-countdown-overlay {\n  position: absolute;\n  height: 100%;\n  top: 0;\n}\n\n.videowall-endscreen {\n  background: black;\n  height: 100%;\n}\n\n.video.ytd-miniplayer {\n  background: black;\n}"
+				}
+			]
+		},
+		{
+			"Category": "🖼️ Core: Thumbnails & Grids",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnableNewtubeCoreStyles_Thumbnails",
+					"name": "Enable Thumbnails & Grids Styles",
+					"value": true,
+					"Editable": false,
+					"enable_css": "/* Thumbnails & Grids Styles */\nytd-thumbnail-overlay-time-status-renderer,\nytd-thumbnail-overlay-bottom-panel-renderer {\n  height: ${Get_Value('TimeH')}px !important;\n}\n\nytd-multi-page-menu-renderer,\nytd-player:not(.ytd-video-preview):not(.ytp-player-minimized) .html5-video-player:not(.ytp-fullscreen) .html5-video-container,\n.ytp-offline-slate-background,\n.ytp-storyboard-framepreview,\n.ytp-storyboard-framepreview-img,\n.videowall-endscreen {\n  border-radius: var(--theme-radius-big) !important;\n}\n\nytd-video-preview .html5-video-container {\n  border-radius: var(--theme-radius) !important;\n}\n\na.thumbnail > .ytcd-basic-item-large-image, ytcp-thumbnail-with-title, ytd-playlist-thumbnail, ytd-thumbnail, #thumbnail, .thumbnail-container.ytd-notification-renderer, [role='listbox'], .ytp-ce-video, .ytp-ce-playlist, [aria-live='polite'], .ytp-tooltip-bg, .ytp-tooltip-text.ytp-tooltip-text-no-title, .branding-img.iv-click-target, .branding-context-container-inner, ytd-thumbnail-overlay-bottom-panel-renderer, .ytp-progress-list, .ytp-play-progress.ytp-swatch-background-color, .ytp-load-progress, .ytp-hover-progress.ytp-hover-progress-light, .style-scope.ytd-subscribe-button-renderer, #container.ytd-playlist-panel-renderer, .header.ytd-playlist-panel-renderer, ytd-button-renderer.style-suggestive[is-paper-button] tp-yt-paper-button.ytd-button-renderer, ytd-live-chat-frame, .ytp-ce-playlist-count, .ytp-ce-expanding-overlay-background, .ytp-popup.ytp-settings-menu, .ytp-sb-subscribe, .ytp-sb-unsubscribe, .iv-drawer, .iv-card, .iv-card a.iv-click-target, .ytp-cards-teaser-box, .miniplayer.ytd-miniplayer, .ytp-popup, .badge.ytd-badge-supported-renderer, .ytp-ce-website .ytp-ce-expanding-image, .ytp-ce-merchandise .ytp-ce-expanding-image, .ytp-flyout-cta .ytp-flyout-cta-body, #ytp-ad-image, .ytp-ad-preview-container, .ytp-ad-message-container, #guide-content, .sbsb_d, #endpoint.yt-simple-endpoint.ytd-guide-entry-renderer, [role='search'], .ytp-ad-skip-button.ytp-button, .ytp-flyout-cta .ytp-flyout-cta-icon, #banner > img, #icon > img, #action, .ytp-cards-teaser, .ytp-ce-video-duration, .ytp-show-tiles .ytp-videowall-still, .ytp-videowall-still-info-content, .ytp-videowall-still-listlabel-mix.ytp-videowall-still-listlabel, .style-scope.ytd-popup-container, #action-companion-ad-info-button.ytd-action-companion-ad-renderer, .ytp-flyout-cta .ytp-flyout-cta-action-button, .ytp-autonav-endscreen-upnext-thumbnail, .ytp-autonav-endscreen-upnext-button, ytd-playlist-panel-video-renderer, ytd-guide-entry-renderer, tp-yt-paper-listbox > *, .ytp-ad-overlay-image, .ytp-ad-button-icon, .ytp-ad-overlay-close-button, .ytp-ad-text-overlay, .ytp-ad-button-icon, .ytp-ad-button-icon, #media-container.ytd-display-ad-renderer, ytd-display-ad-renderer[layout=display-ad-layout-top-landscape-image] #media-badge.ytd-display-ad-renderer, #chips-wrapper.ytd-feed-filter-chip-bar-renderer, ytd-mini-guide-entry-renderer, ytd-video-preview, ytd-toggle-button-renderer, ytd-post-renderer[uses-compact-lockup], ytd-backstage-image-renderer, #tabs-container, ytd-playlist-video-renderer, ytd-miniplayer, ytd-button-renderer, .ytd-thumbnail-overlay-loading-preview-renderer, ytd-thumbnail-overlay-inline-unplayable-renderer, ytd-thumbnail.ytd-rich-grid-media:before, .skeleton-bg-color.ytd-ghost-grid-renderer, .captions-text, #container, [round], ytd-engagemepanel-section-list-renderer, #tooltip, yt-multi-page-menu-section-renderer #items > *, ytd-notification-renderer, #time.ytd-macro-markers-list-item-renderer, ytd-macro-markers-list-item-renderer, .ytp-menuitem, tp-yt-paper-button.ytd-expander, #text-container.yt-notification-action-renderer, tp-yt-paper-button.ytd-text-inline-expander, tp-yt-paper-listbox > * tp-yt-paper-item, .ytp-menuitem, yt-live-chat-text-message-renderer, yt-img-shadow img, ytmusic-player-queue-item, yt-dynamic-text-view-model, .ytp-inline-preview-controls, .ytSearchboxComponentSearchButton, [role='listbox'] > div {\n  border-radius: var(--theme-radius) !important;\n}\n\nytd-thumbnail-overlay-time-status-renderer,\nytd-thumbnail-overlay-bottom-panel-renderer,\nytd-thumbnail-overlay-side-panel-renderer,\nytd-thumbnail-overlay-toggle-button-renderer,\n.iv-branding-active .branding-context-container-inner,\n.ytp-ce-video-duration {\n  border-radius: var(--theme-time-radius) !important;\n  background-color: var(--hover-time-background) !important;\n}\n\nytd-compact-playlist-renderer:hover>div>ytd-playlist-thumbnail,\nytd-compact-video-renderer:hover>div>ytd-thumbnail,\nytd-compact-radio-renderer:hover>div>ytd-thumbnail,\nytd-thumbnail.ytd-rich-grid-media:hover {\n  outline: solid;\n  outline-color: var(--border-hover-color) !important;\n  outline-width: var(--border-width-hover) !important;\n}\n\nytd-thumbnail.ytd-rich-grid-media:active {\n  box-shadow: var(--border-minus) 0 var(--border-click-color), 0 var(--border-width) var(--border-click-color), var(--border-width) 0 var(--border-click-color), 0 var(--border-minus) var(--border-click-color) !important;\n}\n\nytd-compact-playlist-renderer:active>div>ytd-playlist-thumbnail,\nytd-compact-video-renderer:active>div>ytd-thumbnail,\nytd-compact-radio-renderer:active>div>ytd-thumbnail {\n  outline: var(--border-width) solid var(--border-click-color) !important;\n}\n\nytd-compact-radio-renderer > #dismissible > ytd-thumbnail > a > yt-img-shadow > img,\nytd-playlist-thumbnail > a > #playlist-thumbnails > ytd-playlist-video-thumbnail-renderer > yt-img-shadow > img,\nytd-playlist-thumbnail > a > div > ytd-playlist-custom-thumbnail-renderer > yt-img-shadow > img,\n.thumbnail-overlay.ytmusic-player-queue-item {\n  transition: all .2s ;\n}\n\n#progress.ytd-thumbnail-overlay-resume-playback-renderer {\n  background: linear-gradient(-70deg, var(--NewtubeTheme), var(--theme-third)) !important;\n}\n\n#thumbnail > #hover-overlays {\n  transition: all .4s;\n  height: 100%;\n  width: 100%;\n  animation-fill-mode: backwards;\n  position: absolute;\n  top: 0;\n  opacity: 0 !important;\n}\n\n#thumbnail:has(ytd-thumbnail-overlay-time-status-renderer) > #hover-overlays {\n  transform: skewX(-20deg) translateX(30px);\n}\n\n#thumbnail:has(ytd-thumbnail-overlay-bottom-panel-renderer) > #hover-overlays {\n  transform: scale(1.5);\n}\n\n#thumbnail:hover > #hover-overlays {\n  opacity: 1 !important;\n  transform: unset !important;\n}\n\nytd-thumbnail-overlay-time-status-renderer {\n  display: flex !important;\n}"
+				}
+			]
+		},
+		{
+			"Category": "📄 Core: Layout, Buttons & Popups",
+			"Settings": [
+				{
+					"type": "Checkbox",
+					"id": "EnableNewtubeCoreStyles_Layout",
+					"name": "Enable Layout, Buttons & Popups Styles",
+					"value": true,
+					"Editable": false,
+					"enable_css": "/* Layout, Buttons & Popups Styles */\n#container {\n  position: relative !important;\n}\n\n#hearted-border.ytd-creator-heart-renderer {\n  opacity: 0 !important;\n}\n\n.gstl_50.sbdd_a {\n  top: 56px !important;\n}\n\nytd-tabbed-page-header {\n  --yt-lightsource-section1-color: transparent !important;\n}\n\ntp-yt-paper-button.ytd-expander span,\n.yt-spec-button-shape-next--outline,\ntp-yt-paper-button.ytd-text-inline-expander,\n.yt-spec-button-shape-next--filled,\n#reply-button-end button,\n.ytp-tooltip-text {\n  color: var(--text-color) !important;\n}\n\n.ytd-comment-renderer:hover {\n  text-decoration: none !important;\n}\n\n[role='listbox'] > div:hover {\n  background: var(--theme-third) !important;\n  border-color: transparent !important;\n  transition: all 0.1s;\n}\n\ntp-yt-paper-button.ytd-expander,\ntp-yt-paper-button.ytd-text-inline-expander,\n.yt-spec-button-shape-next--outline,\n#reply-button-end button,\n.yt-spec-button-shape-next--filled,\n.yt-spec-button-shape-next--call-to-action.yt-spec-button-shape-next--text,\n#reply-button-end a {\n  border: 1px solid transparent !important;\n  transition: all 0.1s;\n}\n\ntp-yt-paper-button.ytd-expander,\ntp-yt-paper-button.ytd-text-inline-expander {\n  padding-inline: 10px !important;\n}\n\n#text-container.yt-notification-action-renderer {\n  border: 1px solid var(--theme-third);\n}\n\n[role='search']:hover,\ntp-yt-paper-button.ytd-expander:hover,\ntp-yt-paper-button.ytd-text-inline-expander:hover,\n.yt-spec-button-shape-next--outline:hover,\n#reply-button-end button:hover,\n.yt-spec-button-shape-next--filled:hover,\n.yt-spec-button-shape-next--call-to-action.yt-spec-button-shape-next--text:hover,\n#reply-button-end a:hover {\n  border-color: var(--NewtubeTheme) !important;\n}\n\n.watch-skeleton .skeleton-bg-color, ytd-author-comment-badge-renderer, .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--filled, .yt-spec-button-shape-next--overlay.yt-spec-button-shape-next--filled, .masthead-skeleton-icon, tp-yt-paper-button.ytd-expander, tp-yt-paper-button.ytd-text-inline-expander, .yt-spec-button-shape-next--outline, #reply-button-end button, .yt-spec-button-shape-next--filled, .yt-spec-button-shape-next--call-to-action.yt-spec-button-shape-next--text:hover, #reply-button-end a:hover {\n  background: var(--theme-third) !important;\n}\n\nytd-playlist-panel-video-renderer:hover {\n  background-color: var(--playlist-bg) !important;\n}\n\nytd-app,\n.background-gradient,\nytmusic-app-layout:has(ytmusic-nav-bar[is-search-page]) {\n  background: transparent !important;\n}\n\n#NewtubeBlurBG {\n  transition: opacity 2s, margin-top 0.1s, margin-left 0.1s;\n}\n\n#NewtubeVDOCanvas {\n  transition: margin-top 0.1s, margin-left 0.1s;\n}\n\nhtml:has(div.html5-video-player.ytp-fullscreen) #NewtubeBlurBG,\nytmusic-app #background {\n  display: none;\n}\n\n.ytp-preview:not(.ytp-text-detail) span.ytp-tooltip-text-no-title,\n.ytd-thumbnail-overlay-loading-preview-renderer,\nytd-thumbnail-overlay-inline-unplayable-renderer {\n  background-color: var(--hover-time-background) !important;\n}\n\n.ytp-preview:not(.ytp-text-detail) span.ytp-tooltip-text-no-title {\n  display: block !important;\n}\n\nytd-live-chat-frame, .yt-simple-endpoint.ytd-playlist-panel-video-renderer, ytd-guide-entry-renderer, ytd-playlist-thumbnail, ytd-thumbnail, ytd-compact-playlist-renderer, ytd-compact-video-renderer, ytd-compact-radio-renderer, ytd-compact-playlist-renderer>div>div>div>a, ytd-compact-video-renderer>div>div>div>a, ytd-compact-radio-renderer>div>div>div>a, ytd-thumbnail.ytd-rich-grid-media, ytd-thumbnail.ytd-rich-grid-media>a, #button.ytd-menu-renderer.yt-icon.ytd-menu-renderer, ytd-playlist-video-renderer, ytd-video-renderer, yt-lockup-view-model, yt-multi-page-menu-section-renderer #items > *, ytd-notification-renderer, ytd-macro-markers-list-item-renderer {\n  transition: all .2s;\n}\n\ntp-yt-paper-button.ytd-subscribe-button-renderer[subscribed] {\n  border-bottom: var(--yt-spec-10-percelayer) !important;\n}\n\n.ytp-ce-expanding-overlay-background,\n.ytp-ce-playlist-count {\n  background: var(--things-end-on-video) !important;\n}\n\n[role='listbox'],\n#scrim,\ntp-yt-iron-overlay-backdrop,\n#tabs-container {\n  background: var(--top-bar-and-search-background) !important;\n}\n\nytd-thumbnail-overlay-hover-text-renderer {\n  background-color: var(--top-bar-and-search-background) !important;\n}\n\n#video-preview-container {\n  box-shadow: 0px 0px 0px 0px !important;\n}\n\n.sbsb_d,\n#endpoint.yt-simple-endpoint.ytd-guide-entry-renderer:hover,\n#endpoint.yt-simple-endpoint.ytd-guide-entry-renderer:focus,\n.ytp-menuitem:not([aria-disabled=true]):hover,\nytd-mini-guide-entry-renderer:hover {\n  background: var(--search-background-hover) !important;\n  transition: all .2s cubic-bezier(0.1, 0.7, 1, 1);\n}\n\n.gsfs, .ytp-ce-channel-metadata, .ytp-cards-teaser .ytp-cards-teaser-text, .ytp-panel-menu, .ytp-ce-website-title, .ytp-ce-merchandise-title, #time.ytd-macro-markers-list-item-renderer, .yt-core-attributed-string--link-inherit-color {\n  color: var(--text-color) !important;\n}\n\n#show-more-button {\n  transition: background .2s;\n}\n\nytd-app {\n  transition: background 1s;\n}\n\n#tooltip.tp-yt-paper-tooltip {\n  background-color: var(--bg-color) !important;\n}\n\n#tooltip.tp-yt-paper-tooltip {\n  color: var(--text-color) !important;\n}\n\n.sbqs_c:before {\n  background: transparent !important;\n  width: 0px !important;\n}\n\n@keyframes show-searchIcon {\n  0% {\n    opacity: 0;\n    left: 20px;\n  }\n  100% {\n    opacity: 1;\n    left: 0px;\n  }\n}\n\nyt-searchbox [class*='SearchIcon'] {\n  display: block !important;\n  width: 20px !important;\n  position: absolute;\n  animation: show-searchIcon 0.4s;\n}\n\nyt-searchbox [role='listbox'] {\n  transition: all 0.4s;\n  display: block !important;\n  position: absolute;\n  left: 20px;\n  opacity: 0;\n  pointer-events: none;\n}\n\nyt-searchbox:has([class*='Focus']) [role='listbox'] {\n  left: 0px;\n  opacity: 1;\n  pointer-events: all;\n}\n\n.sbsb_i {\n  background: black;\n  padding: 5px 10px;\n  border-radius: var(--theme-radius);\n  outline: solid white 1px;\n  color: white !important;\n  transition: all 0.2s;\n}\n\n.sbsb_i:hover {\n  background: white !important;\n  color: black !important;\n}\n\n.sbpqs_d .sbpqs_a {\n  color: var(--NewtubeTheme) !important;\n}\n\n.sbse:not(.sbpqs_d) .sbpqs_a {\n  color: var(--nd-text-color) !important;\n}\n\n.sbpqs_a:before {\n  filter: invert(0.5);\n}\n\n#guide-content,\n#mini-guide-background {\n  background: var(--LeftBar) !important;\n  border-color: transparent !important;\n}\n\nytd-action-companion-ad-renderer,\n#container,\nytd-live-chat-frame {\n  border: transparent !important;\n}\n\n#NewtubeVDOCanvas,\n.song-media-controls {\n  border-radius: var(--theme-radius-big) !important;\n}\n\n.badge-style-type-simple.ytd-badge-supported-renderer,\n.badge-style-type-live-now-alternate.ytd-badge-supported-renderer {\n  width: 100%;\n  text-align: center;\n  justify-content: center;\n}\n\n.badge-style-type-live-now-alternate {\n  padding: 2px !important;\n}\n\nyt-live-chat-message-input-renderer {\n  border-radius: 10px;\n}\n\nyt-button-shape button {\n  transition: all 0.2s ease-out;\n}\n\nytd-app > #content {\n  overflow-x: hidden;\n}\n\nytmusic-player-queue-item[play-button-state=playing],\nytmusic-player-queue-item[play-button-state=paused] {\n  background: linear-gradient(70deg, var(--theme-third), transparent) !important;\n}\n\n#text.ytd-channel-name {\n  transition: all 0.2s;\n  background: transparent;\n}\n\nytd-video-owner-renderer #text.ytd-channel-name:hover,\nytd-video-meta-block #text.ytd-channel-name:hover {\n  background: var(--theme-third);\n}\n\nytd-video-meta-block #text.ytd-channel-name:not(.complex-string):hover,\nytd-video-owner-renderer #text.ytd-channel-name:not(.complex-string):hover {\n  padding-inline: 10px;\n}\n\n.ytp-settings-menu .ytp-menuitem-content,\n#thumbnail-container.ytd-playlist-panel-video-renderer {\n  overflow: visible !important;\n}\n\n#below {\n  margin-top: var(--BelowSpace)px;\n}\n\n.playlist-items.ytd-playlist-panel-renderer {\n  transform: translateZ(0);\n}\n\nhtml > body {\n  display: initial;\n  overflow-x: hidden;\n}\n\nbody > ytd-player {\n  opacity: 0;\n}\n\n.left-items.ytmusic-player-queue-item {\n  transform: scale(1.5);\n}\n\nytmusic-player-queue-item img {\n  object-fit: cover !important;\n}\n\nytmusic-player-queue-item {\n  padding-inline: 20px !important;\n  transition: margin .2s;\n}\n\nyt-dynamic-text-view-model {\n  text-align: center;\n}\n\n@keyframes show-box {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n\ntp-yt-iron-dropdown {\n  transition: transform .4s, opacity .4s;\n  display: flex !important;\n}\n\ntp-yt-iron-dropdown:not([aria-hidden='true']) {\n  animation: show-box .4s;\n}\n\ntp-yt-iron-dropdown[aria-hidden='true'] {\n  pointer-events: none;\n  opacity: 0 !important;\n  transform: scale(0.9) !important;\n}\n\n.no-scroll #page-manager {\n  margin-top: 0px !important;\n}\n\n#watch-while-engagement-panel.ytd-reel-video-renderer {\n  width: 100%;\n}\n\nhtml.ytdl-is-fullscreen ytd-app {\n  backface-visibility: hidden;\n}\n\nytd-notification-topbar-button-renderer .yt-spec-icon-badge-shape__badge {\n  background: var(--theme-fort) !important;\n  color: var(--NewtubeTheme) !important;\n}\n\n#text.ytd-channel-name {\n  color: var(--Chanel_Color);\n}\n\nyt-chip-cloud-chip-renderer[selected] #chip-container {\n  background: var(--NewtubeTheme) !important;\n}\n\nyt-chip-cloud-chip-renderer[aria-selected='true'] yt-formatted-string {\n  color: var(--bg-color);\n  font-weight: 900;\n}\n\nhtml[global-color-palette] ytd-app {\n  background: transparent !important;\n}"
+				}
+			]
+		}
+	]
+}
