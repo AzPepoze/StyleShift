@@ -356,6 +356,94 @@ export function Export_StyleShift_JSON_Text() {
 }
 
 /**
+ * Imports StyleShift data from a ZIP file.
+ * @param {File} zipFile - The ZIP file.
+ * @returns {Promise<Category[]>}
+ * @example
+ * const data = await Import_StyleShift_Zip(file);
+ */
+export async function Import_StyleShift_Zip(zipFile) {
+	const zip = new JSzip();
+
+	const loaded_zip = await zip.loadAsync(zipFile, {
+		createFolders: true,
+	});
+
+	const Custom_StyleShift_Items: Category[] = [];
+
+	const Category_Folders = Object.keys(loaded_zip.files).filter((path) => {
+		const Path_Array = path.split("/");
+		if (Path_Array.length === 2 && Path_Array[1] == "") {
+			return true;
+		}
+	});
+
+	for (const Category_Path of Category_Folders) {
+		const Category_Path_Name = Category_Path.slice(0, -1);
+		const Category_Array = Category_Path_Name.split(" - ");
+		const Category_Index = Number(Category_Array[0]);
+
+		let Category_Config = loaded_zip.file(`${Category_Path_Name}/Config.json`);
+
+		const ConfigContent = await Category_Config.async("string");
+		const Category_Data = JSON.parse(ConfigContent);
+
+		let Settings: Setting[] = [];
+
+		for (const Setting_Path of Object.keys(loaded_zip.files)) {
+			if (
+				Setting_Path.split("/").length === 3 &&
+				Setting_Path.startsWith(`${Category_Path_Name}/`) &&
+				Setting_Path.endsWith("/")
+			) {
+				let Setting_Path_Name = Setting_Path.slice(Category_Path.length, -1);
+
+				const Setting_Array = Setting_Path_Name.split(" - ");
+				const Setting_Index = Number(Setting_Array[0]);
+
+				let Setting_Data =
+					JSON.parse(await loaded_zip.file(`${Setting_Path}Config.json`).async("string")) || {};
+
+				for (const Setting_Property_Path of Object.keys(loaded_zip.files)) {
+					if (
+						Setting_Property_Path.split("/").length === 3 &&
+						Setting_Property_Path.startsWith(Setting_Path) &&
+						!Setting_Property_Path.endsWith("/") &&
+						!Setting_Property_Path.endsWith("Config.json")
+					) {
+						let Setting_Property_Name = Setting_Property_Path.slice(
+							Setting_Path.length,
+							Setting_Property_Path.lastIndexOf(".")
+						);
+
+						console.log(Setting_Property_Path);
+
+						Setting_Data[Setting_Property_Name] = await loaded_zip
+							.file(Setting_Property_Path)
+							.async("string");
+					}
+				}
+
+				Settings[Setting_Index] = Setting_Data;
+			}
+		}
+
+		// clear null settings
+		Category_Data["Settings"] = Settings.filter((setting) => setting !== null);
+
+		Custom_StyleShift_Items[Category_Index] = Category_Data;
+	}
+
+	const StyleShift_Data = {
+		Custom_StyleShift_Items,
+	};
+
+	console.log(StyleShift_Data);
+
+	await Import_StyleShift_Data(StyleShift_Data);
+}
+
+/**
  * Exports StyleShift data as a ZIP file.
  * @param {Object} StyleShift_Data - The JSON data.
  * @param {string} zipFileName - The ZIP file name.
@@ -390,7 +478,11 @@ export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
 			for (const [Setting_index, Original_Setting] of This_Category.Settings.entries()) {
 				console.log(Original_Setting);
 
-				const Renamed_Setting_Name = ((Original_Setting.name || Original_Setting.id) || "Untitled Setting").replace(/\/|\n/g, "_");
+				const Renamed_Setting_Name = (
+					Original_Setting.name ||
+					Original_Setting.id ||
+					"Untitled Setting"
+				).replace(/\/|\n/g, "_");
 
 				const This_Setting = deepClone(Original_Setting);
 				const Settings_Folder = Category_Folder.folder(`${Setting_index} - ${Renamed_Setting_Name}`);
@@ -406,88 +498,6 @@ export async function Export_StyleShift_Zip(StyleShift_Data, zipFileName) {
 
 	const zipBlob = await zip.generateAsync({ type: "blob" });
 	Download_File(zipBlob, zipFileName);
-}
-
-/**
- * Imports StyleShift data from a ZIP file.
- * @param {File} zipFile - The ZIP file.
- * @returns {Promise<Category[]>}
- * @example
- * const data = await Import_StyleShift_Zip(file);
- */
-export async function Import_StyleShift_Zip(zipFile) {
-	const zip = new JSzip();
-
-	const loaded_zip = await zip.loadAsync(zipFile, {
-		createFolders: true,
-	});
-
-	const StyleShift_Data: Category[] = [];
-
-	const Category_Folders = Object.keys(loaded_zip.files).filter((path) => {
-		const Path_Array = path.split("/");
-		if (Path_Array.length === 2 && Path_Array[1] == "") {
-			return true;
-		}
-	});
-
-	for (const Category_Path of Category_Folders) {
-		const Category_Path_Name = Category_Path.slice(0, -1);
-		const Category_Array = Category_Path_Name.split(" - ");
-		const Category_Index = Number(Category_Array[0]);
-
-		let Category_Config = loaded_zip.file(`${Category_Path_Name}/Config.json`);
-
-		const ConfigContent = await Category_Config.async("string");
-		const Category_Data = JSON.parse(ConfigContent);
-
-		let Settings: Setting[] = [];
-
-		for (const Setting_Path of Object.keys(loaded_zip.files)) {
-			if (
-				Setting_Path.split("/").length === 3 &&
-				Setting_Path.startsWith(`${Category_Path_Name}/`) &&
-				Setting_Path.endsWith("/")
-			) {
-				let Setting_Path_Name = Setting_Path.slice(Category_Path.length, -1);
-
-				const Setting_Array = Setting_Path_Name.split(" - ");
-				const Setting_Index = Number(Setting_Array[0]);
-
-				let Setting_Data = JSON.parse(await loaded_zip.file(`${Setting_Path}Config.json`).async("string"));
-
-				for (const Setting_Property_Path of Object.keys(loaded_zip.files)) {
-					if (
-						Setting_Property_Path.split("/").length === 3 &&
-						Setting_Property_Path.startsWith(Setting_Path) &&
-						!Setting_Property_Path.endsWith("/") &&
-						!Setting_Property_Path.endsWith("Config.json")
-					) {
-						let Setting_Property_Name = Setting_Property_Path.slice(
-							Setting_Path.length,
-							Setting_Property_Path.lastIndexOf(".")
-						);
-
-						console.log(Setting_Property_Path);
-
-						Setting_Data[Setting_Property_Name] = await loaded_zip
-							.file(Setting_Property_Path)
-							.async("string");
-					}
-				}
-
-				Settings[Setting_Index] = Setting_Data;
-			}
-		}
-
-		Category_Data["Settings"] = Settings;
-
-		StyleShift_Data[Category_Index] = Category_Data;
-	}
-
-	console.log(StyleShift_Data);
-
-	return StyleShift_Data;
 }
 
 /**

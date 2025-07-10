@@ -1,18 +1,15 @@
 import * as Monaco from "monaco-editor/esm/vs/editor/editor.main.js";
-import * as Monaco_Themes from "monaco-themes";
-
 import * as editorWorker from "monaco-editor/esm/vs/editor/editor.worker.js";
+const Monaco_Themes = "Monaco_All_Themes";
 
 function Run() {
-	Monaco_Themes;
-
 	if (window["StyleShift"] == null) {
 		setTimeout(Run, 1);
 		return;
 	}
 
 	window["StyleShift"]["Build-in"]["Monaco"] = Monaco;
-	window["StyleShift"]["Build-in"]["Monaco_Themes"] = "Monaco_All_Themes";
+	window["StyleShift"]["Build-in"]["Monaco_Themes"] = Monaco_Themes;
 
 	self.MonacoEnvironment = {
 		getWorkerUrl: function (moduleId, label) {

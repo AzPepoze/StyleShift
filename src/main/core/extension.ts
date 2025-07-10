@@ -141,22 +141,18 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 				const lineNumber = beforeMatch.split("\n").length;
 				const charPosition = matchIndex - beforeMatch.lastIndexOf("\n");
 
-				// Extract the line of code where the match occurred
 				const codeLines = LoweredCase_Code.split("\n");
 				const errorLine = codeLines[lineNumber - 1];
 
-				// ตรวจสอบว่าคำว่า import อยู่ในคอมเมนต์หรือไม่
 				const isComment = errorLine.replaceAll(" ", "").replaceAll("\t", "").startsWith("//");
 				if (isComment) {
 					continue;
 				}
 
-				// Get surrounding context (10 characters before and after the match)
 				const startContext = Math.max(0, charPosition - 15);
 				const endContext = Math.min(errorLine.length, charPosition + match[0].length + 15);
 				const contextSnippet = errorLine.slice(startContext, endContext);
 
-				// Highlight the matched part in red with underline
 				const highlightedError = contextSnippet.replace(
 					match[0],
 					`<span style="color: red; text-decoration: underline;">${match[0]}</span>`
@@ -311,7 +307,7 @@ export function Color_OBJ_to_HEX({ HEX, Alpha }: color_obj): string {
 export function HEX_to_Color_OBJ(hex: string): { HEX: string; Alpha: number } {
 	if (typeof hex !== "string") {
 		console.warn("HEX_to_Color_OBJ received non-string hex value:", hex);
-		return { HEX: "#000000", Alpha: 100 }; // Return a default value or handle error appropriately
+		return { HEX: "#000000", Alpha: 100 };
 	}
 	const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
 	const rgbHex = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex;

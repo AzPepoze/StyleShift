@@ -600,7 +600,7 @@ export async function Create_Setting_UI_Element_With_Able_Developer_Mode(Parent:
 	return Main_Element;
 }
 
-export async function Create_Category_UI(Parent, This_Category) {
+export async function Create_Category_UI(Parent, This_Category: Category) {
 	const Category_Frame = await Settings_UI["Setting_Frame"](true, true);
 	Category_Frame.className += " STYLESHIFT-Category-Frame";
 	Parent.append(Category_Frame);
@@ -612,9 +612,11 @@ export async function Create_Category_UI(Parent, This_Category) {
 		try {
 			await Create_Setting_UI_Element_With_Able_Developer_Mode(Category_Frame, This_Setting);
 		} catch (error) {
-			Create_Error(`${This_Setting.type}\n${error}`).then((Notification) => {
-				Notification.Set_Title("StyleShift - Create UI error");
-			});
+			Create_Error(`At ${This_Category.Category} - ${JSON.stringify(This_Setting, null, 2)}\n${error}`).then(
+				(Notification) => {
+					Notification.Set_Title("StyleShift - Create UI error");
+				}
+			);
 		}
 	}
 
