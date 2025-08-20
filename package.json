@@ -24,21 +24,21 @@
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.268",
-		"@types/node": "^22.14.1",
+		"@types/node": "^22.17.2",
 		"archiver": "^7.0.1",
 		"azpepoze.node_tools": "^1.0.4",
 		"chokidar": "^4.0.3",
-		"dts-gen": "^0.10.4",
+		"dts-gen": "^0.10.5",
 		"esbuild": "^0.24.2",
-		"fs-extra": "^11.3.0",
+		"fs-extra": "^11.3.1",
 		"jszip": "^3.10.1",
 		"monaco-editor": "^0.52.2",
-		"monaco-themes": "^0.4.4",
+		"monaco-themes": "^0.4.6",
 		"npm-run-all": "^4.1.5",
-		"sass": "^1.86.3",
+		"sass": "^1.90.0",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.8.3",
-		"undici-types": "^7.8.0"
+		"typescript": "^5.9.2",
+		"undici-types": "^7.14.0"
 	}
 }

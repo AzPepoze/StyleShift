@@ -251,7 +251,7 @@ export async function Load_Developer_Modules() {
 
 	try {
 		Loading_UI.Set_Content("Preparing : Jzip (Export theme as zip)");
-		JSzip = (await import(chrome.runtime.getURL("modules/jszip.js"))).default;
+		JSzip = (await import(chrome.runtime.getURL("modules/jszip.js"))).default.default;
 
 		console.log("JSzip:", JSzip);
 

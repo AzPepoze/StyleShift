@@ -66,7 +66,7 @@ let Default_StyleShift_Items: Category[] = [
 				icon: "",
 				id: "Test_Button",
 				name: "Open settings page!",
-				text_align: "left",
+				text_align: "center",
 				type: "Button",
 			},
 			{
