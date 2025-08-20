@@ -67,9 +67,9 @@ let Dev_Only_Items: Category[] = [
 						Timeout: -1,
 					});
 					try {
-						await StyleShift_Functions["Import_StyleShift_Zip"](
-							await StyleShift_Functions["Get_File"](".StyleShift.zip")
-						);
+						let File = await StyleShift_Functions["Get_File"](".StyleShift.zip");
+						console.log("File:", File);
+						await StyleShift_Functions["Import_StyleShift_Zip"](File);
 
 						Notification.Set_Icon("✅");
 						Notification.Set_Title("StyleShift - Imported File");
