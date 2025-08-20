@@ -1,6 +1,6 @@
 .vscode
 node_modules
 out
-for_developers
+devs
 
 test.json
