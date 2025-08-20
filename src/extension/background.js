@@ -64,12 +64,13 @@ chrome.runtime.onMessage.addListener(async (Recived_Message, Sender) => {
 				if (Recived_args) {
 					const Setting_ID = Recived_args["Setting_ID"];
 					if (Setting_ID) {
+						// pre_code += `console.log(StyleShift["Build-in"]["_Call_Function"]());\n`;
 						pre_code += `let This_Setting_Frame = document.querySelector(".STYLESHIFT-Window #${Setting_ID}");\n`;
 						pre_code += `async function Save_Setting_Value(value){
-                                   return await StyleShift["Build-in"]["_Call_Function"]["Save_StyleShift_Value"]("${Setting_ID}",value)
+                                   return await StyleShift["Build-in"]["_Call_Function"]("Save_StyleShift_Value", "${Setting_ID}", value)
                               }\n`;
 						pre_code += `async function Load_Setting_Value(){
-                                   return await StyleShift["Build-in"]["_Call_Function"]["Load_StyleShift_Value"]("${Setting_ID}")
+                                   return await StyleShift["Build-in"]["_Call_Function"]("Load_StyleShift_Value", "${Setting_ID}")
                               }\n`;
 					}
 					for (const [key, value] of Object.entries(Recived_args)) {

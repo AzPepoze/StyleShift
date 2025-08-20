@@ -589,6 +589,7 @@ export async function Disable_Extension_Function() {
  * @returns {Promise<string>} The JSON string representation of the retrieved data.
  */
 export async function Load_StyleShift_Value(id) {
+	console.log("Load_StyleShift_Value", id, await Load(id));
 	return JSON.stringify(await Load(id));
 }
 
