@@ -1,5 +1,5 @@
-import { Dynamic_Append, Create_Error } from "../../buid-in-functions/extension";
-import { Scroll_On_Click, sleep, insertAfter } from "../../buid-in-functions/normal";
+import { Dynamic_Append, Create_Error } from "../../build-in-functions/extension";
+import { Scroll_On_Click, sleep, insertAfter } from "../../build-in-functions/normal";
 import { Loaded_Developer_Modules } from "../../core/extension";
 import { Load, Save_All } from "../../core/save";
 import { Get_Dev_Only_Items } from "../../items-dev";

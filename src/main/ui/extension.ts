@@ -1,4 +1,4 @@
-import { GetDocumentBody, sleep } from "../buid-in-functions/normal";
+import { GetDocumentBody, sleep } from "../build-in-functions/normal";
 import { Load_Developer_Modules, Loaded_Developer_Modules } from "../core/extension";
 import { Load } from "../core/save";
 import { Remove_Config_UI, Recreate_Config_UI } from "./config";

@@ -1,5 +1,5 @@
-import * as StyleShift_Functions from "../buid-in-functions/extension";
-import { On_Function_Event } from "../buid-in-functions/normal";
+import * as StyleShift_Functions from "../build-in-functions/extension";
+import { On_Function_Event } from "../build-in-functions/normal";
 
 // function Clear_Bloat(thisSetting: any): any | null {
 // 	const settingType = thisSetting.type;

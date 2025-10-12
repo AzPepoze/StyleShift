@@ -257,7 +257,7 @@ export function Once_Element_Remove(targetElement: HTMLElement, callback: Functi
 	let observer = new MutationObserver((mutationsList, observer) => {
 		for (const mutation of mutationsList) {
 			if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
-				for (const removedNode of mutation.removedNodes) {
+				for (const removedNode of Array.from(mutation.removedNodes)) {
 					if (removedNode === targetElement) {
 						callback();
 						observer.disconnect();

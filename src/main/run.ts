@@ -1,10 +1,10 @@
-import { Create_Error, Create_Notification } from "./buid-in-functions/extension";
+import { Create_Error, Create_Notification } from "./build-in-functions/extension";
 import {
 	Get_Current_Domain,
 	Get_Current_URL_Parameters,
 	GetDocumentBody,
 	ReArrange_Selector,
-} from "./buid-in-functions/normal";
+} from "./build-in-functions/normal";
 import { Run_Text_Script, Update_StyleShift_Functions_List } from "./core/extension";
 import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./core/save";
 import { SetUp_Setting_Function } from "./settings/functions";

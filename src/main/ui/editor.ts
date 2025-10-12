@@ -1,4 +1,4 @@
-import { Get_Element_Center_Position } from "../buid-in-functions/normal";
+import { Get_Element_Center_Position } from "../build-in-functions/normal";
 import { Category } from "../types/store";
 import { Start_Highlighter } from "./highlight";
 import { Create_Main_Settings_UI } from "./settings/settings";

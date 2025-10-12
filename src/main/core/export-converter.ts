@@ -1,4 +1,4 @@
-import { Create_Error } from "../buid-in-functions/extension";
+import { Create_Error } from "../build-in-functions/extension";
 import { StyleShift_Property_List, Type_Convert_Table } from "../settings/default-items";
 import { Setting } from "../types/store";
 

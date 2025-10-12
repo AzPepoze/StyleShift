@@ -1,4 +1,4 @@
-import { Create_UniqueID, Once_Element_Remove, Wait_Document_Loaded } from "../buid-in-functions/normal";
+import { Create_UniqueID, Once_Element_Remove, Wait_Document_Loaded } from "../build-in-functions/normal";
 import { Get_StyleShift_Items } from "../settings/items";
 import { Create_Editor_UI, Editor_UI } from "./editor";
 import { Show_Confirm } from "./extension";

@@ -1,5 +1,5 @@
-import { Create_Error } from "../buid-in-functions/extension";
-import { sleep } from "../buid-in-functions/normal";
+import { Create_Error } from "../build-in-functions/extension";
+import { sleep } from "../build-in-functions/normal";
 import { Save_Name } from "../run";
 import { Get_Settings_List, Update_StyleShift_Items } from "../settings/items";
 import { Show_Confirm } from "../ui/extension";

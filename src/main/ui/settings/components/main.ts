@@ -1,4 +1,4 @@
-import { Create_Notification, Create_Error } from "../../../buid-in-functions/extension";
+import { Create_Notification, Create_Error } from "../../../build-in-functions/extension";
 import {
 	HEX_to_RBG,
 	RGB_to_HSV,
@@ -6,7 +6,7 @@ import {
 	numberWithCommas,
 	Once_Element_Remove,
 	Create_UniqueID,
-} from "../../../buid-in-functions/normal";
+} from "../../../build-in-functions/normal";
 import {
 	Is_Safe_Code,
 	Run_Text_Script_From_Setting,

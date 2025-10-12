@@ -1,4 +1,4 @@
-import { Apply_Drag } from "../../../buid-in-functions/normal";
+import { Apply_Drag } from "../../../build-in-functions/normal";
 import { Monaco, Is_Safe_Code } from "../../../core/extension";
 import { Save_All } from "../../../core/save";
 import { isFirefox, In_Setting_Page } from "../../../run";

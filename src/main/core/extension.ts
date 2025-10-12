@@ -1,5 +1,5 @@
-import { Create_Error, Create_Notification } from "../buid-in-functions/extension";
-import { sleep } from "../buid-in-functions/normal";
+import { Create_Error, Create_Notification } from "../build-in-functions/extension";
+import { sleep } from "../build-in-functions/normal";
 import { Update_All, In_Setting_Page, isFirefox } from "../run";
 import { color_obj } from "../types/store";
 import { Save_All } from "./save";

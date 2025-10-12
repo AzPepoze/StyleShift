@@ -25,3 +25,5 @@ function zip(inputDir, output) {
 fs.readdirSync(path.join(__dirname, "../out/dist")).forEach((file) => {
 	zip(path.join(__dirname, "../out/dist", file), path.join(__dirname, "../out/release", file + ".zip"));
 });
+
+export {};

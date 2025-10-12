@@ -1,4 +1,4 @@
-import { GetDocumentHead, sleep } from "../buid-in-functions/normal";
+import { GetDocumentHead, sleep } from "../build-in-functions/normal";
 import { Load } from "../core/save";
 
 let StyleSheet_Holder: HTMLElement;

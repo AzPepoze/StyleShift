@@ -42,7 +42,7 @@ async function replaceForFirefox(filePath) {
 		const modifiedContent = await replaceForFirefoxText(data);
 		await fs.writeFile(filePath, modifiedContent, "utf8");
 		console.log(`File '${filePath}' updated successfully!`);
-	} catch (err) {
+	} catch (err: any) {
 		console.error("Error:", err.message);
 	}
 }
@@ -76,7 +76,10 @@ async function processFunctions(codePath) {
 }
 
 async function generateBuildInFunctions(buildPath) {
-	const functionsList = fs.readFileSync(path.join(__dirname, "../src/main/buid-in-functions/extension.ts"), "utf-8");
+	const functionsList = fs.readFileSync(
+		path.join(__dirname, "../src/main/build-in-functions/extension.ts"),
+		"utf-8"
+	);
 
 	const functionNames = [
 		...new Set([...functionsList.matchAll(/\bexport (async\s*function|function)?\s*(\w+)\(/g)].map((x) => x[2])),
@@ -136,7 +139,7 @@ async function build() {
 
 		// Process functions
 		fs.copySync(
-			path.join(__dirname, "../src/main/buid-in-functions/normal.ts"),
+			path.join(__dirname, "../src/main/build-in-functions/normal.ts"),
 			path.join(tempPath, "normal.ts")
 		);
 
@@ -207,3 +210,5 @@ if (isOnce) {
 		await build();
 	});
 }
+
+export {};

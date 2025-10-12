@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const typesDir = path.join(__dirname, "../for_developers/types");
+const typesDir = path.join(__dirname, "../devs/types");
 const typesSubDir = path.join(typesDir, "types");
 const Build_in_Functions_Dir = path.join(typesDir, "Build-in_Functions");
 const normalFunctionsPath = path.join(Build_in_Functions_Dir, "Normal_Functions.d.ts");
@@ -46,3 +46,5 @@ fs.readdirSync(typesDir).forEach((file) => {
 });
 
 console.log("Types built successfully!");
+
+export {};

@@ -1,6 +1,7 @@
 const esbuild = require("esbuild");
 const path = require("path");
 const fs = require("fs");
+
 const { File_Content_Replace } = require("azpepoze.node_tools");
 
 const workerEntryPoints = [
@@ -62,3 +63,5 @@ const workerEntryPoints = [
 		JSON.stringify(getLocalThemes())
 	);
 })();
+
+export {};

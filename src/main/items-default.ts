@@ -1,4 +1,4 @@
-import { Open_Setting_Page } from "./buid-in-functions/extension";
+import { Open_Setting_Page } from "./build-in-functions/extension";
 import { Category } from "./types/store";
 
 let Default_StyleShift_Items: Category[] = [

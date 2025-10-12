@@ -1,4 +1,4 @@
-import { HEX_to_RBG, RGB_to_HSV, HSV_to_RGB, ReArrange_Selector } from "../../../buid-in-functions/normal";
+import { HEX_to_RBG, RGB_to_HSV, HSV_to_RGB, ReArrange_Selector } from "../../../build-in-functions/normal";
 import { Save_All } from "../../../core/save";
 import { UI_Preset } from "../../../settings/default-items";
 import { Add_Setting } from "../../../settings/items";

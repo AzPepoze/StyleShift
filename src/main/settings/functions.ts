@@ -1,4 +1,4 @@
-import { sleep } from "../buid-in-functions/normal";
+import { sleep } from "../build-in-functions/normal";
 import { Run_Text_Script_From_Setting } from "../core/extension";
 import { Load_Any } from "../core/save";
 import { Setting } from "../types/store";

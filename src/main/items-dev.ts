@@ -1,5 +1,5 @@
-import * as StyleShift_Functions from "./buid-in-functions/extension";
-import { sleep } from "./buid-in-functions/normal";
+import * as StyleShift_Functions from "./build-in-functions/extension";
+import { sleep } from "./build-in-functions/normal";
 import { Category } from "./types/store";
 
 let Dev_Only_Items: Category[] = [
