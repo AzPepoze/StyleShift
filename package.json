@@ -18,7 +18,7 @@
 		"build_module": "ts-node utils/builder-modules.ts",
 		"full_build": "sass src/main/styles/setting.scss out/build/style.css --style=compressed --no-source-map && node utils/builder-extension.ts --production --once && npm run build_module",
 		"build_release": "ts-node utils/build-release.ts",
-		"gen_types": "tsc -p utils/tsconfig-builder-types.json && node utils/builder-template.ts",
+		"gen_types": "tsc -p utils/tsconfig-builder-types.json && ts-node utils/builder-types.ts",
 		"gen_raw_types": "tsc -p utils/tsconfig-builder-types.json",
 		"gen_templates": "ts-node utils/builder-template.ts -p utils/tsconfig-builder-types.json"
 	},

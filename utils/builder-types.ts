@@ -1,14 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
+const typeFileName = "StyleShift.d.ts";
+
 const typesDir = path.join(__dirname, "../devs/types");
 const typesSubDir = path.join(typesDir, "types");
-const Build_in_Functions_Dir = path.join(typesDir, "Build-in_Functions");
-const normalFunctionsPath = path.join(Build_in_Functions_Dir, "Normal_Functions.d.ts");
-const extensionFunctionsPath = path.join(Build_in_Functions_Dir, "Extension_Functions.d.ts");
-const styleShiftPath = path.join(typesDir, "StyleShift.d.ts");
+const Build_in_Functions_Dir = path.join(typesDir, "build-in-functions");
+const normalFunctionsPath = path.join(Build_in_Functions_Dir, "normal.d.ts");
+const extensionFunctionsPath = path.join(Build_in_Functions_Dir, "extension.d.ts");
+const styleShiftPath = path.join(typesDir, typeFileName);
 
-// Read contents of Normal_Functions.d.ts and Extension_Functions.d.ts
+// Read contents of normal.d.ts and extension.d.ts
 const normalFunctionsContent = fs.readFileSync(normalFunctionsPath, "utf-8");
 const extensionFunctionsContent = fs.readFileSync(extensionFunctionsPath, "utf-8");
 
@@ -35,7 +37,7 @@ const combinedContent =
 fs.writeFileSync(styleShiftPath, `declare global {\n${combinedContent}\n}\nexport {};`, "utf-8");
 
 fs.readdirSync(typesDir).forEach((file) => {
-	if (file !== "styleshift.d.ts") {
+	if (file !== typeFileName) {
 		try {
 			fs.unlinkSync(path.join(typesDir, file));
 		} catch (error) {}
