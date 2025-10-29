@@ -161,12 +161,22 @@ export async function Create_Error(Content, Timeout = 0) {
 	});
 }
 
+export async function Create_Warning(Content, { Timeout = 0, Show = true } = {}) {
+	console.warn("StyleShift - " + Content);
+	if (!Show) return;
+	return await Create_Notification({
+		Icon: "❌",
+		Title: "StyleShift - Error",
+		Content: Content,
+		Timeout: Timeout,
+	});
+}
+
 /*
 -------------------------------------------------------
 For advanced user !!!
 -------------------------------------------------------
 */
-
 /**
  * Shows a text input prompt window.
  * @param {{ Title : string, Placeholder : string, Content : string }} Options
@@ -318,16 +328,24 @@ export function Export_StyleShift_Data() {
 	let Export_StyleShift_Data = {};
 
 	for (const This_Key of StyleShift_Allowed_Keys) {
-		Export_StyleShift_Data[This_Key] = deepClone(Saved_Data[This_Key]);
+		if (Saved_Data[This_Key]) {
+			Export_StyleShift_Data[This_Key] = deepClone(Saved_Data[This_Key]);
+		}
 	}
 
-	for (const This_Category of Export_StyleShift_Data["Custom_StyleShift_Items"]) {
-		delete This_Category.Highlight_Color;
-		delete This_Category.Editable;
+	const custom_items = Export_StyleShift_Data["Custom_StyleShift_Items"];
 
-		for (const This_Setting of This_Category.Settings) {
-			delete This_Setting.Editable;
+	if (custom_items) {
+		for (const This_Category of custom_items) {
+			delete This_Category.Highlight_Color;
+			delete This_Category.Editable;
+
+			for (const This_Setting of This_Category.Settings) {
+				delete This_Setting.Editable;
+			}
 		}
+	} else {
+		Create_Warning("No custom items found. Skipping...", { Show: false });
 	}
 
 	return Export_StyleShift_Data;
@@ -552,12 +570,12 @@ export function Dynamic_Get_Element(Child: Object | any) {
  * Open_Setting_Page();
  */
 export function Open_Setting_Page() {
-	window.open(chrome.runtime.getURL(`setting/styleshift.html?Save_Domain=${Get_Current_Domain()}`), "_blank");
+	window.open(chrome.runtime.getURL(`setting/styleshift.html?domain=${Get_Current_Domain()}`), "_blank");
 }
 
 /*
 -------------------------------------------------------
-Danger !!!
+Danger Zone !!!
 -------------------------------------------------------
 */
 
@@ -589,7 +607,6 @@ export async function Disable_Extension_Function() {
  * @returns {Promise<string>} The JSON string representation of the retrieved data.
  */
 export async function Load_StyleShift_Value(id) {
-	console.log("Load_StyleShift_Value", id, await Load(id));
 	return JSON.stringify(await Load(id));
 }
 

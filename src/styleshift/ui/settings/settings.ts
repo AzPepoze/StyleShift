@@ -2,7 +2,7 @@ import { Dynamic_Append, Create_Error } from "../../build-in-functions/extension
 import { Scroll_On_Click, sleep, insertAfter } from "../../build-in-functions/normal";
 import { Loaded_Developer_Modules } from "../../core/extension";
 import { Load, Save_All } from "../../core/save";
-import { Get_Dev_Only_Items } from "../../items-dev";
+import { Get_Dev_Only_Items } from "../../../main/items-dev";
 import { In_Setting_Page, Update_All } from "../../run";
 import {
 	Add_Category,

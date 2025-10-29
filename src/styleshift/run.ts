@@ -48,8 +48,8 @@ console.log("In_Setting_Page", In_Setting_Page);
 export let Save_Name;
 if (In_Setting_Page) {
 	let URL_Parameters = Get_Current_URL_Parameters();
-	if (URL_Parameters.Save_Domain) {
-		Save_Name = URL_Parameters.Save_Domain;
+	if (URL_Parameters.domain) {
+		Save_Name = URL_Parameters.domain;
 	} else {
 		Save_Name = "youtube.com";
 	}

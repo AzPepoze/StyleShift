@@ -1,5 +1,5 @@
-import { Convert_To_Export_Setting } from "../src/main/core/export-converter";
-import { UI_Preset } from "../src/main/settings/default-items";
+import { Convert_To_Export_Setting } from "../src/styleshift/core/export-converter";
+import { UI_Preset } from "../src/styleshift/settings/default-items";
 
 const fs = require("fs");
 const path = require("path");

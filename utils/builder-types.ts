@@ -10,11 +10,9 @@ const normalFunctionsPath = path.join(Build_in_Functions_Dir, "normal.d.ts");
 const extensionFunctionsPath = path.join(Build_in_Functions_Dir, "extension.d.ts");
 const styleShiftPath = path.join(typesDir, typeFileName);
 
-// Read contents of normal.d.ts and extension.d.ts
 const normalFunctionsContent = fs.readFileSync(normalFunctionsPath, "utf-8");
 const extensionFunctionsContent = fs.readFileSync(extensionFunctionsPath, "utf-8");
 
-// Read contents of all files in ../types/types
 let typesSubDirContent = "";
 fs.readdirSync(typesSubDir).forEach((file) => {
 	const filePath = path.join(typesSubDir, file);
@@ -23,7 +21,6 @@ fs.readdirSync(typesSubDir).forEach((file) => {
 	}
 });
 
-// Combine contents and write to StyleShift.d.ts
 const defaultExport = `
 export function Set_Value(id: string, value: any): void;
 export function Get_Value(id: string): any;

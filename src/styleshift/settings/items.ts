@@ -1,7 +1,7 @@
 import { Random } from "../build-in-functions/normal";
 import { Save_And_Update_ALL } from "../core/extension";
 import { Load, Save_Any } from "../core/save";
-import { Get_Default_Items } from "../items-default";
+import { Get_Default_Items } from "../../main/items-default";
 import { Update_All } from "../run";
 import { Category, Setting } from "../types/store";
 import { SetUp_Setting_Function } from "./functions";

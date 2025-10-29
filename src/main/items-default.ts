@@ -1,5 +1,5 @@
-import { Open_Setting_Page } from "./build-in-functions/extension";
-import { Category } from "./types/store";
+import { Open_Setting_Page } from "../styleshift/build-in-functions/extension";
+import { Category } from "../styleshift/types/store";
 
 let Default_StyleShift_Items: Category[] = [
 	{

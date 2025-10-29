@@ -14,6 +14,16 @@ const isOnce = args.includes("--once");
 
 /*
 -------------------------------------------------------
+Utils Functions
+-------------------------------------------------------
+*/
+function getFileNameFromPath(filePath) {
+	const parts = filePath.split("/");
+	return parts[parts.length - 1];
+}
+
+/*
+-------------------------------------------------------
 Firefox Compatibility Functions
 -------------------------------------------------------
 */
@@ -41,7 +51,7 @@ async function replaceForFirefox(filePath) {
 
 		const modifiedContent = await replaceForFirefoxText(data);
 		await fs.writeFile(filePath, modifiedContent, "utf8");
-		console.log(`File '${filePath}' updated successfully!`);
+		console.log(`File '${getFileNameFromPath(filePath)}' updated successfully!`);
 	} catch (err: any) {
 		console.error("Error:", err.message);
 	}
@@ -77,7 +87,7 @@ async function processFunctions(codePath) {
 
 async function generateBuildInFunctions(buildPath) {
 	const functionsList = fs.readFileSync(
-		path.join(__dirname, "../src/main/build-in-functions/extension.ts"),
+		path.join(__dirname, "../src/styleshift/build-in-functions/extension.ts"),
 		"utf-8"
 	);
 
@@ -127,7 +137,7 @@ async function build() {
 
 		// Build main bundle
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/main/run.ts")],
+			entryPoints: [path.join(__dirname, "../src/styleshift/run.ts")],
 			bundle: true,
 			outfile: path.join(buildPath, "styleshift.js"),
 			platform: "browser",
@@ -139,7 +149,7 @@ async function build() {
 
 		// Process functions
 		fs.copySync(
-			path.join(__dirname, "../src/main/build-in-functions/normal.ts"),
+			path.join(__dirname, "../src/styleshift/build-in-functions/normal.ts"),
 			path.join(tempPath, "normal.ts")
 		);
 
@@ -157,7 +167,7 @@ async function build() {
 		});
 
 		await esbuild.build({
-			entryPoints: [path.join(__dirname, "../src/main/communication/web-page.ts")],
+			entryPoints: [path.join(__dirname, "../src/styleshift/communication/web-page.ts")],
 			outfile: path.join(buildPath, "build-in.js"),
 			platform: "browser",
 		});
@@ -205,8 +215,8 @@ Build Process Initialization
 if (isOnce) {
 	build();
 } else {
-	chokidar.watch(path.join(__dirname, "../src/main")).on("all", async (event, path) => {
-		console.log(event, path);
+	chokidar.watch(path.join(__dirname, "../src")).on("all", async (event, path: string) => {
+		console.log(event, getFileNameFromPath(path));
 		await build();
 	});
 }
