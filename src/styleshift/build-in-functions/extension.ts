@@ -165,8 +165,8 @@ export async function Create_Warning(Content, { Timeout = 0, Show = true } = {})
 	console.warn("StyleShift - " + Content);
 	if (!Show) return;
 	return await Create_Notification({
-		Icon: "❌",
-		Title: "StyleShift - Error",
+		Icon: "⚠️",
+		Title: "StyleShift - Warning",
 		Content: Content,
 		Timeout: Timeout,
 	});
