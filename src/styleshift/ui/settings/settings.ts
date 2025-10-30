@@ -2,7 +2,7 @@ import { Dynamic_Append, Create_Error } from "../../build-in-functions/extension
 import { Scroll_On_Click, sleep, insertAfter } from "../../build-in-functions/normal";
 import { Loaded_Developer_Modules } from "../../core/extension";
 import { Load, Save_All } from "../../core/save";
-import { Get_Dev_Only_Items } from "../../../main/items-dev";
+import { Get_StyleShift_Dev_Only_Items } from "../../../main/items-styleshift-dev";
 import { In_Setting_Page, Update_All } from "../../run";
 import {
 	Add_Category,
@@ -132,7 +132,7 @@ export async function Create_Main_Settings_UI({
 				console.log(Loaded_Developer_Modules);
 
 				if (Loaded_Developer_Modules) {
-					const Get_Dev_Only_Category = Get_Dev_Only_Items().find(
+					const Get_Dev_Only_Category = Get_StyleShift_Dev_Only_Items().find(
 						(x) => x.Category == This_Category.Category
 					);
 
@@ -165,7 +165,7 @@ export async function Create_Main_Settings_UI({
 			}
 
 			if (await Load("Developer_Mode")) {
-				for (const Category of Get_Dev_Only_Items()) {
+				for (const Category of Get_StyleShift_Dev_Only_Items()) {
 					if (!Created_Dev_Only_Category.includes(Category.Category)) {
 						await Create_Category_UI(Settings_Container, Category);
 					}

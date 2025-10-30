@@ -1,7 +1,8 @@
+import { Get_Default_Items } from "../../main/items-default";
+import { Get_StyleShift_Default_Items } from "../../main/items-styleshift-default";
 import { Random } from "../build-in-functions/normal";
 import { Save_And_Update_ALL } from "../core/extension";
 import { Load, Save_Any } from "../core/save";
-import { Get_Default_Items } from "../../main/items-default";
 import { Update_All } from "../run";
 import { Category, Setting } from "../types/store";
 import { SetUp_Setting_Function } from "./functions";
@@ -75,7 +76,7 @@ function Save_Custom_Items_And_Update_All(Custom_Items) {
 }
 
 export async function Update_StyleShift_Items() {
-	StyleShift_Items.Default = Get_Default_Items();
+	StyleShift_Items.Default = { ...Get_StyleShift_Default_Items(), ...Get_Default_Items() };
 	StyleShift_Items.Custom = (await Load("Custom_StyleShift_Items")) || [];
 
 	Auto_Add_HightLight(Get_ALL_StyleShift_Items());

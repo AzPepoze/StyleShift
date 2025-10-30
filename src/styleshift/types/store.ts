@@ -9,9 +9,9 @@ export type Category = {
 };
 
 export type option = {
-	enable_css?: string;
-	enable_function?: string | Function;
-
+    enable_css?: string;
+    
+    enable_function?: string | Function;
 	disable_function?: string | Function;
 };
 

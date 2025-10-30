@@ -92,6 +92,6 @@ let Dev_Only_Items: Category[] = [
 	},
 ];
 
-export function Get_Dev_Only_Items() {
+export function Get_StyleShift_Dev_Only_Items() {
 	return Dev_Only_Items;
 }
