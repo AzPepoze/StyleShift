@@ -4,18 +4,18 @@ const path = require("path");
 const typeFileName = "StyleShift.d.ts";
 
 const typesDir = path.join(__dirname, "../devs/types");
-const typesSubDir = path.join(typesDir, "types");
-const Build_in_Functions_Dir = path.join(typesDir, "build-in-functions");
-const normalFunctionsPath = path.join(Build_in_Functions_Dir, "normal.d.ts");
-const extensionFunctionsPath = path.join(Build_in_Functions_Dir, "extension.d.ts");
+const styleshiftTypesDir = path.join(typesDir, "styleshift");
+const buildInFunctionsDir = path.join(styleshiftTypesDir, "build-in-functions");
+const normalFunctionsPath = path.join(buildInFunctionsDir, "normal.d.ts");
+const extensionFunctionsPath = path.join(buildInFunctionsDir, "extension.d.ts");
 const styleShiftPath = path.join(typesDir, typeFileName);
 
 const normalFunctionsContent = fs.readFileSync(normalFunctionsPath, "utf-8");
 const extensionFunctionsContent = fs.readFileSync(extensionFunctionsPath, "utf-8");
 
 let typesSubDirContent = "";
-fs.readdirSync(typesSubDir).forEach((file) => {
-	const filePath = path.join(typesSubDir, file);
+fs.readdirSync(styleshiftTypesDir).forEach((file) => {
+	const filePath = path.join(styleshiftTypesDir, file);
 	if (fs.statSync(filePath).isFile()) {
 		typesSubDirContent += fs.readFileSync(filePath, "utf-8") + "\n";
 	}

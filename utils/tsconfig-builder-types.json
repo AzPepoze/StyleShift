@@ -8,6 +8,6 @@
 		"types": ["chrome", "node"],
 		"outDir": "../devs/types"
 	},
-	"include": ["../src/main/build-in-functions/extension.ts"],
+	"include": ["../src/styleshift/build-in-functions/extension.ts"],
 	"exclude": ["../node_modules"]
 }
