@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"dev": "concurrently \"npm:dev_css\" \"npm:dev_js\" \"web-ext run --source-dir=./out/build\"",
+		"dev": "concurrently \"npm:dev_css\" \"npm:dev_js\" \"web-ext run --source-dir=./out/dist/firefox\"",
 		"dev_js": "ts-node utils/builder-extension.ts",
 		"dev_css": "sass --watch src/main/styles/setting.scss out/build/style.css --style=compressed --no-source-map",
 		"build_module": "ts-node utils/builder-modules.ts",

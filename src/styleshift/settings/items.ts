@@ -76,7 +76,7 @@ function Save_Custom_Items_And_Update_All(Custom_Items) {
 }
 
 export async function Update_StyleShift_Items() {
-	StyleShift_Items.Default = { ...Get_StyleShift_Default_Items(), ...Get_Default_Items() };
+	StyleShift_Items.Default = [...Get_StyleShift_Default_Items(), ...Get_Default_Items()];
 	StyleShift_Items.Custom = (await Load("Custom_StyleShift_Items")) || [];
 
 	Auto_Add_HightLight(Get_ALL_StyleShift_Items());

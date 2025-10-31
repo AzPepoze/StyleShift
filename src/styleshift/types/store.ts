@@ -191,7 +191,7 @@ export type Setting =
 
 			setup_?: string | Function;
 
-			ui_function?: string;
+			ui_function?: string | Function;
 
 			//--------------
 

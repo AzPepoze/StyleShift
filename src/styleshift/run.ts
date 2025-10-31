@@ -4,6 +4,7 @@ import {
 	Get_Current_URL_Parameters,
 	GetDocumentBody,
 	ReArrange_Selector,
+	sleep,
 } from "./build-in-functions/normal";
 import { Run_Text_Script, Update_StyleShift_Functions_List } from "./core/extension";
 import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./core/save";
@@ -20,6 +21,7 @@ import { Toggle_Customize } from "./ui/highlight";
 //-------------------------------------------------------
 
 export let Ver = chrome.runtime.getManifest().version;
+export let StyleShift_Ready = false;
 
 export let isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
 console.log("isFirefox", navigator.userAgent.toLowerCase(), isFirefox);
@@ -138,6 +140,7 @@ async function Main_Run() {
 	if (In_Setting_Page) {
 		Extension_Settings_UI.Create_UI();
 	}
+	StyleShift_Ready = true;
 }
 
 /*
@@ -189,6 +192,20 @@ chrome.runtime.onMessage.addListener(async function (message) {
 		}
 
 		if (message == "Setting") {
+			if (!StyleShift_Ready) {
+				const loading_notification = await Create_Notification({
+					Icon: "⏳",
+					Title: "StyleShift is loading! please wait...",
+					Timeout: -1,
+				});
+
+				while (!StyleShift_Ready) {
+					await sleep(100);
+				}
+
+				loading_notification.Close();
+			}
+
 			Extension_Settings_UI.Toggle();
 		}
 	} catch (error) {

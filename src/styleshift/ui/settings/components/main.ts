@@ -914,11 +914,16 @@ Are you want to continue?`)
 	["Custom"]: async function (This_Setting: Partial<Extract<Setting, { type: "Custom" }>>) {
 		let Frame = Settings_UI["Setting_Frame"](true, true);
 		Frame.id = This_Setting.id || Create_UniqueID(10);
-		Run_Text_Script({
-			Text: This_Setting["ui_function"],
-			Code_Name: `${This_Setting.id} : ui_function`,
-			args: JSON.stringify({ Setting_ID: Frame.id }),
-		});
+
+		if (typeof This_Setting.ui_function === 'function') {
+			(This_Setting.ui_function as Function)(Frame);
+		} else if (typeof This_Setting.ui_function === 'string') {
+			Run_Text_Script({
+				Text: This_Setting["ui_function"],
+				Code_Name: `${This_Setting.id} : ui_function`,
+				args: JSON.stringify({ Setting_ID: Frame.id }),
+			});
+		}
 
 		let Config_UI_Function = await Create_Config_UI_Function(This_Setting.Editable, async function (Parent) {
 			await Settings_UI["Config_Main_Section"](Parent, This_Setting, {
