@@ -1,34 +1,32 @@
 {
 	"scripts": {
-		"dev": "concurrently \"npm:dev_css\" \"npm:dev_js\" \"web-ext run --source-dir=./out/dist/firefox\"",
-		"dev_js": "ts-node utils/builder-extension.ts",
-		"dev_css": "sass --watch src/main/styles/setting.scss out/build/style.css --style=compressed --no-source-map",
+		"dev": "concurrently \"npm:dev:css\" \"npm:dev:js\" \"web-ext run --source-dir=./out/dist/firefox\"",
+		"dev:js": "ts-node utils/builder-extension.ts",
+		"dev:css": "sass --watch src/styleshift/styles/setting.scss out/build/style.css --style=compressed --no-source-map",
 		"build_module": "ts-node utils/builder-modules.ts",
-		"full_build": "sass src/main/styles/setting.scss out/build/style.css --style=compressed --no-source-map && node utils/builder-extension.ts --production --once && npm run build_module",
-		"build_release": "ts-node utils/build-release.ts",
-		"gen_types": "tsc -p utils/tsconfig-builder-types.json && ts-node utils/builder-types.ts",
-		"gen_raw_types": "tsc -p utils/tsconfig-builder-types.json",
-		"gen_templates": "ts-node utils/builder-template.ts -p utils/tsconfig-builder-types.json"
+		"build:dev": "sass src/styleshift/styles/setting.scss out/build/style.css --style=compressed --no-source-map && node utils/builder-extension.ts --production --once && npm run build_module",
+		"build:prod": "ts-node utils/build-release.ts",
+		"build:types": "tsc -p utils/tsconfig-builder-types.json && ts-node utils/builder-types.ts",
+		"build:types_raw": "tsc -p utils/tsconfig-builder-types.json",
+		"build:folder_template": "ts-node utils/builder-template.ts -p utils/tsconfig-builder-types.json"
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
 		"monaco-editor": "^0.52.2",
-		"monaco-themes": "^0.4.6"
+		"monaco-themes": "^0.4.7"
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.268",
-		"@types/node": "^22.17.2",
+		"@types/node": "^22.19.1",
 		"archiver": "^7.0.1",
 		"azpepoze.node_tools": "^1.0.4",
 		"chokidar": "^4.0.3",
 		"concurrently": "^9.2.1",
-		"dts-gen": "^0.10.5",
 		"esbuild": "^0.24.2",
-		"fs-extra": "^11.3.1",
-		"sass": "^1.90.0",
-		"ts-loader": "^9.5.2",
+		"fs-extra": "^11.3.2",
+		"sass": "^1.94.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.9.2",
-		"web-ext": "^9.1.0"
+		"typescript": "^5.9.3",
+		"web-ext": "^9.2.0"
 	}
 }

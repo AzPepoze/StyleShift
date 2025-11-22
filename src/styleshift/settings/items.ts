@@ -110,22 +110,19 @@ export async function Update_StyleShift_Items() {
 
 let Settings_List = {} as { [id: string]: Setting };
 
-export async function Get_Settings_List(Force = false): Promise<{ [id: string]: Setting }> {
-	if (!Force && Object.keys(Settings_List).length) {
+export async function Get_Settings_List(rebuild = false): Promise<{ [id: string]: Setting }> {
+	if (!rebuild && Object.keys(Settings_List).length) {
 		return Settings_List;
 	}
 
 	Settings_List = {};
 
 	for (const Category_OBJ of Get_ALL_StyleShift_Items()) {
-		try {
-			for (const Setting of Category_OBJ.Settings) {
-				if (Setting.id == "") {
-					continue;
-				}
+		for (const Setting of Category_OBJ.Settings) {
+			if ("id" in Setting && Setting.id != null) {
 				Settings_List[Setting.id] = Setting;
 			}
-		} catch (error) {}
+		}
 	}
 
 	return Settings_List;

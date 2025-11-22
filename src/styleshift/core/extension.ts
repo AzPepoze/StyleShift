@@ -88,7 +88,6 @@ export function Is_Safe_Code(code: string, Code_Name: string) {
 		/eval/i,
 		/new function/i,
 		/(?<!@)\bimport\b/i,
-		/require/i,
 		/fetch/i,
 		/xmlhttprequest/i,
 		/xhr/i,

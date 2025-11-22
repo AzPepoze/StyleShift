@@ -123,6 +123,27 @@ export async function ClearSave() {
 	await chrome.storage.local.clear();
 }
 
+export async function Update_Save_Default() {
+	let Can_Settings = await Get_Settings_List(true);
+	let Current_Settings = Saved_Data["Current_Settings"];
+
+	console.log(Can_Settings);
+
+	if (Current_Settings == null) {
+		Current_Settings = {};
+	}
+
+	for (const id in Can_Settings) {
+		const setting = Can_Settings[id];
+		if ("value" in setting && Current_Settings[id] == null) {
+			Current_Settings[id] = setting.value;
+			console.log("Added New Default Setting:", id, setting.value);
+		}
+	}
+
+	Saved_Data["Current_Settings"] = Current_Settings;
+}
+
 export async function Clear_Unused_Save() {
 	if (!Loaded) {
 		await sleep(100);
@@ -135,11 +156,11 @@ export async function Clear_Unused_Save() {
 
 	console.log("Clearing Unnessary Save");
 
-	let Can_Setting_List = Object.keys(await Get_Settings_List(true));
+	let Can_Settings_Keys = Object.keys(await Get_Settings_List(true));
 	let Current_Settings = Saved_Data["Current_Settings"];
 
 	for (const key of Object.keys(Current_Settings)) {
-		if (!Can_Setting_List.includes(key)) {
+		if (!Can_Settings_Keys.includes(key)) {
 			console.log("Removed", key);
 			delete Current_Settings[key];
 		}

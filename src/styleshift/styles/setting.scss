@@ -84,6 +84,10 @@
 }
 
 .STYLESHIFT-Main {
+	* {
+		user-select: none;
+	}
+
 	textarea {
 		white-space: nowrap !important;
 	}
@@ -114,10 +118,6 @@
 		}
 	}
 
-	*:not(.monaco-editor):not(.monaco-editor *) {
-		user-select: none;
-	}
-
 	//---------------------------------------------
 
 	[STYLESHIFT-All-Transition] {
@@ -135,6 +135,7 @@
 		text-align: center;
 		border-radius: 100px;
 		margin: 3px;
+		user-select: text;
 	}
 
 	.STYLESHIFT-Left-Category-Title {
@@ -244,6 +245,7 @@
 		text-wrap: wrap;
 		font-size: 17px;
 		white-space: break-spaces;
+		user-select: text;
 	}
 
 	.STYLESHIFT-Text-Editor {

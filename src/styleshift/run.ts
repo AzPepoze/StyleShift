@@ -7,7 +7,7 @@ import {
 	sleep,
 } from "./build-in-functions/normal";
 import { Run_Text_Script, Update_StyleShift_Functions_List } from "./core/extension";
-import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All } from "./core/save";
+import { Clear_Unused_Save, Load, Load_ThisWeb_Save, Save, Save_All, Update_Save_Default } from "./core/save";
 import { SetUp_Setting_Function } from "./settings/functions";
 import { Create_StyleSheet_Holder } from "./settings/style-sheet";
 import { Get_ALL_StyleShift_Items, Get_ALL_StyleShift_Settings, Update_StyleShift_Items } from "./settings/items";
@@ -114,6 +114,7 @@ async function Main_Run() {
 	await Update_StyleShift_Functions_List();
 	await Create_StyleSheet_Holder();
 	await Update_StyleShift_Items();
+	await Update_Save_Default();
 	console.log("Test", Get_ALL_StyleShift_Items());
 
 	//------------------------------------------
@@ -140,6 +141,7 @@ async function Main_Run() {
 	if (In_Setting_Page) {
 		Extension_Settings_UI.Create_UI();
 	}
+
 	StyleShift_Ready = true;
 }
 
