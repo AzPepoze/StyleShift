@@ -1,7 +1,7 @@
 import { Category } from "../styleshift/types/store";
 
-let Default_StyleShift_Items: Category[] = [];
+const default_styleshift_items: Category[] = [];
 
-export function Get_Default_Items() {
-	return Default_StyleShift_Items;
+export function get_default_items() {
+	return default_styleshift_items;
 }

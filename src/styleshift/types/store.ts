@@ -1,28 +1,28 @@
 export type Category = {
-	Category: string;
-	Rainbow?: boolean;
-	Selector?: string;
+	category: string;
+	rainbow?: boolean;
+	selector?: string;
 
-	Editable?: boolean;
-	Settings: Setting[];
-	Highlight_Color?: string;
+	editable?: boolean;
+	settings: Setting[];
+	highlight_color?: string;
 };
 
-export type option = {
-    enable_css?: string;
-    
-    enable_function?: string | Function;
+export type Option = {
+	enable_css?: string;
+
+	enable_function?: string | Function;
 	disable_function?: string | Function;
 };
 
-export type color_obj = {
-	HEX: string;
-	Alpha: number;
+export type Color_obj = {
+	hex: string;
+	alpha: number;
 };
 
 export type Setting =
 	| {
-			type: "Text";
+			type: "text";
 			id?: string;
 
 			html: string;
@@ -30,10 +30,10 @@ export type Setting =
 			text_align?: "left" | "center" | "right";
 			font_size?: number;
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Setting_Sub_Title";
+			type: "sub_text";
 			id?: string;
 
 			text: string;
@@ -42,10 +42,10 @@ export type Setting =
 			color?: string;
 			font_size?: number;
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Button";
+			type: "button";
 			id?: string;
 			name: string;
 			description?: string;
@@ -57,10 +57,10 @@ export type Setting =
 
 			click_function?: string | Function;
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Checkbox";
+			type: "checkbox";
 			id: string;
 			name: string;
 			description?: string;
@@ -70,6 +70,7 @@ export type Setting =
 			constant_css?: string;
 
 			setup_function?: string | Function;
+			update_function?: string | Function;
 
 			enable_css?: string;
 			enable_function?: string | Function;
@@ -77,10 +78,10 @@ export type Setting =
 			disable_css?: string;
 			disable_function?: string | Function;
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Number_Slide";
+			type: "number_slide";
 			id: string;
 			name: string;
 			description?: string;
@@ -89,6 +90,7 @@ export type Setting =
 			max?: number;
 			step?: number;
 			value: number;
+			var_css_unit?: string;
 
 			//--------------
 
@@ -102,10 +104,10 @@ export type Setting =
 
 			//--------------
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Dropdown";
+			type: "dropdown";
 			id: string;
 			name: string;
 			description?: string;
@@ -118,14 +120,14 @@ export type Setting =
 
 			setup_function?: string | Function;
 
-			options: { [key: string]: option };
+			options: { [key: string]: Option };
 
 			//--------------
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Color";
+			type: "color";
 			id: string;
 			name: string;
 			description?: string;
@@ -145,10 +147,10 @@ export type Setting =
 
 			//--------------
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Text_Input";
+			type: "text_input";
 			id: string;
 			name: string;
 			description?: string;
@@ -158,51 +160,48 @@ export type Setting =
 			update_function?: string | ((value: string) => void);
 
 			//--------------
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Image_Input";
+			type: "image_input";
 			id: string;
 			name: string;
 			description?: string;
 
 			value: string;
-			MaxFileSize: number;
+			max_file_size: number;
 
 			//--------------
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Preview_Image";
+			type: "preview_image";
 			id: string;
 
 			//--------------
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Custom";
+			type: "custom";
 			id: string;
 
 			//--------------
 
 			constant_css?: string;
-
 			setup_function?: string | Function;
-
 			setup_?: string | Function;
-
 			ui_function?: string | Function;
 
 			//--------------
 
-			Editable?: boolean;
+			editable?: boolean;
 	  }
 	| {
-			type: "Combine_Settings";
+			type: "combine_settings";
 			id?: string;
 			name?: string;
 			description?: string;
 			sync_id: string[];
 			update_function?: string;
-			Editable?: boolean;
+			editable?: boolean;
 	  };

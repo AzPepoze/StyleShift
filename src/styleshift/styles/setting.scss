@@ -275,7 +275,7 @@
 
 	/* Checkbox */
 
-	.STYLESHIFT-Setting-Frame[settingtype="Checkbox"] {
+	.STYLESHIFT-Setting-Frame[settingtype="checkbox"] {
 		flex-direction: row;
 		align-items: center;
 		gap: 10px;
@@ -328,7 +328,7 @@
 		}
 	}
 
-	.STYLESHIFT-Number_Input {
+	.STYLESHIFT-Number-Input {
 		width: 50px;
 		height: 15px;
 		background: rgb(33, 33, 33);
@@ -354,7 +354,7 @@
 		}
 	}
 
-	.STYLESHIFT-Number_Slide {
+	.STYLESHIFT-Number-Slide {
 		-webkit-appearance: none;
 		appearance: none;
 		width: calc(100% - 50px);
@@ -398,7 +398,7 @@
 		gap: 10px;
 	}
 
-	.STYLESHIFT-Setting-Frame[settingtype="Color"] {
+	.STYLESHIFT-Setting-Frame[settingtype="color"] {
 		width: 95%;
 	}
 

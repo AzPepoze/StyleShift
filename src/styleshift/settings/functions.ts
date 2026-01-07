@@ -1,274 +1,303 @@
-import { sleep } from "../build-in-functions/normal";
-import { Run_Text_Script_From_Setting } from "../core/extension";
-import { Load_Any } from "../core/save";
+import { wait_one_frame } from "../build-in-functions/normal";
+import { run_text_script_from_setting } from "../core/extension";
+import { load_any } from "../core/save";
 import { Setting } from "../types/store";
-import { Create_StyleSheet } from "./style-sheet";
+import { create_stylesheet } from "./style-sheet";
 
-export let Settings_Current_State = {};
-let Settings_Update_Function: { [key: string]: Function } = {};
-let Settings_On_Update: { [key: string]: Function[] } = {};
+export const settings_current_state = {};
+const settings_update_function: { [key: string]: Function } = {};
 
-let Settings_Funcion = {
-	["Checkbox"]: async function (This_Setting) {
-		let StyleSheet: HTMLElement;
-		if (This_Setting.constant_css || This_Setting.enable_css || This_Setting.disable_css) {
-			StyleSheet = Create_StyleSheet(This_Setting.id);
+const settings_on_update: { [key: string]: Function[] } = {};
+const settings_on_init: { [key: string]: Function[] } = {};
+
+const settings_function = {
+	["checkbox"]: async function (this_setting) {
+		let style_sheet: HTMLElement;
+		if (this_setting.constant_css || this_setting.enable_css || this_setting.disable_css) {
+			style_sheet = create_stylesheet(this_setting.id);
 		}
 
-		if (This_Setting.setup_function) {
-			Run_Text_Script_From_Setting(This_Setting, "setup_function");
+		if (this_setting.setup_function) {
+			run_text_script_from_setting(this_setting, "setup_function");
 		}
 
-		async function Update_Function() {
-			let value = await Load_Any(This_Setting.id);
+		async function update_function() {
+			const value = await load_any(this_setting.id);
 
-			if (StyleSheet) {
-				StyleSheet.textContent = This_Setting.constant_css || ``;
+			if (style_sheet) {
+				style_sheet.textContent = this_setting.constant_css || ``;
 			}
 
 			if (value) {
-				if (StyleSheet) {
-					StyleSheet.textContent += This_Setting.enable_css || ``;
+				if (style_sheet) {
+					style_sheet.textContent += this_setting.enable_css || ``;
 				}
 			} else {
-				if (StyleSheet) {
-					StyleSheet.textContent += This_Setting.disable_css || ``;
+				if (style_sheet) {
+					style_sheet.textContent += this_setting.disable_css || ``;
 				}
 			}
 
-			if (Settings_Current_State[This_Setting.id] == value) return;
-			Settings_Current_State[This_Setting.id] = value;
+			if (settings_current_state[this_setting.id] == value) return;
+			settings_current_state[this_setting.id] = value;
+
+			if (this_setting.update_function) {
+				run_text_script_from_setting(this_setting, "update_function");
+			}
 
 			if (value) {
-				if (This_Setting.enable_function) {
-					Run_Text_Script_From_Setting(This_Setting, "enable_function");
+				if (this_setting.enable_function) {
+					run_text_script_from_setting(this_setting, "enable_function");
 				}
 			} else {
-				if (This_Setting.disable_function) {
-					Run_Text_Script_From_Setting(This_Setting, "disable_function");
+				if (this_setting.disable_function) {
+					run_text_script_from_setting(this_setting, "disable_function");
 				}
 			}
 		}
 
-		Update_Function();
+		update_function();
 
-		return Update_Function;
+		return update_function;
 	},
-	["Number_Slide"]: async function (This_Setting: Partial<Extract<Setting, { type: "Number_Slide" }>>) {
-		let StyleSheet: HTMLElement;
-		if (This_Setting.constant_css || This_Setting.var_css) {
-			StyleSheet = Create_StyleSheet(This_Setting.id);
+	["number_slide"]: async function (this_setting: Partial<Extract<Setting, { type: "number_slide" }>>) {
+		let style_sheet: HTMLElement;
+		if (this_setting.constant_css || this_setting.var_css) {
+			style_sheet = create_stylesheet(this_setting.id);
 		}
 
-		if (This_Setting.setup_function) {
-			Run_Text_Script_From_Setting(This_Setting, "setup_function");
+		if (this_setting.setup_function) {
+			run_text_script_from_setting(this_setting, "setup_function");
 		}
 
-		async function Update_Function() {
-			let value = await Load_Any(This_Setting.id);
+		async function update_function() {
+			const value = await load_any(this_setting.id);
 
-			if (StyleSheet) {
-				StyleSheet.textContent = "";
-				StyleSheet.textContent += `:root{${
-					This_Setting.var_css ? This_Setting.var_css : `--${This_Setting.id}`
-				}: ${value}px}`;
-				if (This_Setting.constant_css) {
-					StyleSheet.textContent += This_Setting.constant_css;
+			if (style_sheet) {
+				style_sheet.textContent = "";
+				style_sheet.textContent += `:root{${
+					this_setting.var_css ? this_setting.var_css : `--${this_setting.id}`
+				}: ${value}${this_setting.var_css_unit || "px"}`;
+				if (this_setting.constant_css) {
+					style_sheet.textContent += this_setting.constant_css;
 				}
 			}
 
-			// if (Settings_Current_State[This_Setting.id] == value) return;
-			Settings_Current_State[This_Setting.id] = value;
+			// if (settings_current_state[this_setting.id] == value) return;
+			settings_current_state[this_setting.id] = value;
 
-			if (This_Setting.update_function) {
-				Run_Text_Script_From_Setting(This_Setting, "update_function");
+			if (this_setting.update_function) {
+				run_text_script_from_setting(this_setting, "update_function");
 			}
 		}
 
-		Update_Function();
+		update_function();
 
-		return Update_Function;
+		return update_function;
 	},
-	["Dropdown"]: async function (This_Setting: Partial<Extract<Setting, { type: "Dropdown" }>>) {
-		let StyleSheet: HTMLElement;
-		StyleSheet = Create_StyleSheet(This_Setting.id);
-
-		if (This_Setting.setup_function) {
-			Run_Text_Script_From_Setting(This_Setting, "setup_function");
+	["dropdown"]: async function (this_setting: Partial<Extract<Setting, { type: "dropdown" }>>) {
+		let style_sheet: HTMLElement;
+		style_sheet = create_stylesheet(this_setting.id);
+		if (this_setting.setup_function) {
+			run_text_script_from_setting(this_setting, "setup_function");
 		}
 
-		async function Update_Function() {
-			let value = await Load_Any(This_Setting.id);
+		async function update_function() {
+			const value = await load_any(this_setting.id);
 
-			if (Settings_Current_State[This_Setting.id] == value) return;
-
-			//----------------------
-
-			const Old_Dropdown = This_Setting.options[Settings_Current_State[This_Setting.id]];
-			Run_Text_Script_From_Setting(This_Setting, "disable_function");
+			if (settings_current_state[this_setting.id] == value) return;
 
 			//----------------------
 
-			Settings_Current_State[This_Setting.id] = value;
-			const Current_Dropdown = This_Setting.options[value];
-			Run_Text_Script_From_Setting(This_Setting, "enable_function");
+			const old_dropdown = this_setting.options[settings_current_state[this_setting.id]];
+			run_text_script_from_setting(this_setting, "disable_function");
 
 			//----------------------
 
-			StyleSheet.textContent = "";
-			if (This_Setting.constant_css) {
-				StyleSheet.textContent += This_Setting.constant_css;
+			settings_current_state[this_setting.id] = value;
+			const current_dropdown = this_setting.options[value];
+			run_text_script_from_setting(this_setting, "enable_function");
+
+			//----------------------
+
+			style_sheet.textContent = "";
+			if (this_setting.constant_css) {
+				style_sheet.textContent += this_setting.constant_css;
 			}
-			if (Current_Dropdown && Current_Dropdown.enable_css) {
-				StyleSheet.textContent += Current_Dropdown.enable_css;
+			if (current_dropdown && current_dropdown.enable_css) {
+				style_sheet.textContent += current_dropdown.enable_css;
 			}
 		}
 
-		Update_Function();
+		update_function();
 
-		return Update_Function;
+		return update_function;
 	},
-	["Color"]: async function (This_Setting: Partial<Extract<Setting, { type: "Color" }>>) {
-		let StyleSheet: HTMLElement;
+	["color"]: async function (this_setting: Partial<Extract<Setting, { type: "color" }>>) {
+		let style_sheet: HTMLElement;
 
-		// if (This_Setting.constant_css) {
-		StyleSheet = Create_StyleSheet(This_Setting.id);
+		// if (this_setting.constant_css) {
+		style_sheet = create_stylesheet(this_setting.id);
 		// }
 
-		if (This_Setting.setup_function) {
-			Run_Text_Script_From_Setting(This_Setting, "setup_function");
+		if (this_setting.setup_function) {
+			run_text_script_from_setting(this_setting, "setup_function");
 		}
 
-		async function Update_Function() {
-			let value = await Load_Any(This_Setting.id);
+		async function update_function() {
+			const value = await load_any(this_setting.id);
 
 			//----------------------
 
-			Settings_Current_State[This_Setting.id] = value;
+			settings_current_state[this_setting.id] = value;
 
 			//----------------------
 
-			if (StyleSheet) {
-				StyleSheet.textContent = "";
-				StyleSheet.textContent += `:root{${
-					This_Setting.var_css ? This_Setting.var_css : `--${This_Setting.id}`
+			if (style_sheet) {
+				style_sheet.textContent = "";
+				style_sheet.textContent += `:root{${
+					this_setting.var_css ? this_setting.var_css : `--${this_setting.id}`
 				}: ${value}}`;
-				StyleSheet.textContent += This_Setting.constant_css || ``;
+				style_sheet.textContent += this_setting.constant_css || ``;
 			}
 
 			//----------------------
 
-			if (This_Setting.update_function) {
-				Run_Text_Script_From_Setting(This_Setting, "update_function");
+			if (this_setting.update_function) {
+				run_text_script_from_setting(this_setting, "update_function");
 			}
 		}
 
-		Update_Function();
+		update_function();
 
-		return Update_Function;
+		return update_function;
 	},
-	["Custom"]: async function (This_Setting: Partial<Extract<Setting, { type: "Custom" }>>) {
-		let StyleSheet: HTMLElement;
-		if (This_Setting.constant_css) {
-			StyleSheet = Create_StyleSheet(This_Setting.id);
+	["custom"]: async function (this_setting: Partial<Extract<Setting, { type: "custom" }>>) {
+		let style_sheet: HTMLElement;
+		if (this_setting.constant_css) {
+			style_sheet = create_stylesheet(this_setting.id);
 		}
 
-		if (This_Setting.setup_function) {
-			Run_Text_Script_From_Setting(This_Setting, "setup_function");
+		if (this_setting.setup_function) {
+			run_text_script_from_setting(this_setting, "setup_function");
 		}
 
-		async function Update_Function() {
-			let value = await Load_Any(This_Setting.id);
+		async function update_function() {
+			const value = await load_any(this_setting.id);
 
 			//----------------------
 
-			// if (Settings_Current_State[This_Setting.id] == value) return;
-			Settings_Current_State[This_Setting.id] = value;
+			// if (settings_current_state[this_setting.id] == value) return;
+			settings_current_state[this_setting.id] = value;
 
 			//----------------------
 
-			if (StyleSheet) {
-				StyleSheet.textContent = This_Setting.constant_css || ``;
+			if (style_sheet) {
+				style_sheet.textContent = this_setting.constant_css || ``;
 			}
 		}
 
-		Update_Function();
+		update_function();
 
-		return Update_Function;
+		return update_function;
 	},
-	["Combine_Settings"]: async function (This_Setting: Partial<Extract<Setting, { type: "Combine_Settings" }>>) {
-		let StyleSheet = Create_StyleSheet(This_Setting.id);
+	["combine_settings"]: async function (this_setting: Partial<Extract<Setting, { type: "combine_settings" }>>) {
+		const style_sheet = create_stylesheet(this_setting.id);
 
-		async function Update_Function() {
-			if (StyleSheet && This_Setting.update_function) {
-				StyleSheet.textContent = This_Setting.update_function;
+		async function update_function() {
+			if (style_sheet && this_setting.update_function) {
+				style_sheet.textContent = this_setting.update_function;
 			}
 		}
 
-		Update_Function();
-		return Update_Function;
+		update_function();
+		return update_function;
 	},
 };
 
-export async function SetUp_Setting_Function(This_Setting) {
-	if (This_Setting.id == null) return;
+export async function setup_setting_function(this_setting) {
+	if (this_setting.id == null) return;
 
-	const Get_Update_Function = Settings_Funcion[This_Setting.type];
-	if (!Get_Update_Function) return;
+	const get_update_function = settings_function[this_setting.type];
+	if (!get_update_function) return;
 
-	let Update_Function = await Get_Update_Function(This_Setting);
-	Settings_Update_Function[This_Setting.id] = Update_Function;
+	const update_function = await get_update_function(this_setting);
+	settings_update_function[this_setting.id] = update_function;
 
-	return Update_Function;
+	return update_function;
 }
 
-let Updating_Setting_Function = {};
+const updating_setting_function = {};
 
-export async function Update_Setting_Function(id) {
-	switch (Updating_Setting_Function[id]) {
+export async function update_setting_function(id) {
+	switch (updating_setting_function[id]) {
 		case "Waiting":
 			return;
 
 		case "Updating":
-			Updating_Setting_Function[id] = "Waiting";
-			await sleep(100);
-			Update_Setting_Function(id);
+			updating_setting_function[id] = "Waiting";
+			await wait_one_frame();
+			update_setting_function(id);
 
 		default:
-			Updating_Setting_Function[id] = "Updating";
-			if (Settings_Update_Function[id]) await Settings_Update_Function[id]();
-			const Current_Value = await Load_Any(id);
+			updating_setting_function[id] = "Updating";
+			if (settings_update_function[id]) await settings_update_function[id]();
+			const current_value = await load_any(id);
 
-			// Run all on_update functions
-			if (Settings_On_Update[id]) {
-				for (const This_Function of Settings_On_Update[id]) {
-					This_Function(Current_Value);
+			// run all on_update functions
+			if (settings_on_update[id]) {
+				for (const this_function of settings_on_update[id]) {
+					this_function(current_value);
 				}
 			}
 
-			console.log("Updated", id, Current_Value);
+			console.log("updated", id, current_value);
 			//----------------------
-			await sleep(100);
+			await wait_one_frame();
 
-			if (Updating_Setting_Function[id] == "Updating") {
-				delete Updating_Setting_Function[id];
+			if (updating_setting_function[id] == "Updating") {
+				delete updating_setting_function[id];
 			}
 	}
 }
 
-export async function On_Setting_Update(id: string, callback: (value) => void) {
-	if (Settings_On_Update[id] == null) {
-		Settings_On_Update[id] = [];
+export async function on_setting_update(id: string, callback: (value) => void, callback_on_init = false) {
+	if (settings_on_update[id] == null) {
+		settings_on_update[id] = [];
 	}
-	Settings_On_Update[id].push(callback);
+
+	settings_on_update[id].push(callback);
+
+	if (callback_on_init) {
+		if (settings_on_init[id] == null) {
+			settings_on_init[id] = [];
+		}
+		settings_on_init[id].push(callback);
+	}
 }
 
-export async function Remove_On_Setting_Update(id: string, callback: Function) {
-	if (Settings_On_Update[id] == null) return;
+export async function remove_on_setting_update(id: string, callback: Function) {
+	if (settings_on_update[id] == null) return;
 
-	Settings_On_Update[id] = Settings_On_Update[id].filter((This_Function) => This_Function != callback);
+	settings_on_update[id] = settings_on_update[id].filter((this_function) => this_function != callback);
 
-	if (Settings_On_Update[id].length == 0) {
-		delete Settings_On_Update[id];
+	if (settings_on_update[id].length == 0) {
+		delete settings_on_update[id];
+	}
+}
+
+export async function run_setting_init(id) {
+	if (settings_on_init[id]) {
+		const current_value = await load_any(id);
+		for (const this_function of settings_on_init[id]) {
+			this_function(current_value);
+		}
+	}
+}
+
+export async function run_all_setting_init() {
+	for (const id in settings_on_init) {
+		// console.log("running init", id);
+		run_setting_init(id);
 	}
 }
